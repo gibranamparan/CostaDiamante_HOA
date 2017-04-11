@@ -197,18 +197,20 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CondoController.cs" />
+    <Compile Include="Controllers\GuestController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\OwnersController.cs" />
+    <Compile Include="Controllers\PermissionsController.cs" />
+    <Compile Include="Controllers\Permissions_VisitsController.cs" />
+    <Compile Include="Controllers\VisitsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\201704112026527_initialMigration.cs" />
     <Compile Include="Migrations\201704112026527_initialMigration.Designer.cs">
       <DependentUpon>201704112026527_initialMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704112116379_correccionDeRelaciones.cs" />
-    <Compile Include="Migrations\201704112116379_correccionDeRelaciones.Designer.cs">
-      <DependentUpon>201704112116379_correccionDeRelaciones.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -282,6 +284,36 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
+    <Content Include="Views\Owners\Create.cshtml" />
+    <Content Include="Views\Owners\Delete.cshtml" />
+    <Content Include="Views\Owners\Details.cshtml" />
+    <Content Include="Views\Owners\Edit.cshtml" />
+    <Content Include="Views\Owners\Index.cshtml" />
+    <Content Include="Views\Guest\Create.cshtml" />
+    <Content Include="Views\Guest\Delete.cshtml" />
+    <Content Include="Views\Guest\Details.cshtml" />
+    <Content Include="Views\Guest\Edit.cshtml" />
+    <Content Include="Views\Guest\Index.cshtml" />
+    <Content Include="Views\Condo\Create.cshtml" />
+    <Content Include="Views\Condo\Delete.cshtml" />
+    <Content Include="Views\Condo\Details.cshtml" />
+    <Content Include="Views\Condo\Edit.cshtml" />
+    <Content Include="Views\Condo\Index.cshtml" />
+    <Content Include="Views\Permissions\Create.cshtml" />
+    <Content Include="Views\Permissions\Delete.cshtml" />
+    <Content Include="Views\Permissions\Details.cshtml" />
+    <Content Include="Views\Permissions\Edit.cshtml" />
+    <Content Include="Views\Permissions\Index.cshtml" />
+    <Content Include="Views\Visits\Create.cshtml" />
+    <Content Include="Views\Visits\Delete.cshtml" />
+    <Content Include="Views\Visits\Details.cshtml" />
+    <Content Include="Views\Visits\Edit.cshtml" />
+    <Content Include="Views\Visits\Index.cshtml" />
+    <Content Include="Views\Permissions_Visits\Create.cshtml" />
+    <Content Include="Views\Permissions_Visits\Delete.cshtml" />
+    <Content Include="Views\Permissions_Visits\Details.cshtml" />
+    <Content Include="Views\Permissions_Visits\Edit.cshtml" />
+    <Content Include="Views\Permissions_Visits\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -300,9 +332,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201704112026527_initialMigration.resx">
       <DependentUpon>201704112026527_initialMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704112116379_correccionDeRelaciones.resx">
-      <DependentUpon>201704112116379_correccionDeRelaciones.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

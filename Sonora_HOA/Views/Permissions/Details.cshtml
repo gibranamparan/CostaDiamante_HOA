@@ -1,0 +1,43 @@
+﻿@model Sonora_HOA.Models.Permissions
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Permissions</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.condo.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.condo.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.startDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.startDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.guestID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.guestID)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.permissionsID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

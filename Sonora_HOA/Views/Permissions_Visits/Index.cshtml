@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Sonora_HOA.Models.Permissions_Visits>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.permissions.permissionsID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.visits.visitsID)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.permissions.permissionsID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.visits.visitsID)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.permissions_visitsID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.permissions_visitsID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.permissions_visitsID })
+        </td>
+    </tr>
+}
+
+</table>

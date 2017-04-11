@@ -29,5 +29,17 @@ namespace Sonora_HOA.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<Sonora_HOA.Models.Owners> ApplicationUsers { get; set; }
+
+        public System.Data.Entity.DbSet<Sonora_HOA.Models.Guest> Guests { get; set; }
+
+        public System.Data.Entity.DbSet<Sonora_HOA.Models.Condo> Condoes { get; set; }
+
+        public System.Data.Entity.DbSet<Sonora_HOA.Models.Permissions> Permissions { get; set; }
+
+        public System.Data.Entity.DbSet<Sonora_HOA.Models.Visits> Visits { get; set; }
+
+        public System.Data.Entity.DbSet<Sonora_HOA.Models.Permissions_Visits> Permissions_Visits { get; set; }
     }
 }
