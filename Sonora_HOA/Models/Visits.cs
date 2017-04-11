@@ -7,7 +7,7 @@ namespace Sonora_HOA.Models
 {
     public class Visits
     {
-        public int visitid { get; set; }
+        public int visitsID { get; set; }
 
         [DisplayFormat(DataFormatString = "{0: dd/MM/yyyy}",
         ApplyFormatInEditMode = true)]
