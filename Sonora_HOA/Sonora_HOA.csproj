@@ -206,6 +206,10 @@
     <Compile Include="Migrations\201704112026527_initialMigration.Designer.cs">
       <DependentUpon>201704112026527_initialMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704112116379_correccionDeRelaciones.cs" />
+    <Compile Include="Migrations\201704112116379_correccionDeRelaciones.Designer.cs">
+      <DependentUpon>201704112116379_correccionDeRelaciones.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condo.cs" />
@@ -296,6 +300,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201704112026527_initialMigration.resx">
       <DependentUpon>201704112026527_initialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704112116379_correccionDeRelaciones.resx">
+      <DependentUpon>201704112116379_correccionDeRelaciones.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

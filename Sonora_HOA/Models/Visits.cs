@@ -19,7 +19,7 @@ namespace Sonora_HOA.Models
         [DisplayFormat(DataFormatString = "{0: dd/MM/yyyy}",
         ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
-        public DateTime arrivedDate { get; set; }
+        public DateTime arrivalDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{0: dd/MM/yyyy}",
         ApplyFormatInEditMode = true)]

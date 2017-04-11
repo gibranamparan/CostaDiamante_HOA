@@ -9,16 +9,18 @@ namespace Sonora_HOA.Models
     public class Permissions
     {
         public int permissionsID { get; set; }
-        [DisplayFormat(DataFormatString = "{0: dd/MM/yyyy}",
-        ApplyFormatInEditMode = true)]
+
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime startDate { get; set; }
 
-        public virtual Condo condo { get; set; }
+        //Condo where visit is permited
         public int number { get; set; }
+        public virtual Condo condo { get; set; }
 
-        public virtual Guest guest { get; set; }
+        //Guest who is permited to visit
         public int guestID { get; set; }
+        public virtual Guest guest { get; set; }
 
         public virtual ICollection<Permissions_Visits> permisionsvisits { get; set; }
     }
