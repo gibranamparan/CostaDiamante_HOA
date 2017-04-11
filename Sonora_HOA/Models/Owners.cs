@@ -11,7 +11,7 @@ namespace Sonora_HOA.Models
         public string name { get; set; }
         public string lastName { get; set; }
 
-        public ICollection<Condo> Condo { get; set; }
-        public ICollection<Guest> Guest { get; set; }
+        public virtual ICollection<Condo> Condo { get; set; }
+        public virtual ICollection<Guest> Guest { get; set; }
     }
 }

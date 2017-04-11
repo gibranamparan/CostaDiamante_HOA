@@ -9,7 +9,7 @@ namespace Sonora_HOA.Models
     public class Visits
     {
         [Key]
-        public int visitID { get; set; }
+        public int visitsID { get; set; }
 
         [DisplayFormat(DataFormatString = "{0: dd/MM/yyyy}",
         ApplyFormatInEditMode = true)]
@@ -25,5 +25,7 @@ namespace Sonora_HOA.Models
         ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime departureDate { get; set; }
+
+        public virtual ICollection<Permissions_Visits> permisionsvisits {get;set;} 
     }
 }

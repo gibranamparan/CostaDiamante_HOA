@@ -12,10 +12,10 @@ namespace Sonora_HOA.Models
         public int number { get; set; }
         public string name { get; set; }
 
-        public ICollection<Permissions> Permissions { get; set; }
+        public virtual ICollection<Permissions> Permissions { get; set; }
 
         public virtual Owners owner { get; set; }
-        public virtual int id { get; set; }
+        public string Id { get; set; }
 
     }
 }
