@@ -11,12 +11,12 @@ namespace Sonora_HOA.Models
         [Key]
         public int visitsID { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0: dd/MM/yyyy}",
+        [DisplayFormat(DataFormatString = "{0 :yyyy-MM-dd}",
         ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime date { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0: dd/MM/yyyy}",
+        [DisplayFormat(DataFormatString = "{0 :yyyy-MM-dd}",
         ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime arrivedDate { get; set; }
