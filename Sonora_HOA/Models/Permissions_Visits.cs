@@ -10,6 +10,7 @@ namespace Sonora_HOA.Models
     //The permissions 
     public class Permissions_Visits
     {
+        [Key]
         public int permissions_visitsID { get; set; }
         //The permissions are registered for many guests to program many visits in a specific period of time
         public int permissionsID { get; set; }
