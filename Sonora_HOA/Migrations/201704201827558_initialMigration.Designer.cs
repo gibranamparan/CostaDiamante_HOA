@@ -13,7 +13,7 @@ namespace Sonora_HOA.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201704112026527_initialMigration"; }
+            get { return "201704201827558_initialMigration"; }
         }
         
         string IMigrationMetadata.Source
