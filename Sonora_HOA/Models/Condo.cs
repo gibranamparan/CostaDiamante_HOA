@@ -13,6 +13,7 @@ namespace Sonora_HOA.Models
 
         public string name { get; set; }
 
+
         //A condo has one owner
         public string Id { get; set; }
         public virtual Owners owner { get; set; }
