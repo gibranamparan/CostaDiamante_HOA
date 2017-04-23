@@ -19,13 +19,13 @@
             @Html.DisplayFor(model => model.Email)
         </dd>
 
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.EmailConfirmed)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.EmailConfirmed)
-        </dd>
+        </dd>*@
 
         <dt>
             @Html.DisplayNameFor(model => model.PasswordHash)
@@ -35,13 +35,13 @@
             @Html.DisplayFor(model => model.PasswordHash)
         </dd>
 
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.SecurityStamp)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.SecurityStamp)
-        </dd>
+        </dd>*@
 
         <dt>
             @Html.DisplayNameFor(model => model.PhoneNumber)
@@ -51,7 +51,7 @@
             @Html.DisplayFor(model => model.PhoneNumber)
         </dd>
 
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
         </dt>
 
@@ -81,7 +81,7 @@
 
         <dd>
             @Html.DisplayFor(model => model.LockoutEnabled)
-        </dd>
+        </dd>*@
 
         <dt>
             @Html.DisplayNameFor(model => model.AccessFailedCount)
@@ -119,5 +119,6 @@
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index") |
+    @Html.ActionLink("Add Guest", "Index", "Guest", new { id = Model.Id }, null)
 </p>

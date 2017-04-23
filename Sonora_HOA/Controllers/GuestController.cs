@@ -15,8 +15,9 @@ namespace Sonora_HOA.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Guest
-        public ActionResult Index()
+        public ActionResult Index(string id)
         {
+            ViewBag.Ownerid = id;
             return View(db.Guests.ToList());
         }
 
@@ -38,6 +39,7 @@ namespace Sonora_HOA.Controllers
         // GET: Guest/Create
         public ActionResult Create()
         {
+            
             return View();
         }
 
@@ -52,10 +54,10 @@ namespace Sonora_HOA.Controllers
             {
                 db.Guests.Add(guest);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index",new { Id = guest.Id});
             }
 
-            return View(guest);
+            return View();
         }
 
         // GET: Guest/Edit/5
