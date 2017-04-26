@@ -10,6 +10,7 @@
 <div class="form-group">
     @using (Html.BeginForm("Create", "Guest", FormMethod.Post, new { @class = "col-xs-4 form-horizontal" }))
     {
+        @Html.AntiForgeryToken()
         @Html.Hidden("Id", Ownerid)
        
         <div class="form-group">

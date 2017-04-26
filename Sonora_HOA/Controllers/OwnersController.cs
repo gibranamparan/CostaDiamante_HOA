@@ -17,7 +17,7 @@ namespace Sonora_HOA.Controllers
         // GET: Owners
         public ActionResult Index()
         {
-            return View(db.ApplicationUsers.ToList());
+            return View(db.Owners.ToList());
         }
 
         // GET: Owners/Details/5
@@ -27,7 +27,7 @@ namespace Sonora_HOA.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Owners owners = db.ApplicationUsers.Find(id);
+            Owner owners = db.Owners.Find(id);
             if (owners == null)
             {
                 return HttpNotFound();
@@ -46,11 +46,11 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName,name,lastName")] Owners owners)
+        public ActionResult Create([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName,name,lastName")] Owner owners)
         {
             if (ModelState.IsValid)
             {
-                db.ApplicationUsers.Add(owners);
+                db.Owners.Add(owners);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -65,7 +65,7 @@ namespace Sonora_HOA.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Owners owners = db.ApplicationUsers.Find(id);
+            Owner owners = db.Owners.Find(id);
             if (owners == null)
             {
                 return HttpNotFound();
@@ -78,7 +78,7 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName,name,lastName")] Owners owners)
+        public ActionResult Edit([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName,name,lastName")] Owner owners)
         {
             if (ModelState.IsValid)
             {
@@ -96,7 +96,7 @@ namespace Sonora_HOA.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Owners owners = db.ApplicationUsers.Find(id);
+            Owner owners = db.Owners.Find(id);
             if (owners == null)
             {
                 return HttpNotFound();
@@ -109,8 +109,8 @@ namespace Sonora_HOA.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Owners owners = db.ApplicationUsers.Find(id);
-            db.ApplicationUsers.Remove(owners);
+            Owner owners = db.Owners.Find(id);
+            db.Owners.Remove(owners);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

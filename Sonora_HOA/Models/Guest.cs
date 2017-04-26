@@ -16,9 +16,9 @@ namespace Sonora_HOA.Models
         public string lastName { get; set; }
 
         //One guest can be invited and registered by one owner
+        [ForeignKey("owner")]
         public string Id { get; set; }
-        [ForeignKey ("Id")]
-        public virtual Owners owner { get; set; }
+        public virtual Owner owner { get; set; }
        
 
         //One guest can has many permissions in time to visit the condoes

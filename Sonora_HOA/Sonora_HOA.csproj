@@ -208,13 +208,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201704201827558_initialMigration.cs" />
-    <Compile Include="Migrations\201704201827558_initialMigration.Designer.cs">
-      <DependentUpon>201704201827558_initialMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201704260143085_initialCOmmit.cs" />
+    <Compile Include="Migrations\201704260143085_initialCOmmit.Designer.cs">
+      <DependentUpon>201704260143085_initialCOmmit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201704260116266_cambioModeloGuest.cs" />
-    <Compile Include="Migrations\201704260116266_cambioModeloGuest.Designer.cs">
-      <DependentUpon>201704260116266_cambioModeloGuest.cs</DependentUpon>
+    <Compile Include="Migrations\201704260153498_cambioNombreTabla_Owner.cs" />
+    <Compile Include="Migrations\201704260153498_cambioNombreTabla_Owner.Designer.cs">
+      <DependentUpon>201704260153498_cambioNombreTabla_Owner.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -222,7 +222,7 @@
     <Compile Include="Models\Guest.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\Owners.cs" />
+    <Compile Include="Models\Owner.cs" />
     <Compile Include="Models\Permissions.cs" />
     <Compile Include="Models\Permissions_Visits.cs" />
     <Compile Include="Models\Visits.cs" />
@@ -334,11 +334,11 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201704201827558_initialMigration.resx">
-      <DependentUpon>201704201827558_initialMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201704260143085_initialCOmmit.resx">
+      <DependentUpon>201704260143085_initialCOmmit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704260116266_cambioModeloGuest.resx">
-      <DependentUpon>201704260116266_cambioModeloGuest.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201704260153498_cambioNombreTabla_Owner.resx">
+      <DependentUpon>201704260153498_cambioNombreTabla_Owner.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

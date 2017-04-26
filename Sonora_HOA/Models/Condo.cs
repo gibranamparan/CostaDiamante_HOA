@@ -14,14 +14,12 @@ namespace Sonora_HOA.Models
 
         public string name { get; set; }
 
-
         //A condo has one owner
+        [ForeignKey("owner")]
         public string Id { get; set; }
-        [ForeignKey("Id")]
-        public virtual Owners owner { get; set; }
+        public virtual Owner owner { get; set; }
 
         //A condo can be visited with many permissions
         public virtual ICollection<Permissions> Permissions { get; set; }
-
     }
 }

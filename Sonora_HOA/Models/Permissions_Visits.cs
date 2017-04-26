@@ -12,15 +12,13 @@ namespace Sonora_HOA.Models
     {
         [Key]
         public int permissions_visitsID { get; set; }
+
         //The permissions are registered for many guests to program many visits in a specific period of time
         public int permissionsID { get; set; }
         public virtual Permissions permissions { get; set; }
 
-
         //The visits are a group of guests with an active permission
         public int visitsID { get; set; }
         public virtual Visits visits { get; set; }
-        
-
     }
 }
