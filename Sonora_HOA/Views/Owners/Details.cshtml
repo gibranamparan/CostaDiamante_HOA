@@ -1,51 +1,32 @@
 ﻿@model Sonora_HOA.Models.Owner
-
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>Owners</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.UserName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.lastName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.lastName)
-        </dd>
-
-    </dl>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2 class="panel-title">Information of Owner</h2>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("Partial_infoOwner", Model)
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index") |
-    @Html.ActionLink("Add Guest", "Index", "Guest", new { id = Model.Id }, null)
-</p>
+
+@*<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Create Guest</h2>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("../Guest/Partial_CreateGuest", Model)
+    </div>
+</div>*@
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Guest</h2>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("../Guest/Partial_ListGuest", Model)
+    </div>
+</div>

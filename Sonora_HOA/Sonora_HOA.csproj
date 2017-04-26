@@ -318,6 +318,9 @@
     <Content Include="Views\Permissions_Visits\Details.cshtml" />
     <Content Include="Views\Permissions_Visits\Edit.cshtml" />
     <Content Include="Views\Permissions_Visits\Index.cshtml" />
+    <Content Include="Views\Guest\Partial_ListGuest.cshtml" />
+    <Content Include="Views\Guest\Partial_CreateGuest.cshtml" />
+    <Content Include="Views\Owners\Partial_infoOwner.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
