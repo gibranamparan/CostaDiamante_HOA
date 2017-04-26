@@ -3,7 +3,7 @@ namespace Sonora_HOA.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class cambiosModeloGuest : DbMigration
+    public partial class cambioModeloGuest : DbMigration
     {
         public override void Up()
         {

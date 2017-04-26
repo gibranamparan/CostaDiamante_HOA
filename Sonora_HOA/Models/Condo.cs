@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -16,6 +17,7 @@ namespace Sonora_HOA.Models
 
         //A condo has one owner
         public string Id { get; set; }
+        [ForeignKey("Id")]
         public virtual Owners owner { get; set; }
 
         //A condo can be visited with many permissions

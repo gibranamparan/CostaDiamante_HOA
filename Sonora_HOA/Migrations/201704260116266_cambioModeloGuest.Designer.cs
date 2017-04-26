@@ -7,13 +7,13 @@ namespace Sonora_HOA.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class cambiosModeloGuest : IMigrationMetadata
+    public sealed partial class cambioModeloGuest : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(cambiosModeloGuest));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(cambioModeloGuest));
         
         string IMigrationMetadata.Id
         {
-            get { return "201704231741412_cambiosModeloGuest"; }
+            get { return "201704260116266_cambioModeloGuest"; }
         }
         
         string IMigrationMetadata.Source
