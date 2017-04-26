@@ -8,8 +8,16 @@ namespace Sonora_HOA
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            bundles.Add(new ScriptBundle("~/bundles/template").Include(
+            "~/assets/js/skel.min.js",
+            "~/assets/js/util.js",
+            "~/assets/js/main.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js"));
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/customFunctions.js",
+                        "~/Scripts/jquery.mask.js",
+                        "~/Scripts/numeral.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));

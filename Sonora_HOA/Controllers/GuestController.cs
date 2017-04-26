@@ -54,7 +54,7 @@ namespace Sonora_HOA.Controllers
             {
                 db.Guests.Add(guest);
                 db.SaveChanges();
-                return RedirectToAction("Index",new { Id = guest.Id});
+                return RedirectToAction("Details","Owners",new { Id = guest.Id});
             }
 
             return View();
