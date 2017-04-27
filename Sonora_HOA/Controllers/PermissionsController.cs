@@ -40,6 +40,7 @@ namespace Sonora_HOA.Controllers
         public ActionResult Create()
         {
             ViewBag.number = new SelectList(db.Condoes, "number", "name");
+            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name");
             return View();
         }
 
@@ -58,6 +59,7 @@ namespace Sonora_HOA.Controllers
             }
 
             ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.number);
+            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name", permissions.guestID);
             return View(permissions);
         }
 
@@ -74,6 +76,7 @@ namespace Sonora_HOA.Controllers
                 return HttpNotFound();
             }
             ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.number);
+            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name", permissions.guestID);
             return View(permissions);
         }
 
@@ -91,6 +94,7 @@ namespace Sonora_HOA.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.number);
+            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name", permissions.guestID);
             return View(permissions);
         }
 

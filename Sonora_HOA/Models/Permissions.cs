@@ -14,9 +14,11 @@ namespace Sonora_HOA.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", 
             ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
+        [Display(Name = "Start Date")]
         public DateTime startDate { get; set; }
 
         //Condo where visit is permited
+        [Display(Name = "Number")]
         public int number { get; set; }
         public virtual Condo condo { get; set; }
 
