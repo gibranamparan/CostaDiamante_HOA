@@ -23,6 +23,7 @@ namespace Sonora_HOA.Models
         public virtual Condo condo { get; set; }
 
         //Guest who is permited to visit
+        [Display(Name = "Guest")]
         public int guestID { get; set; }
         public virtual Guest guest { get; set; }
 

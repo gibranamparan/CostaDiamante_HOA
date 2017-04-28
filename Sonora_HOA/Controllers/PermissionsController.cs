@@ -18,6 +18,8 @@ namespace Sonora_HOA.Controllers
         public ActionResult Index()
         {
             var permissions = db.Permissions.Include(p => p.condo);
+            ViewBag.number = new SelectList(db.Condoes, "number", "name");
+            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name");
             return View(permissions.ToList());
         }
 
