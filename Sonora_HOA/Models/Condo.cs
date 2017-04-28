@@ -10,12 +10,14 @@ namespace Sonora_HOA.Models
     public class Condo
     {
         [Key]
+        [Display(Name = "Number")]
         public int number { get; set; }
-
+        [Display(Name = "Name")]
         public string name { get; set; }
 
         //A condo has one owner
         [ForeignKey("owner")]
+        [Display(Name = "Owner")]
         public string Id { get; set; }
         public virtual Owner owner { get; set; }
 

@@ -7,44 +7,61 @@
 
 }
 
-<h2>Index</h2>
+@*<h2>Index</h2>*@
 
-<p>
+@*<p>
     @Html.Partial("Partial_CreatePermission",permission)
-</p>
+@*</p>*@
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2 class="panel-title">Create Permission</h2>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("Partial_CreatePermission", permission)
+    </div>
+</div>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.condo.name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.startDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.guest.name)
-        </th>
-        <th></th>
-    </tr>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Permissions</h2>
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.condo.name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.startDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.guest.name)
+                </th>
+                <th></th>
+            </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.condo.name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.startDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.guest.name)&nbsp;@Html.DisplayFor(modelItem => item.guest.lastName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.permissionsID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.permissionsID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.permissionsID })
-        </td>
-    </tr>
-}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.condo.name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.startDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.guest.name)&nbsp;@Html.DisplayFor(modelItem => item.guest.lastName)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.permissionsID }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.permissionsID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.permissionsID })
+                    </td>
+                </tr>
+            }
 
-</table>
+        </table>
+    </div>
+</div>
+
 <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")" type="text/javascript"></script>

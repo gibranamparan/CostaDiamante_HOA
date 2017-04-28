@@ -14,16 +14,19 @@ namespace Sonora_HOA.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
         ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
+        [Display(Name = "Date")]
         public DateTime date { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
         ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
+        [Display(Name = "Arrival")]
         public DateTime arrivalDate { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
         ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
+        [Display(Name = "Departure")]
         public DateTime departureDate { get; set; }
 
         public virtual ICollection<Permissions_Visits> permisionsvisits {get;set;} 
