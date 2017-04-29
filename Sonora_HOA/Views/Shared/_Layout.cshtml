@@ -3,59 +3,85 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - Sonoran HOA</title>
+    @Styles.Render("~/assets/css/main.css ")
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-
-    <script type = 'text/javascript' >
-        var appInsights=window.appInsights||function(config)
-        {
-            function r(config){ t[config] = function(){ var i = arguments; t.queue.push(function(){ t[config].apply(t, i)})} }
-            var t = { config:config},u=document,e=window,o='script',s=u.createElement(o),i,f;for(s.src=config.url||'//az416426.vo.msecnd.net/scripts/a/ai.0.js',u.getElementsByTagName(o)[0].parentNode.appendChild(s),t.cookie=u.cookie,t.queue=[],i=['Event','Exception','Metric','PageView','Trace','Ajax'];i.length;)r('track'+i.pop());return r('setAuthenticatedUserContext'),r('clearAuthenticatedUserContext'),config.disableExceptionTracking||(i='onerror',r('_'+i),f=e[i],e[i]=function(config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t['_' + i](config, r, u, e, o),s}),t
-        }({
-            instrumentationKey:'72dd2137-e8be-447d-a2c2-16dae1dac778'
-        });
-        
-        window.appInsights=appInsights;
-        appInsights.trackPageView();
-    </script>
 </head>
+
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+    <!-- Wrapper -->
+    <div id="wrapper">
+        <!-- Main -->
+        <div id="main">
+            <div class="inner">
+                <!-- Header -->
+                <header id="header"></header>
+
+                <!-- Banner -->
+                <section id="container banner">
+                    <div class="body-content">
+                        @RenderBody()
+                    </div>
+                </section>
+                <hr />
+                <footer>
+                    <p>&copy; @DateTime.Now.Year - Sonoran HOA</p>
+                </footer>
+
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    @*<li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
-                    <li>@Html.ActionLink("Condominios", "Index", "Condo")</li>
-                    <li>@Html.ActionLink("Owners", "Index", "Owners")</li>
-                    <li>@Html.ActionLink("Guest", "Index", "Guest")</li>
-                    <li>@Html.ActionLink("Permissions", "Index", "Permissions")</li>
-                    <li>@Html.ActionLink("Visits", "Index", "Visits")</li>
-                </ul>
-                @Html.Partial("_LoginPartial")
+        </div>
+
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <div class="inner">
+
+                <!-- Menu -->
+
+                <nav id="menu">
+                    <header class="major">
+                        <img src="~/images/LogoCamp.png" alt="Sonoran HOA" class="img-responsive">
+                    </header>
+                    <header class="major">
+                        @*<ul>
+                            <li>@Html.Partial("_LoginPartial")</li>
+                        </ul>*@
+                    </header>
+
+                    @*@if (User.IsInRole("Admin"))
+                    {*@
+                        <ul>
+                            <!--<li><a href="~/Home/Index">Homepage</a></li>-->
+                            <li><a href="~/Owners">Owners</a></li>
+                            <li><a href="~/Condo">Condos</a></li>
+                            <li><a href="~/Guest">Guests</a></li>
+                            <li><a href="~/Permissions">Permissions</a></li>
+                        </ul>
+                    @*}*@
+
+                </nav>
+                <!--Rol sucursales-->
+                @*@if (User.IsInRole("Sucursal") || User.IsInRole("Admin"))
+                {*@
+                    @*<nav id="menu">
+                        <ul>
+                            <li><a href="~/Activos/">Activos</a></li>
+                            <li><a href="~/Empleados/">Empleados</a></li>
+                            <li><a href="~/PrestamosActivos/">Prestamos de Activos</a></li>
+                            <li><a href="~/Sucursales/">Sucursales</a></li>
+                            <li><a href="~/Departamentos/">Departamentos</a></li>
+                            <li><a href="~/Inventarios/">Inventarios</a></li>
+                        </ul>
+                    </nav>*@
+                @*}*@
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
 
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/template")
+    @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/bootstrap")
+
     @RenderSection("scripts", required: false)
 </body>
 </html>

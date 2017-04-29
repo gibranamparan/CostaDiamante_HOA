@@ -1,12 +1,12 @@
-﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
-}
-
-/* Set padding to keep content from hitting the edges */
+﻿/* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    padding-top: 1em;
+}
+
+div#main {
+    background: #eee;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -20,5 +20,159 @@
 input,
 select,
 textarea {
-    max-width: 280px;
+   /*max-width: 280px;*/ 
 }
+
+input[readonly='readonly']{
+    background-color: dimgray;
+}
+
+/*Centers logo*/
+    header.major {
+    
+        text-align: center;
+    }
+
+    nav header.major img{
+        width: 150px;
+        height: 70px;
+    }
+/*****/
+
+/*Page body*/
+    .container.body-content {
+        width: 100%;
+    }
+/*****/
+
+/*Ajustes de color de bootstrap*/
+    .panel-primary .panel-heading h1,.panel-primary .panel-heading h2{
+        color: white;
+    }
+    
+    .panel-info .panel-heading{
+        background-color: #e9df97 !important;
+        border-color: #e9df97 !important;
+    }
+
+    .panel-info{
+        border-color: #e9df97 !important;
+    }
+
+    .panel-info .panel-heading h1,.panel-info .panel-heading h2{
+        color: black;
+    }
+
+    .panel{
+        box-shadow: .5em .5em 1em grey !important;
+    }
+/*****/
+
+/*For actions column*/
+    th.actions{
+        width: 10em;
+    }
+
+    /*Dropdown Button */
+    .dropdown_actions>button {
+        height: 2em;
+    }
+    /* Dropdown button on hover & focus */
+    .dropbtn:hover, .dropbtn:focus {
+        background-color: #3e8e41;
+    }
+
+    /* The container <div> - needed to position the dropdown content */
+    .dropdown_actions {
+        position: relative;
+        display: inline-block;
+    }
+
+    /* Dropdown Content (Hidden by Default) */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    /* Change color of dropdown links on hover */
+    .dropdown-content a:hover {background-color: #f1f1f1}
+
+    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+    .show {display:block;}
+ /*****/
+
+ /*table*/
+ .table th{
+     background-color: #e9df97 !important;
+ }
+
+ td.montoNegativo{
+     color:red;
+ }
+
+ /* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+ /*Varios*/
+ .searchPanel{
+     margin-bottom: .5em;
+     margin-top: .5em;
+ }
+
+ .satLogo{
+     line-height: 2.8em;
+ }
+
+ .form-group img{
+     height: 2em;
+ }
