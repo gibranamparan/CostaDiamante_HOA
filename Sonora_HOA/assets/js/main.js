@@ -237,7 +237,7 @@
 											.data('locked', 1)
 											.css('position', 'fixed')
 											.css('top', -1 * x)
-                                            .css('width', '21em');
+                                            .css('width', '20em');
 
 								}
 

@@ -21,6 +21,10 @@ namespace Sonora_HOA.Models
         [Display(Name = "Last Name")]
         public string lastName { get; set; }
 
+        public string nombreCompleto {
+            get { return this.name + " " + this.lastName; }
+        }
+
         //An owner can register many Guests and has many Condos
         public virtual ICollection<Condo> Condo { get; set; }
         public virtual ICollection<Guest> Guest { get; set; }

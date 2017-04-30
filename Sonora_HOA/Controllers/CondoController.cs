@@ -39,7 +39,7 @@ namespace Sonora_HOA.Controllers
         // GET: Condo/Create
         public ActionResult Create()
         {
-            ViewBag.Id = new SelectList(db.Owners, "Id", "Email");
+            ViewBag.Id = new SelectList(db.Owners.ToList(), "Id", "nombreCompleto");
             return View();
         }
 
