@@ -15,9 +15,10 @@ namespace Sonora_HOA
 
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
-                        "~/Scripts/customFunctions.js",
                         "~/Scripts/jquery.mask.js",
-                        "~/Scripts/numeral.min.js"));
+                        "~/Scripts/jquery.dataTables.min.js",
+                        "~/Scripts/numeral.min.js",
+                        "~/Scripts/custom.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
@@ -33,7 +34,8 @@ namespace Sonora_HOA
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/jquery.dataTables.min.css"));
         }
     }
 }
