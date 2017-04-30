@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -14,14 +15,15 @@ namespace Sonora_HOA.Models
             this.Email = model.Email;
             this.name = model.name;
             this.lastName = model.lastname;
+            this.PhoneNumber = model.phone;
         }
 
-        [Display(Name = "Name")]
+        [DisplayName("Name")]
         public string name { get; set; }
-        [Display(Name = "Last Name")]
+        [DisplayName("Last Name")]
         public string lastName { get; set; }
 
-        public string nombreCompleto {
+        public string fullName {
             get { return this.name + " " + this.lastName; }
         }
 

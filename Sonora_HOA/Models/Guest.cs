@@ -22,7 +22,11 @@ namespace Sonora_HOA.Models
         [Display(Name = "Owner")]
         public string Id { get; set; }
         public virtual Owner owner { get; set; }
-       
+
+        public string fullName
+        {
+            get { return this.name + " " + this.lastName; }
+        }
 
         //One guest can has many permissions in time to visit the condoes
         public virtual ICollection<Permissions> Permissions { get; set; }
