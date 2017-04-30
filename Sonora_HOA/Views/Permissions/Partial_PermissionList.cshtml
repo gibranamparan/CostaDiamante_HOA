@@ -1,39 +1,40 @@
-﻿@model IEnumerable<Sonora_HOA.Models.Permissions>
+﻿@model List<Sonora_HOA.Models.Permissions>
 
 @*<p>
     @Html.ActionLink("Create New", "Create")
 </p>*@
-<table class="table table-hover table-striped">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.startDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.number)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.guestID)
-        </th>
-        <th></th>
-    </tr>
+<table class="table table-hover table-striped datatable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().startDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().guestID)
+            </th>
+        </tr>
+    </thead>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.startDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.number)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.guestID)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.permissionsID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.permissionsID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.permissionsID })
-        </td>
-    </tr>
-}
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.startDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.number)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.guestID)
+                </td>
+            </tr>
+        }
+    </tbody>
+
+
 
 </table>

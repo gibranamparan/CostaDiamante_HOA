@@ -36,9 +36,12 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Visits/Create
-        public ActionResult Create()
+        public ActionResult Create(string id)
         {
-            return View();
+            Visits visit = new Visits();
+            var Permissions = db.Permissions.Where(p => p.condo.Id == id).ToList();
+            ViewBag.Permissions = Permissions;
+            return View(visit);
         }
 
         // POST: Visits/Create
