@@ -4,6 +4,7 @@
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<Permissions> permissions = ViewBag.Permissions;
+    Permissions permission = permissions.FirstOrDefault();
 }
 
 @using (Html.BeginForm()) 
@@ -58,6 +59,7 @@
 }
 
 <div>
+    @Html.Partial("../Permissions/Partial_CreatePermission", permission)
     @Html.Partial("../Permissions/Partial_PermissionList", permissions)
 </div>
 

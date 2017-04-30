@@ -41,6 +41,7 @@ namespace Sonora_HOA.Controllers
         // GET: Permissions/Create
         public ActionResult Create()
         {
+            //Permissions permission = db.Permissions.Include(p)
             ViewBag.number = new SelectList(db.Condoes, "number", "name");
             ViewBag.guestID = new SelectList(db.Guests, "guestID", "name");
             return View();
