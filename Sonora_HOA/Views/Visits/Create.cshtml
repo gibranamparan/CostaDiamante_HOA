@@ -52,6 +52,11 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
+<div>
+    @Html.Partial("../Permissions/Partial_PermissionList",Model)
+
+</div>
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
