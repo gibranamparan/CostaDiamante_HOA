@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sonora_HOA.Models
@@ -80,7 +81,11 @@ namespace Sonora_HOA.Models
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
+        [DisplayName("Name")]
         public string name { get; set; }
+        [DisplayName("Phone")]
+        public string phone { get; set; }
+        [DisplayName("Last Name")]
         public string lastname { get; set; }
     }
 

@@ -1,36 +1,39 @@
 ﻿@model Sonora_HOA.Models.Owner
 @using Sonora_HOA.Models;
-@{ 
+@{
     var Guests = Model.Guest.Where(o => o.Id == Model.Id).ToList();
+
 }
 
-<div class="form-group">
-    @using (Html.BeginForm("Create", "Guest", FormMethod.Post, null))
-    {
-        @Html.AntiForgeryToken()
-        @Html.Hidden("Id", Model.Id)
-        <div class="row">
-            <div class="form-group col-md-6">
-                <label>Name</label>
-                <input type="text" name="name" class="form-control" required>
-            </div>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Guest</h2>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            @using (Html.BeginForm("Create", "Guest", FormMethod.Post, null))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("Id", Model.Id)
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label>Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
 
-            <div class="form-group col-md-6">
-                <label>Last Name</label>
-                <input type="text" name="lastname" class="form-control" required>
-            </div>
+                    <div class="form-group col-md-6">
+                        <label>Last Name</label>
+                        <input type="text" name="lastname" class="form-control" required>
+                    </div>
+                </div>
+
+                <button class="btn btn-success">Register</button>
+            }
         </div>
-
-        <button class="btn btn-success">Register</button>
-
-    }
+    </div>
 </div>
 
-
-
-
-
-<table class="table">
+<table class="table table-hover table-striped">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.name)
@@ -51,12 +54,10 @@
                 @Html.DisplayFor(modelItem => item.lastName)
             </td>
             <td>
-                @Html.ActionLink("Edit","Edit","Guest", new { id = item.Id }, null) |
-                @Html.ActionLink("Delete", "Delete","Guest", new { id = item.Id },null)
+                @Html.ActionLink("Edit", "Edit", "Guest", new { id = item.Id }, null) |
+                @Html.ActionLink("Delete", "Delete", "Guest", new { id = item.Id }, null)
             </td>
         </tr>
     }
 
 </table>
-
-
