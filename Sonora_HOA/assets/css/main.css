@@ -4010,7 +4010,8 @@ Css pesonalisado
 		}
 
 			#menu ul a:hover, #menu ul span:hover {
-				color: #2a6904;
+				/*color: #2a6904;*/
+                color: #E0A57B;
 			}
 
 			#menu ul a.opener, #menu ul span.opener {
