@@ -2288,7 +2288,7 @@ Css pesonalisado
 	}
 
 	header.major > :last-child {
-		border-bottom: solid 3px #5e460b;
+		border-bottom: solid 3px #e57e32;
 		display: inline-block;
 		margin: 0 0 2em 0;
 		padding: 0 0.75em 0.5em 0;
@@ -3508,6 +3508,7 @@ Css pesonalisado
 
 				#main > .inner > section:first-of-type {
 					border-top: 0 !important;
+                    min-height: 750px;
 				}
 
 		@media screen and (max-width: 1680px) {
@@ -3600,7 +3601,7 @@ Css pesonalisado
 		-webkit-transition: margin-left 0.5s ease, box-shadow 0.5s ease;
 		-ms-transition: margin-left 0.5s ease, box-shadow 0.5s ease;
 		transition: margin-left 0.5s ease, box-shadow 0.5s ease;
-		background-color: #cbc06e;/* sidebar*/
+		background-color: #009979;/* sidebar*/
 		font-size: 0.9em;
 		position: relative;
 		/*width: 26em;*/
@@ -3662,7 +3663,8 @@ Css pesonalisado
 			top: 0;
 			width: 6em;
 			z-index: 10000;
-            color: #5e460b;
+            /*color: #5e460b;*/
+            color: #e57e32;
 		}
 
 			#sidebar .toggle:before {
@@ -3810,7 +3812,7 @@ Css pesonalisado
 		display: -webkit-flex;
 		display: -ms-flex;
 		display: flex;
-		border-bottom: solid 5px #6e460b;
+		border-bottom: solid 5px #e57e32;
 		padding: 6em 0 1em 0;
 		position: relative;
 	}
@@ -3999,10 +4001,11 @@ Css pesonalisado
 
 		#menu ul a, #menu ul span {
 			border-bottom: 0;
-			color: inherit;
+			/*color: inherit;*/
+            color: white;
 			cursor: pointer;
 			display: block;
-			font-size: 0.9em;
+			font-size: 1em;
 			padding: 0.625em 0;
 		}
 
@@ -4056,7 +4059,7 @@ Css pesonalisado
 				}
 
 	#menu > ul > li {
-		border-top: solid 1px #412d04;
+		border-top: solid 1px #e57e32;
 		margin: 0.5em 0 0 0;
 		padding: 0.5em 0 0 0;
 	}
