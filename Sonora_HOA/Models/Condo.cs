@@ -18,7 +18,7 @@ namespace Sonora_HOA.Models
         //A condo has one owner
         [ForeignKey("owner")]
         [Display(Name = "Owner")]
-        public string Id { get; set; }
+        public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
 
         //A condo can be visited with many permissions

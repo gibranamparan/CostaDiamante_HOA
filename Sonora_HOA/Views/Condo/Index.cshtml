@@ -13,7 +13,7 @@
 <table class="table table-hover table-striped">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.owner.Email)
+            @Html.DisplayNameFor(model => model.owner.fullName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.name)
@@ -24,7 +24,7 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.owner.Email)
+            @Html.DisplayFor(modelItem => item.owner.fullName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.name)
@@ -33,7 +33,7 @@
             @Html.ActionLink("Edit", "Edit", new { id=item.number }) |
             @Html.ActionLink("Details", "Details", new { id=item.number }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.number }) |
-            @Html.ActionLink("Owner","Details","Owners", new { id = item.Id }, null)
+            @Html.ActionLink("Owner","Details","Owners", new { id = item.ownerID }, null)
         </td>
     </tr>
 }

@@ -39,7 +39,7 @@ namespace Sonora_HOA.Controllers
         public ActionResult Create(string id)
         {
             Visits visit = new Visits();
-            var Permissions = db.Permissions.Where(p => p.condo.Id == id).ToList();
+            var Permissions = db.Permissions.Where(p => p.condo.ownerID == id).ToList();
             ViewBag.Permissions = Permissions;
             ViewBag.number = new SelectList(db.Condoes, "number", "name");
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");

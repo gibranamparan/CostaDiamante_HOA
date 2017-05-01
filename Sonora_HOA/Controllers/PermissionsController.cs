@@ -41,7 +41,7 @@ namespace Sonora_HOA.Controllers
         // GET: Permissions/Create
         public ActionResult Create(string id)
         {
-            var Permissions = db.Permissions.Where(p => p.condo.Id == id).ToList();
+            var Permissions = db.Permissions.Where(p => p.condo.ownerID == id).ToList();
             ViewBag.condoID = Permissions.FirstOrDefault();
             ViewBag.number = new SelectList(db.Condoes, "number", "name");
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
@@ -105,8 +105,8 @@ namespace Sonora_HOA.Controllers
         // GET: Permissions/Delete/5
         public ActionResult Delete(int? id, string ownerID)
         {
-            var Permissions = db.Permissions.Where(p => p.condo.Id == ownerID).ToList();
-            ViewBag.condoID = Permissions.FirstOrDefault().condo.Id;
+            var Permissions = db.Permissions.Where(p => p.condo.ownerID == ownerID).ToList();
+            ViewBag.condoID = Permissions.FirstOrDefault().condo.ownerID;
 
             if (id == null)
             {

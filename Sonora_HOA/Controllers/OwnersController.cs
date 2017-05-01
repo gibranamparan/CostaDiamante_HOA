@@ -65,12 +65,13 @@ namespace Sonora_HOA.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Owner owners = db.Owners.Find(id);
-            if (owners == null)
+            Owner owner = db.Owners.Find(id);
+            if (owner == null)
             {
                 return HttpNotFound();
             }
-            return View(owners);
+            RegisterViewModel vmOwner = new RegisterViewModel(owner);
+            return View(vmOwner);
         }
 
         // POST: Owners/Edit/5

@@ -57,7 +57,7 @@ namespace Sonora_HOA.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Id = new SelectList(db.Owners, "Id", "Email", condo.Id);
+            ViewBag.Id = new SelectList(db.Owners, "Id", "Email", condo.ownerID);
             return View(condo);
         }
 
@@ -73,7 +73,7 @@ namespace Sonora_HOA.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.Id = new SelectList(db.Owners, "Id", "Email", condo.Id);
+            ViewBag.Id = new SelectList(db.Owners, "Id", "Email", condo.ownerID);
             return View(condo);
         }
 
@@ -90,7 +90,7 @@ namespace Sonora_HOA.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.Id = new SelectList(db.Owners, "Id", "Email", condo.Id);
+            ViewBag.Id = new SelectList(db.Owners, "Id", "Email", condo.ownerID);
             return View(condo);
         }
 

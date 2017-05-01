@@ -90,6 +90,15 @@ namespace Sonora_HOA.Models
         public string phone { get; set; }
         [DisplayName("Last Name")]
         public string lastname { get; set; }
+
+        public RegisterViewModel(Owner owner)
+        {
+            this.Email = owner.Email;
+            this.name = owner.name;
+            this.phone = owner.PhoneNumber;
+            this.lastname = owner.lastName;
+            this.userID = owner.Id;
+        }
     }
 
     public class ResetPasswordViewModel

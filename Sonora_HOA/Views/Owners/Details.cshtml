@@ -3,7 +3,23 @@
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 @Html.Partial("Partial_infoOwner", Model)
 
-@Html.Partial("../Guest/Partial_ListGuest", Model)
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Owner's guests for future visits</h2>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("../Guest/Partial_ListGuest", Model)
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title">Owner's condominiums</h2>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("../Condo/Partial_IndexCondo", Model)
+    </div>
+</div>

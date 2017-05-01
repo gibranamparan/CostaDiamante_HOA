@@ -68,7 +68,11 @@ input[readonly='readonly']{
     }
 
     .panel{
-        box-shadow: .5em .5em 1em grey !important;
+        box-shadow: .5em .5em 1em grey;
+    }
+
+    .panel.panel-default{
+        box-shadow: 0em 0em 0em grey !important;
     }
 /*****/
 

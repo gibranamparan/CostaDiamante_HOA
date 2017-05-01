@@ -181,13 +181,18 @@ namespace Sonora_HOA.Controllers
         {
             if (ModelState.IsValid)
             {
+                Owner owner = new Owner(vmOwner);
+
                 ApplicationDbContext context = new ApplicationDbContext();
                 UserStore<ApplicationUser> store = new UserStore<ApplicationUser>(context);
 
-                UserManager<ApplicationUser> UserManager = new UserManager<ApplicationUser>(store);
-                String hashedNewPassword = UserManager.PasswordHasher.HashPassword(vmOwner.Password);
-                Owner owner = new Owner(vmOwner);
-                await store.SetPasswordHashAsync(owner, hashedNewPassword);
+                //If a new password has been introduced, it is modified.
+                if (!String.IsNullOrEmpty(vmOwner.Password)) { 
+                    UserManager<ApplicationUser> UserManager = new UserManager<ApplicationUser>(store);
+                    String hashedNewPassword = UserManager.PasswordHasher.HashPassword(vmOwner.Password);
+                    await store.SetPasswordHashAsync(owner, hashedNewPassword);
+                }
+
                 await store.UpdateAsync(owner);
                 int updatedRegs = context.SaveChanges();
                 return RedirectToAction("Index", "Owner");
