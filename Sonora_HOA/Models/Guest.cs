@@ -24,7 +24,7 @@ namespace Sonora_HOA.Models
         public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
 
-        [DisplayName("Full Name")]
+        [DisplayName("Guest Full Name")]
         public string fullName
         {
             get { return this.name + " " + this.lastName; }

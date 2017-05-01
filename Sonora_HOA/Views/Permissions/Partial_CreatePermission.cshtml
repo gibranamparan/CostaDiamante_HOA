@@ -5,8 +5,8 @@
 
 @using (Html.BeginForm("Create", "Permissions", new { id = Model.condo.ownerID }))
 {
-                @Html.AntiForgeryToken()
-                <div class="form-horizontal">
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         
