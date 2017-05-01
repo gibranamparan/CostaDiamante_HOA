@@ -5,12 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<Permissions> permissions = ViewBag.Permissions;
     Permissions permission = permissions.FirstOrDefault();
+    string ownerID = permission.condo.Id;
 }
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Create","Visits", new { id = ownerID }))
 {
     @Html.AntiForgeryToken()
-
+    @*@Html.Hidden("",condoId)*@
     <div class="panel panel-info">
         <div class="panel-heading">
             <h2 class="panel-title">Create Visit</h2>
