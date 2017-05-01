@@ -52,13 +52,13 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "visitsID,date,arrivalDate,departureDate")] Visits visits,string id)
+        public ActionResult Create([Bind(Include = "visitsID,date,arrivalDate,departureDate")] Visits visits,string ownerID)
         {
             if (ModelState.IsValid)
             {
                 db.Visits.Add(visits);
                 db.SaveChanges();
-                return RedirectToAction("Create","Visits", new { id = id });
+                return RedirectToAction("Create","Visits", new { id = ownerID });
             }
 
             return View(visits);

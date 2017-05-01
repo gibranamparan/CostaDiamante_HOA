@@ -41,11 +41,13 @@ namespace Sonora_HOA.Controllers
         // GET: Permissions/Create
         public ActionResult Create(string id)
         {
+            Permissions permission = new Permissions();
             var Permissions = db.Permissions.Where(p => p.condo.ownerID == id).ToList();
-            ViewBag.condoID = Permissions.FirstOrDefault();
+            ViewBag.Permissions = Permissions;
+            ViewBag.ownerID = id;
             ViewBag.number = new SelectList(db.Condoes, "number", "name");
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
-            return View();
+            return View(permission);
         }
 
         // POST: Permissions/Create
@@ -53,13 +55,13 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "permissionsID,startDate,number,guestID")] Permissions permissions, string id)
+        public ActionResult Create([Bind(Include = "permissionsID,startDate,number,guestID")] Permissions permissions, string ownerID)
         {
             if (ModelState.IsValid)
             {
                 db.Permissions.Add(permissions);
                 db.SaveChanges();
-                return RedirectToAction("Create","Visits", new { id = id });
+                return RedirectToAction("Create","Visits", new { id = ownerID });
             }
 
             ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.number);
