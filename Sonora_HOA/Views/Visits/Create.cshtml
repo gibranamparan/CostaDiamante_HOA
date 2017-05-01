@@ -4,8 +4,11 @@
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<Permissions> permissions = ViewBag.Permissions;
-    Permissions permission = permissions.FirstOrDefault();
-    string ownerID = permission.condo.Id;
+    if (permissions.Count() == 0) {
+        permissions = new List<Permissions>();
+    }
+    Permissions permission = new Permissions();
+    string ownerID = ViewBag.ownerID;
 }
 
 @using (Html.BeginForm("Create","Visits", new { id = ownerID }))

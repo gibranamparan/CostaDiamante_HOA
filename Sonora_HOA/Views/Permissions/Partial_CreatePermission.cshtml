@@ -3,7 +3,7 @@
     string id = ViewBag.condoID;
 }
 
-@using (Html.BeginForm("Create", "Permissions", new { id = Model.condo.Id }))
+@using (Html.BeginForm("Create", "Permissions", new { id = Model.condo.ownerID }))
 {
                 @Html.AntiForgeryToken()
                 <div class="form-horizontal">

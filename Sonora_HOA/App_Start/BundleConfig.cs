@@ -36,6 +36,10 @@ namespace Sonora_HOA
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
                       "~/Content/jquery.dataTables.min.css"));
+
+            bundles.Add(new StyleBundle("~/Content/template").Include(
+                      "~/assets/css/main.css",
+                      "~/assets/css/font-awesome.min.css"));
         }
     }
 }
