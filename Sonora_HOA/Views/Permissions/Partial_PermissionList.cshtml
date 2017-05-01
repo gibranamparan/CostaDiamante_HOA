@@ -10,11 +10,12 @@
                 @Html.DisplayNameFor(model => model.FirstOrDefault().startDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().number)
+                @*@Html.DisplayNameFor(model => model.FirstOrDefault().condo.name)*@Condo's Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault().guestID)
+                @*@Html.DisplayNameFor(model => model.FirstOrDefault().guest.name)*@Visitor's Name
             </th>
+            <th></th>
         </tr>
     </thead>
 
@@ -26,10 +27,13 @@
                     @Html.DisplayFor(modelItem => item.startDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.number)
+                    @Html.DisplayFor(modelItem => item.condo.name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.guestID)
+                    @Html.DisplayFor(modelItem => item.guest.fullName)
+                </td>
+                <td>
+                    <a href="@Url.Action("Delete","Permissions", new { id = item.permissionsID, ownerID = item.condo.Id })" class="glyphicon glyphicon-remove"/>
                 </td>
             </tr>
         }

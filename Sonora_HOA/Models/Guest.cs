@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace Sonora_HOA.Models
         public string Id { get; set; }
         public virtual Owner owner { get; set; }
 
+        [DisplayName("Full Name")]
         public string fullName
         {
             get { return this.name + " " + this.lastName; }

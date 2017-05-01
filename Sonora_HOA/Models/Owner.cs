@@ -25,6 +25,7 @@ namespace Sonora_HOA.Models
         [DisplayName("Last Name")]
         public string lastName { get; set; }
 
+        [DisplayName("Full Name")]
         public string fullName {
             get { return this.name + " " + this.lastName; }
         }

@@ -41,6 +41,8 @@ namespace Sonora_HOA.Controllers
             Visits visit = new Visits();
             var Permissions = db.Permissions.Where(p => p.condo.Id == id).ToList();
             ViewBag.Permissions = Permissions;
+            ViewBag.number = new SelectList(db.Condoes, "number", "name");
+            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
             return View(visit);
         }
 
@@ -49,13 +51,13 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "visitsID,date,arrivalDate,departureDate")] Visits visits)
+        public ActionResult Create([Bind(Include = "visitsID,date,arrivalDate,departureDate")] Visits visits,string id)
         {
             if (ModelState.IsValid)
             {
                 db.Visits.Add(visits);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Create","Visits", new { id = id });
             }
 
             return View(visits);

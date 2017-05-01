@@ -19,7 +19,7 @@ namespace Sonora_HOA.Controllers
         {
             var permissions = db.Permissions.Include(p => p.condo);
             ViewBag.number = new SelectList(db.Condoes, "number", "name");
-            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name");
+            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
             return View(permissions.ToList());
         }
 
@@ -39,10 +39,12 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Permissions/Create
-        public ActionResult Create()
+        public ActionResult Create(string id)
         {
+            var Permissions = db.Permissions.Where(p => p.condo.Id == id).ToList();
+            ViewBag.condoID = Permissions.FirstOrDefault();
             ViewBag.number = new SelectList(db.Condoes, "number", "name");
-            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name");
+            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
             return View();
         }
 
@@ -51,17 +53,17 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "permissionsID,startDate,number,guestID")] Permissions permissions)
+        public ActionResult Create([Bind(Include = "permissionsID,startDate,number,guestID")] Permissions permissions, string id)
         {
             if (ModelState.IsValid)
             {
                 db.Permissions.Add(permissions);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Create","Visits", new { id = id });
             }
 
             ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.number);
-            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name", permissions.guestID);
+            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
 
@@ -78,7 +80,7 @@ namespace Sonora_HOA.Controllers
                 return HttpNotFound();
             }
             ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.number);
-            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name", permissions.guestID);
+            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
 
@@ -96,13 +98,16 @@ namespace Sonora_HOA.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.number);
-            ViewBag.guestID = new SelectList(db.Guests, "guestID", "name", permissions.guestID);
+            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
 
         // GET: Permissions/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, string ownerID)
         {
+            var Permissions = db.Permissions.Where(p => p.condo.Id == ownerID).ToList();
+            ViewBag.condoID = Permissions.FirstOrDefault().condo.Id;
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -118,12 +123,12 @@ namespace Sonora_HOA.Controllers
         // POST: Permissions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id, string ownerID)
         {
             Permissions permissions = db.Permissions.Find(id);
             db.Permissions.Remove(permissions);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Create","Visits", new { id = ownerID });
         }
 
         protected override void Dispose(bool disposing)
