@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Sonora_HOA.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Sonora_HOA.Controllers
 {
@@ -156,7 +157,7 @@ namespace Sonora_HOA.Controllers
                 if (result.Succeeded)
                 {
                     //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -170,6 +171,30 @@ namespace Sonora_HOA.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+        //
+        // POST: /Account/Register
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(RegisterViewModel vmOwner)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationDbContext context = new ApplicationDbContext();
+                UserStore<ApplicationUser> store = new UserStore<ApplicationUser>(context);
+
+                UserManager<ApplicationUser> UserManager = new UserManager<ApplicationUser>(store);
+                String hashedNewPassword = UserManager.PasswordHasher.HashPassword(vmOwner.Password);
+                Owner owner = new Owner(vmOwner);
+                await store.SetPasswordHashAsync(owner, hashedNewPassword);
+                await store.UpdateAsync(owner);
+                int updatedRegs = context.SaveChanges();
+                return RedirectToAction("Index", "Owner");
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(vmOwner);
         }
 
         //

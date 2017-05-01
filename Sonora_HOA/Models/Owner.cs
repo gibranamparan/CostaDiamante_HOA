@@ -11,6 +11,8 @@ namespace Sonora_HOA.Models
     {
         public Owner() { }
         public Owner(RegisterViewModel model) {
+            if (!String.IsNullOrEmpty(model.userID))
+                this.Id = model.userID;
             this.UserName = model.Email;
             this.Email = model.Email;
             this.name = model.name;

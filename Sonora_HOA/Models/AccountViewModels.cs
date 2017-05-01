@@ -65,6 +65,8 @@ namespace Sonora_HOA.Models
 
     public class RegisterViewModel
     {
+        public string userID { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
@@ -83,6 +85,7 @@ namespace Sonora_HOA.Models
 
         [DisplayName("Name")]
         public string name { get; set; }
+
         [DisplayName("Phone")]
         public string phone { get; set; }
         [DisplayName("Last Name")]
