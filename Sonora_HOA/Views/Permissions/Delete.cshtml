@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Delete";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string ownerID = ViewBag.ownerID;
+    string ownerID = ViewBag.condoID;
 }
 
 <h2>Delete</h2>
@@ -14,7 +14,8 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.condo.name)
+            @*@Html.DisplayNameFor(model => model.condo.name)*@
+            Condo's Name
         </dt>
 
         <dd>
@@ -30,11 +31,12 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.guest.name)
+            @*@Html.DisplayNameFor(model => model.guest.name)*@
+            Guest's Name
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.guest.name)&nbsp;@Html.DisplayFor(model => model.guest.lastName)
+            @Html.DisplayFor(model => model.guest.fullName)
         </dd>
 
     </dl>
@@ -44,7 +46,7 @@
 
         <div class="form-actions no-color">
             <input type="submit" value="Delete" class="btn btn-danger" /> |
-            @Html.ActionLink("Back to List", "Create","Visits",new { id = ownerID })
+            @Html.ActionLink("Back to List", "Create", "Visits", new { id = ownerID }, null)
         </div>
     }
 </div>

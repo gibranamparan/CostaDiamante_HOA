@@ -106,7 +106,7 @@ namespace Sonora_HOA.Controllers
         public ActionResult Delete(int? id, string ownerID)
         {
             var Permissions = db.Permissions.Where(p => p.condo.Id == ownerID).ToList();
-            ViewBag.condoID = Permissions.FirstOrDefault();
+            ViewBag.condoID = Permissions.FirstOrDefault().condo.Id;
 
             if (id == null)
             {
