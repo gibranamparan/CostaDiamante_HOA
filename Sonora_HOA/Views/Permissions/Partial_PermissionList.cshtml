@@ -1,8 +1,5 @@
 ﻿@model List<Sonora_HOA.Models.Permissions>
 
-@*<p>
-    @Html.ActionLink("Create New", "Create")
-</p>*@
 <table class="table table-hover table-striped datatable">
     <thead>
         <tr>
@@ -10,10 +7,10 @@
                 @Html.DisplayNameFor(model => model.FirstOrDefault().startDate)
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.FirstOrDefault().condo.name)*@Condo's Name
+                @Html.DisplayNameFor(model => model.FirstOrDefault().condo.name)
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.FirstOrDefault().guest.name)*@Visitor's Name
+                @Html.DisplayNameFor(model => model.FirstOrDefault().guest.name)
             </th>
             <th></th>
         </tr>

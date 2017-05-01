@@ -10,19 +10,32 @@
     <div class="panel-heading">
         <h2 class="panel-title">
             <span>Owner's guests for future visits</span>
-            <i class="fa fa-window-minimize"></i>
+            <i class="pull-right fa fa-window-minimize" onclick="changeIcon(this)"
+                data-toggle="collapse" data-target="#Partial_ListGuest"></i>
         </h2>
     </div>
-    <div class="panel-body">
+    <div id="Partial_ListGuest" class="panel-body in">
         @Html.Partial("../Guest/Partial_ListGuest", Model)
     </div>
 </div>
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h2 class="panel-title">Owner's condominiums</h2>
+        <h2 class="panel-title">
+            <span>Owner's condominiums</span>
+            <i class="pull-right fa fa-window-maximize" onclick="changeIcon(this)"
+                data-toggle="collapse" data-target="#Partial_IndexCondo"></i>
+        </h2>
     </div>
-    <div class="panel-body">
+    <div class="panel-body collapse" id="Partial_IndexCondo">
         @Html.Partial("../Condo/Partial_IndexCondo", Model)
     </div>
 </div>
+
+@section Scripts{
+    <script>
+        function changeIcon(boton) {
+            $(boton).toggleClass("fa-window-minimize fa-window-maximize")
+        }
+    </script>
+}

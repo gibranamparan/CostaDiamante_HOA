@@ -13,7 +13,7 @@
         @using (Html.BeginForm("Create", "Guest", FormMethod.Post, null))
         {
             @Html.AntiForgeryToken()
-            @Html.Hidden("Id", Model.Id)
+            @Html.Hidden("ownerID", Model.Id)
             <div class="form">
                 <div class="form-group col-md-6">
                     @Html.LabelFor(model => newGuest.name)
