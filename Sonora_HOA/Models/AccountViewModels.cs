@@ -88,8 +88,12 @@ namespace Sonora_HOA.Models
 
         [DisplayName("Phone")]
         public string phone { get; set; }
+
         [DisplayName("Last Name")]
         public string lastname { get; set; }
+
+        [DisplayName("Register as Administrator")]
+        public bool registerAsAdmin { get; set; }
 
         public RegisterViewModel() { }
         public RegisterViewModel(Owner owner)

@@ -13,6 +13,7 @@
     <div id="wrapper">
         <!-- Main -->
         <div id="main">
+            @Html.Partial("_LoginPartial")
             <div class="inner">
                 <!-- Header -->
                 <header id="header"></header>
@@ -39,7 +40,9 @@
 
                 <nav id="menu">
                     <header class="major">
-                        <img src="~/images/logo.png" alt="Sonoran HOA" class="img-responsive">
+                        <a href="/">
+                            <img src="~/images/logo.png" alt="Sonoran HOA" class="img-responsive">
+                        </a>
                     </header>
                     <header class="major">
                         @*<ul>

@@ -19,11 +19,11 @@
 </div>
 
 <div class="panel panel-primary">
-    <div class="panel-heading">
+    <div class="panel-heading" onclick="changeIcon(this)"
+                data-toggle="collapse" data-target="#Partial_IndexCondo">
         <h2 class="panel-title">
             <span>Owner's condominiums</span>
-            <i class="pull-right fa fa-window-minimize" onclick="changeIcon(this)"
-                data-toggle="collapse" data-target="#Partial_IndexCondo"></i>
+            <i class="pull-right fa fa-window-minimize"></i>
         </h2>
     </div>
     <div class="panel-body in" id="Partial_IndexCondo">
@@ -33,8 +33,8 @@
 
 @section Scripts{
     <script>
-        function changeIcon(boton) {
-            $(boton).toggleClass("fa-window-minimize fa-window-maximize")
+        function changeIcon(bar) {
+            $(bar).find("i").toggleClass("fa-window-minimize fa-window-maximize")
         }
     </script>
 }

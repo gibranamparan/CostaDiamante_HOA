@@ -11,10 +11,6 @@ namespace Sonora_HOA.Models
     {
         [Key]
         public int condoID { get; set; }
-
-        [Display(Name = "Number")]
-        public int num { get; set; }
-
         [Display(Name = "Condo Name")]
         public string name { get; set; }
 

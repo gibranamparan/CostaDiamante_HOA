@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Sonora_HOA.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Security.Principal;
 
 namespace Sonora_HOA.Controllers
 {
@@ -80,7 +81,7 @@ namespace Sonora_HOA.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedireccionarSegunRol(model);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -89,6 +90,18 @@ namespace Sonora_HOA.Controllers
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
+            }
+        }
+
+        private ActionResult RedireccionarSegunRol(LoginViewModel model)
+        {
+            var user = UserManager.FindByName(model.Email);
+            if (UserManager.IsInRole(user.Id, ApplicationUser.RoleNames.ADMIN))
+            {
+                return RedirectToAction("Index", "Owners");
+            }else
+            {
+                return RedirectToAction("Details", "Owners",new { id = user.Id});
             }
         }
 
@@ -152,10 +165,14 @@ namespace Sonora_HOA.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new Owner(model);
+                var user = model.registerAsAdmin? new ApplicationUser(model): new Owner(model);
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    string rolName = model.registerAsAdmin ? 
+                        Sonora_HOA.Models.ApplicationUser.RoleNames.ADMIN:
+                         Sonora_HOA.Models.ApplicationUser.RoleNames.OWNER;
+                    UserManager.AddToRole(user.Id, rolName);
                     //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
@@ -422,7 +439,7 @@ namespace Sonora_HOA.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("LogIn", "Account");
         }
 
         //

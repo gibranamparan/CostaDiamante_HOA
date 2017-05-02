@@ -182,9 +182,13 @@ input[readonly='readonly']{
      line-height: 2.8em;
  }
 
+ /*Forms*/
  .form-group img{
      height: 2em;
  }
+ form.form-inline button.btn.btn-success {
+    margin-top: 2em;
+}
 
  .field-validation-error{
      color: red;
@@ -193,4 +197,20 @@ input[readonly='readonly']{
  /*Footer*/
  footer {
     border-top: 1px solid #e57e32;
+}
+
+ /*UserPanel*/
+ .usrPanel {
+    background: #009979;
+    position: absolute;
+    right: 0;
+    width: 23em;
+    text-align: right;
+    box-shadow: 0.1em 0.2em 2em grey;
+    border-radius: 0 0 0em 1em;
+}
+ul.usrPanel li a {
+    color: white;
+    border: none;
+    z-index: 5;
 }
