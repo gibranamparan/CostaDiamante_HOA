@@ -18,7 +18,7 @@ namespace Sonora_HOA.Controllers
         public ActionResult Index()
         {
             var permissions = db.Permissions.Include(p => p.condo);
-            ViewBag.number = new SelectList(db.Condoes, "number", "name");
+            ViewBag.number = new SelectList(db.Condoes, "condoID", "name");
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
             return View(permissions.ToList());
         }
@@ -45,7 +45,7 @@ namespace Sonora_HOA.Controllers
             var Permissions = db.Permissions.Where(p => p.condo.ownerID == id).ToList();
             ViewBag.Permissions = Permissions;
             ViewBag.ownerID = id;
-            ViewBag.number = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "number", "name");
+            ViewBag.condoID = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "condoID", "name");
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
             return View();
         }
@@ -55,7 +55,7 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "permissionsID,startDate,number,guestID")] Permissions permissions, string id)
+        public ActionResult Create([Bind(Include = "permissionsID,startDate,condoID,guestID")] Permissions permissions, string id)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +64,7 @@ namespace Sonora_HOA.Controllers
                 return RedirectToAction("Create","Visits", new { id = id });
             }
 
-            ViewBag.number = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "number", "name", permissions.condoID);
+            ViewBag.condoID = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "condoID", "name", permissions.condoID);
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
@@ -81,7 +81,7 @@ namespace Sonora_HOA.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.condoID);
+            ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name", permissions.condoID);
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
@@ -91,7 +91,7 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "permissionsID,startDate,number,guestID")] Permissions permissions)
+        public ActionResult Edit([Bind(Include = "permissionsID,startDate,condoID,guestID")] Permissions permissions)
         {
             if (ModelState.IsValid)
             {
@@ -99,7 +99,7 @@ namespace Sonora_HOA.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.condoID);
+            ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name", permissions.condoID);
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }

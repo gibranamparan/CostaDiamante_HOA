@@ -44,8 +44,9 @@
                 </div>
 
                 <div class="form-group">
-                    <div id="errorMessage" class="alert alert-info" role="alert">Arrival date should be the same, or before departure date!</div>
+                    
                     <div class="col-md-offset-2 col-md-10">
+                        <div id="errorMessage" hidden class="alert alert-info" role="alert">Arrival date should be the same, or before departure date!</div>
                         <input id="createVisit" name="createVisit" type="submit" value="Create" data-toggle="tooltip" data-placement="top" title="Testing" onclick="ValidateDates('arrivalDate', 'departureDate');" class="btn btn-success" />
                     </div>
                 </div>
@@ -78,45 +79,57 @@
             var arrival = document.getElementById("arrivalDate").value;
             var departure = document.getElementById("departureDate").value;
 
-            if (departure == "") {
+            if (arrival == "" || departure == "") {
                 $('#createVisit').attr('disabled', true)
+                $("#errorMessage").fadeIn(500, function () {
+
+                })
             }
             else {
-                $('#createVisit').attr('disabled', false)
-            }
-            //Validates ranges
-            if ((Date.parse(arrival)) > (Date.parse(departure))) {
-                //alert('The arrival date should be before your departure');
-                $("#errorMessage").show("fast", function () {
+                //Validates ranges
+                if ((Date.parse(arrival)) > (Date.parse(departure))) {
 
-                });
-                if ($('#createVisit').attr('disabled', true)) {
-                    $("#errorMessage").hide(1000);
+                    if ($('#createVisit').attr('disabled', true)) {
+                        $("#errorMessage").fadeIn(500, function () {
+
+                        })
+                    }
                 }
                 else {
                     $('#createVisit').attr('disabled', false)
+                    $("#errorMessage").fadeOut(500, function () {
+
+                    })
                 }
             }
+            
         });
         $("#departureDate").change(function () {
             var arrival = document.getElementById("arrivalDate").value;
             var departure = document.getElementById("departureDate").value;
-            if (arrival == "") {
+            if (departure == ""||arrival == "") {
                 $('#createVisit').attr('disabled', true)
+                $("#errorMessage").fadeIn(500, function () {
+
+                })
             }
             else {
-                $('#createVisit').attr('disabled', false)
-            }
-            //Validates ranges
-            if ((Date.parse(arrival)) > (Date.parse(departure))) {
-                alert('The arrival date should be before your departure');
-                if ($('#createVisit').attr('disabled', true)) {
+                if ((Date.parse(arrival)) > (Date.parse(departure))) {
 
+                    if ($('#createVisit').attr('disabled', true)) {
+                        $("#errorMessage").fadeIn(500, function () {
+
+                        })
+                    }
                 }
                 else {
                     $('#createVisit').attr('disabled', false)
+                    $("#errorMessage").fadeOut(500, function () {
+
+                    })
                 }
             }
+           
         });
     </script>
     @Scripts.Render("~/bundles/jqueryval")
