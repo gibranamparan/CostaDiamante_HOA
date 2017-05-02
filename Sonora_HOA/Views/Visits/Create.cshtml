@@ -5,14 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     List<Permissions> permissions = ViewBag.Permissions;
     Permissions permission = new Permissions();
+    permission.startDate = DateTime.Today;
+    Model.date = DateTime.Today;
+    Model.arrivalDate = DateTime.Today;
+    Model.departureDate = DateTime.Today;
     string ownerID = ViewBag.ownerID;
     if (permissions.Count() == 0) {
         permissions = new List<Permissions>();
-    }
-    else
-    {
-        permission = permissions.FirstOrDefault();
-        ownerID = permission.condo.ownerID;
     }
 
 }
@@ -20,28 +19,18 @@
 @using (Html.BeginForm("Create","Visits", new { id = ownerID }))
 {
     @Html.AntiForgeryToken()
-    @*@Html.Hidden("",condoId)*@
     <div class="panel panel-info">
         <div class="panel-heading">
             <h2 class="panel-title">Create Visit</h2>
         </div>
         <div class="panel-body">
             <div class="form-horizontal">
-                @*<h4>Visits</h4>*@
                 <hr />
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                <div class="form-group">
-                    @Html.LabelFor(model => model.date, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
-                    </div>
-                </div>
 
                 <div class="form-group">
                     @Html.LabelFor(model => model.arrivalDate, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control", type="Date", id="arrivalDate", name="arrivalDate" } })
                         @Html.ValidationMessageFor(model => model.arrivalDate, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -49,14 +38,15 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.departureDate, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control", type = "Date", id = "departureDate", name = "departureDate" } })
                         @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
                     </div>
                 </div>
 
                 <div class="form-group">
+                    <div id="errorMessage" class="alert alert-info" role="alert">Arrival date should be the same, or before departure date!</div>
                     <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Create" class="btn btn-success" />
+                        <input id="createVisit" name="createVisit" type="submit" value="Create" data-toggle="tooltip" data-placement="top" title="Testing" onclick="ValidateDates('arrivalDate', 'departureDate');" class="btn btn-success" />
                     </div>
                 </div>
             </div>
@@ -82,5 +72,52 @@
 
 
 @section Scripts {
+    <script>
+        //Date picker validation, and button block
+        $("#arrivalDate").change(function () {
+            var arrival = document.getElementById("arrivalDate").value;
+            var departure = document.getElementById("departureDate").value;
+
+            if (departure == "") {
+                $('#createVisit').attr('disabled', true)
+            }
+            else {
+                $('#createVisit').attr('disabled', false)
+            }
+            //Validates ranges
+            if ((Date.parse(arrival)) > (Date.parse(departure))) {
+                //alert('The arrival date should be before your departure');
+                $("#errorMessage").show("fast", function () {
+
+                });
+                if ($('#createVisit').attr('disabled', true)) {
+                    $("#errorMessage").hide(1000);
+                }
+                else {
+                    $('#createVisit').attr('disabled', false)
+                }
+            }
+        });
+        $("#departureDate").change(function () {
+            var arrival = document.getElementById("arrivalDate").value;
+            var departure = document.getElementById("departureDate").value;
+            if (arrival == "") {
+                $('#createVisit').attr('disabled', true)
+            }
+            else {
+                $('#createVisit').attr('disabled', false)
+            }
+            //Validates ranges
+            if ((Date.parse(arrival)) > (Date.parse(departure))) {
+                alert('The arrival date should be before your departure');
+                if ($('#createVisit').attr('disabled', true)) {
+
+                }
+                else {
+                    $('#createVisit').attr('disabled', false)
+                }
+            }
+        });
+    </script>
     @Scripts.Render("~/bundles/jqueryval")
 }
