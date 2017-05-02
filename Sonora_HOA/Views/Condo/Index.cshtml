@@ -30,9 +30,9 @@
             @Html.DisplayFor(modelItem => item.owner.fullName)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.number }) |
-            @Html.ActionLink("Details", "Details", new { id=item.number }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.number }) |
+            @Html.ActionLink("Edit", "Edit", new { id=item.condoID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.condoID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.condoID }) |
             @Html.ActionLink("Owner","Details","Owners", new { id = item.ownerID }, null)
         </td>
     </tr>

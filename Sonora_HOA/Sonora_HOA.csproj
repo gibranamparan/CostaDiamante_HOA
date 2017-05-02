@@ -397,6 +397,7 @@
     <Content Include="Views\Condo\Partial_IndexCondo.cshtml" />
     <Content Include="Views\Condo\Partial_CreateCondo.cshtml" />
     <Content Include="Views\Guest\Partial_CreateGuest.cshtml" />
+    <Content Include="Views\Visits\Partial_ListVisits.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

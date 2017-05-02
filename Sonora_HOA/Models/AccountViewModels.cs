@@ -91,6 +91,7 @@ namespace Sonora_HOA.Models
         [DisplayName("Last Name")]
         public string lastname { get; set; }
 
+        public RegisterViewModel() { }
         public RegisterViewModel(Owner owner)
         {
             this.Email = owner.Email;

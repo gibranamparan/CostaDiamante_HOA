@@ -18,6 +18,13 @@ namespace Sonora_HOA.Models
         [Display(Name = "Start Date")]
         public DateTime startDate { get; set; }
 
+
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
+            ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date)]
+        [Display(Name = "End Date")]
+        public DateTime endDate { get { return this.startDate.AddMonths(6); } }
+
         //Condo where visit is permited
         [Display(Name = "Number")]
         public int condoID { get; set; }

@@ -22,11 +22,11 @@
     <div class="panel-heading">
         <h2 class="panel-title">
             <span>Owner's condominiums</span>
-            <i class="pull-right fa fa-window-maximize" onclick="changeIcon(this)"
+            <i class="pull-right fa fa-window-minimize" onclick="changeIcon(this)"
                 data-toggle="collapse" data-target="#Partial_IndexCondo"></i>
         </h2>
     </div>
-    <div class="panel-body collapse" id="Partial_IndexCondo">
+    <div class="panel-body in" id="Partial_IndexCondo">
         @Html.Partial("../Condo/Partial_IndexCondo", Model)
     </div>
 </div>

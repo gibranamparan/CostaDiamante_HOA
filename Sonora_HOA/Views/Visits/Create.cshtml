@@ -13,7 +13,7 @@
     if (permissions.Count() == 0) {
         permissions = new List<Permissions>();
     }
-
+    Owner owner = ViewBag.owner;
 }
 
 @using (Html.BeginForm("Create","Visits", new { id = ownerID }))
@@ -55,16 +55,20 @@
                 @Html.ActionLink("Back to List", "Index")
             </div>
         </div>
-    </div>
-    
+    </div>    
 }
-
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h2 class="panel-title">Permission</h2>
+        <h2 class="panel-title">
+            <span>
+                New Permission
+            </span>
+            <i class="pull-right fa fa-window-minimize" onclick="changeIcon(this)"
+               data-toggle="collapse" data-target="#Partial_CreatePermission"></i>
+        </h2>
     </div>
-    <div class="panel-body">
+    <div class="panel-body in" id="Partial_CreatePermission">
         @Html.Partial("../Permissions/Partial_CreatePermission", permission)
     </div>
 </div>
@@ -74,6 +78,10 @@
 
 @section Scripts {
     <script>
+        function changeIcon(boton) {
+            $(boton).toggleClass("fa-window-minimize fa-window-maximize")
+        }
+
         //Date picker validation, and button block
         $("#arrivalDate").change(function () {
             var arrival = document.getElementById("arrivalDate").value;

@@ -48,7 +48,7 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "number,name,ownerID")] Condo condo)
+        public ActionResult Create([Bind(Include = "num,name,ownerID")] Condo condo)
         {
             if (ModelState.IsValid)
             {
@@ -115,9 +115,10 @@ namespace Sonora_HOA.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Condo condo = db.Condoes.Find(id);
+            string ownerID = condo.ownerID;
             db.Condoes.Remove(condo);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details","Owners",new { id=ownerID});
         }
 
         protected override void Dispose(bool disposing)
