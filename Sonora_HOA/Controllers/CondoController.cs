@@ -39,7 +39,7 @@ namespace Sonora_HOA.Controllers
         // GET: Condo/Create
         public ActionResult Create()
         {
-            ViewBag.Id = new SelectList(db.Owners.ToList(), "Id", "nombreCompleto");
+            ViewBag.ownerID = new SelectList(db.Owners.ToList(), "Id", "fullName");
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace Sonora_HOA.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Id = new SelectList(db.Owners, "Id", "Email", condo.ownerID);
+            ViewBag.ownerID = new SelectList(db.Owners, "Id", "fullName", condo.ownerID);
             return View(condo);
         }
 
@@ -73,7 +73,7 @@ namespace Sonora_HOA.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.Id = new SelectList(db.Owners, "Id", "Email", condo.ownerID);
+            ViewBag.ownerID = new SelectList(db.Owners, "Id", "fullName", condo.ownerID);
             return View(condo);
         }
 
@@ -82,7 +82,7 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "number,name,Id")] Condo condo)
+        public ActionResult Edit([Bind(Include = "number,name,ownerID")] Condo condo)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +90,7 @@ namespace Sonora_HOA.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.Id = new SelectList(db.Owners, "Id", "Email", condo.ownerID);
+            ViewBag.Id = new SelectList(db.Owners, "Id", "fullName", condo.ownerID);
             return View(condo);
         }
 

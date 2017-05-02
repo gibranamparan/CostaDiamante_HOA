@@ -1,9 +1,9 @@
 ﻿@model Sonora_HOA.Models.Permissions
 @{ 
-    string id = ViewBag.condoID;
+    string ownerID = ViewBag.ownerID;
 }
 
-@using (Html.BeginForm("Create", "Permissions", new { id = Model.condo.ownerID }))
+@using (Html.BeginForm("Create", "Permissions", new { id = ownerID }))
 {
     @Html.AntiForgeryToken()
     <div class="form-horizontal">
