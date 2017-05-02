@@ -224,6 +224,10 @@
     <Compile Include="Migrations\201705012050261_condo_ID_to_ownerID.Designer.cs">
       <DependentUpon>201705012050261_condo_ID_to_ownerID.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705020215193_condo_noAutoINcrementKey.cs" />
+    <Compile Include="Migrations\201705020215193_condo_noAutoINcrementKey.Designer.cs">
+      <DependentUpon>201705020215193_condo_noAutoINcrementKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condo.cs" />
@@ -416,6 +420,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705012050261_condo_ID_to_ownerID.resx">
       <DependentUpon>201705012050261_condo_ID_to_ownerID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705020215193_condo_noAutoINcrementKey.resx">
+      <DependentUpon>201705020215193_condo_noAutoINcrementKey.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

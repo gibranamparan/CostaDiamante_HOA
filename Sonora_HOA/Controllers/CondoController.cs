@@ -54,7 +54,7 @@ namespace Sonora_HOA.Controllers
             {
                 db.Condoes.Add(condo);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details","Owners",new { id=condo.ownerID });
             }
 
             ViewBag.ownerID = new SelectList(db.Owners, "Id", "fullName", condo.ownerID);

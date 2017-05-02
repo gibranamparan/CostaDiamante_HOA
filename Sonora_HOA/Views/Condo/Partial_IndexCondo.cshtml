@@ -10,19 +10,25 @@
         <h3 class="panel-title">New Owner's Condo</h3>
     </div>
     <div class="panel-body">
-        @Html.Partial("../Condo/Partial_CreateCondo", newCondo);
+        @Html.Partial("../Condo/Partial_CreateCondo", newCondo)
     </div>
 </div>
 <table class="table table-hover table-striped">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.name)
+            @Html.DisplayNameFor(model => model.Condos.FirstOrDefault().number)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Condos.FirstOrDefault().name)
         </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model.Condos) {
     <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.number)
+        </td>
         <td>
             @Html.DisplayFor(modelItem => item.name)
         </td>
