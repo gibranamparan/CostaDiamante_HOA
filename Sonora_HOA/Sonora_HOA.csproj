@@ -387,6 +387,8 @@
     <Content Include="Views\Permissions\Partial_CreatePermission.cshtml" />
     <Content Include="Views\Permissions\Partial_PermissionList.cshtml" />
     <Content Include="Views\Condo\Partial_IndexCondo.cshtml" />
+    <Content Include="Views\Condo\Partial_CreateCondo.cshtml" />
+    <Content Include="Views\Guest\Partial_CreateGuest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

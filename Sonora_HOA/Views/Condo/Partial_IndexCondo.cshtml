@@ -3,32 +3,14 @@
 
 @{ 
     Condo newCondo = new Condo();
+    newCondo.ownerID = Model.Id;
 }
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">New Owner's Condo</h3>
     </div>
     <div class="panel-body">
-        @using (Html.BeginForm())
-        {
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(model => model.Id)
-
-            <div class="form">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                <div class="form-group col-md-12">
-                    @Html.LabelFor(model => newCondo.name, htmlAttributes: new { @class = "col-md-2" })
-                    @Html.EditorFor(model => newCondo.name, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => newCondo.name, "", new { @class = "text-danger" })
-                </div>
-
-                <div class="form-group">
-                    <div class="col-md-10">
-                        <button class="btn btn-success">Create</button>
-                    </div>
-                </div>
-            </div>
-        }
+        @Html.Partial("../Condo/Partial_CreateCondo", newCondo);
     </div>
 </div>
 <table class="table table-hover table-striped">
