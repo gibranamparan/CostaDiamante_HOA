@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -19,7 +20,8 @@ namespace Sonora_HOA.Models
 
         //Condo where visit is permited
         [Display(Name = "Number")]
-        public int number { get; set; }
+        public int condoID { get; set; }
+        [ForeignKey("condoID")]
         public virtual Condo condo { get; set; }
 
         //Guest who is permited to visit

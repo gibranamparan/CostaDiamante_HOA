@@ -10,9 +10,11 @@ namespace Sonora_HOA.Models
     public class Condo
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int condoID { get; set; }
+
         [Display(Name = "Number")]
-        public int number { get; set; }
+        public int num { get; set; }
+
         [Display(Name = "Condo Name")]
         public string name { get; set; }
 

@@ -64,7 +64,7 @@ namespace Sonora_HOA.Controllers
                 return RedirectToAction("Create","Visits", new { id = id });
             }
 
-            ViewBag.number = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "number", "name", permissions.number);
+            ViewBag.number = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "number", "name", permissions.condoID);
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
@@ -81,7 +81,7 @@ namespace Sonora_HOA.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.number);
+            ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.condoID);
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
@@ -99,7 +99,7 @@ namespace Sonora_HOA.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.number);
+            ViewBag.number = new SelectList(db.Condoes, "number", "name", permissions.condoID);
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
