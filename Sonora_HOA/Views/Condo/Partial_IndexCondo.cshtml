@@ -16,7 +16,7 @@
 <table class="table table-hover table-striped">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Condos.FirstOrDefault().number)
+            @Html.DisplayNameFor(model => model.Condos.FirstOrDefault().num)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Condos.FirstOrDefault().name)
@@ -27,15 +27,15 @@
 @foreach (var item in Model.Condos) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.number)
+            @Html.DisplayFor(modelItem => item.num)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.name)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.number }) |
-            @Html.ActionLink("Details", "Details", new { id=item.number }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.number })
+            @Html.ActionLink("Edit", "Edit", new { id=item.num }) |
+            @Html.ActionLink("Details", "Details", new { id=item.num }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.num })
         </td>
     </tr>
 }
