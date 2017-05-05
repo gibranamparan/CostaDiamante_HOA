@@ -23,6 +23,6 @@ namespace Sonora_HOA.Models
         public virtual CheckInList checkInList { get; set; }
 
         //Every visits has a checkin list
-        public virtual ICollection<Visits> visits { get; set; }
+        public virtual ICollection<Permissions_Visits> visitsPermited { get; set; }
     }
 }

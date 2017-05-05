@@ -14,7 +14,6 @@ namespace Sonora_HOA.Models
         public DateTime endDate { get; set; }
 
         public virtual ICollection<Permissions> permissions { get; set; }
-        public virtual ICollection<Visits> visits { get; set; }
 
         public static SelectList generatePermissionPeriods()
         {

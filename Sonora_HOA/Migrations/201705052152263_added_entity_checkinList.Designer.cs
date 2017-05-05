@@ -13,7 +13,7 @@ namespace Sonora_HOA.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201705052141469_added_entity_checkinList"; }
+            get { return "201705052152263_added_entity_checkinList"; }
         }
         
         string IMigrationMetadata.Source
