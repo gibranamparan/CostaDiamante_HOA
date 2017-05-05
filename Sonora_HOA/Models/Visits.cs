@@ -29,7 +29,11 @@ namespace Sonora_HOA.Models
         [Display(Name = "Departure")]
         public DateTime departureDate { get; set; }
 
+        //A visits is for one condo
         public int condoID { get; set; }
         public virtual Condo condo { get; set; }
+
+        //Every visits has a checkin list
+        public virtual ICollection<Permissions_Visits> visitors { get; set; }
     }
 }

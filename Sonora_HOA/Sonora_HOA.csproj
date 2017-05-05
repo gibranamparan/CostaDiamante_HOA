@@ -241,8 +241,13 @@
     <Compile Include="Migrations\201705050455497_relationship_Changed_permission_condo_visits.Designer.cs">
       <DependentUpon>201705050455497_relationship_Changed_permission_condo_visits.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705052141469_added_entity_checkinList.cs" />
+    <Compile Include="Migrations\201705052141469_added_entity_checkinList.Designer.cs">
+      <DependentUpon>201705052141469_added_entity_checkinList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\CheckInList.cs" />
     <Compile Include="Models\Condo.cs" />
     <Compile Include="Models\Guest.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -446,6 +451,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705050455497_relationship_Changed_permission_condo_visits.resx">
       <DependentUpon>201705050455497_relationship_Changed_permission_condo_visits.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705052141469_added_entity_checkinList.resx">
+      <DependentUpon>201705052141469_added_entity_checkinList.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

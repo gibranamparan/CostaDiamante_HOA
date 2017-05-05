@@ -57,6 +57,8 @@ namespace Sonora_HOA.Models
 
         public System.Data.Entity.DbSet<Sonora_HOA.Models.Visits> Visits { get; set; }
 
+        public System.Data.Entity.DbSet<Sonora_HOA.Models.CheckInList> CheckInLists { get; set; }
+
         public System.Data.Entity.DbSet<Sonora_HOA.Models.Permissions_Visits> Permissions_Visits { get; set; }
     }
 }

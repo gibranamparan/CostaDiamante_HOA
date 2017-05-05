@@ -2,46 +2,105 @@
 @using Sonora_HOA.Models;
 @{
     var Guests = Model.Guests.Where(o => o.ownerID == Model.Id).ToList();
-    Guest newGuest = new Guest();
-    newGuest.ownerID = Model.Id;
+    
+    bool selectionMode = false;
+    string ownerID = "";
+    if (ViewData["selectionMode"] != null)
+    {
+        selectionMode = true;
+        ownerID = (string)ViewData["ownerID"];
+    }
 }
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">New Guest</h3>
-    </div>
-    <div class="panel-body">
-        @Html.Partial("../Guest/Partial_CreateGuest", newGuest)
-    </div>
-</div>
 
-<table class="table table-hover table-striped">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.fullName)
-        </th>
-        <th></th>
-    </tr>
-    @if (Guests.Count() > 0) { 
-        foreach (var item in Guests)
+<table class="table table-hover table-striped datatable">
+    <thead>
+        <tr>
+            @if (selectionMode)
+            {
+                <th width="2em">
+                    Select Guest
+                </th>
+            }
+            <th>
+                @Html.DisplayNameFor(model => model.fullName)
+            </th>
+            @if (!selectionMode)
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Guests.Count() > 0)
+        {
+            foreach (var item in Guests)
+            {
+                <tr>
+                    @if (selectionMode)
+                    {
+                        <td>
+                            <input type="checkbox" value="@item.guestID" onchange="selectChange(this)" />
+                        </td>
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.fullName)
+                    </td>
+                    @if (!selectionMode)
+                    {
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", "Guest", new { id = item.ownerID }, null) |
+                            @Html.ActionLink("Delete", "Delete", "Guest", new { id = item.ownerID }, null)
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.fullName)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", "Guest", new { id = item.ownerID }, null) |
-                    @Html.ActionLink("Delete", "Delete", "Guest", new { id = item.ownerID }, null)
+                <td colspan="2">
+                    <div class="alert alert-info">No guests are registered for this owner.</div>
                 </td>
             </tr>
         }
-    }else
-    {
-        <tr>
-            <td colspan="2">
-                <div class="alert alert-info">No guests are registered for this owner.</div>
-            </td>
-        </tr>
-    }
+    </tbody>
 
 </table>
+
+@if (selectionMode)
+{
+    <script>
+        var checkedList = new Array();
+        var ownerID = '@ownerID';
+
+        //Check the condo to be associated
+        function selectChange(cb) {
+            if ($(cb).is(":checked"))
+                checkedList.push({
+                    guestID: $(cb).val(),
+                })
+
+            console.log(JSON.stringify(checkedList));
+        }
+
+        //Send all checked condos to server to be associated to current owner.
+        function registerList() {
+            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            jQuery.postJSON("/Permissions/Create",
+                {
+                    checkedList: checkedList,
+                    ownerID: ownerID
+                },"JSON",
+                function (result) {
+                    if (result > 0) {
+                        location.reload();
+                    }
+                },
+                function (request) {
+                    alert("Error: " + JSON.stringify(request));
+                }, null, antiForgeryToken)
+        }
+
+    </script>
+}

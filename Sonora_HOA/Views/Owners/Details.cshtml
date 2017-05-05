@@ -7,9 +7,14 @@
     vdd.Add("ownerID", Model.Id);
 
     List<Sonora_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
+    Sonora_HOA.Models.Guest newGuest = new Sonora_HOA.Models.Guest();
+    newGuest.ownerID = Model.Id;
 }
-@Html.Partial("Partial_infoOwner", Model)
+<a href="@Url.Action("Index","Owners")">
+    <i class="glyphicon glyphicon-arrow-left"></i>Back to Owners List
+</a>
 
+@Html.Partial("Partial_infoOwner", Model)
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h2 class="panel-title">
@@ -40,6 +45,14 @@
         </h2>
     </div>
     <div id="Partial_ListGuest" class="panel-body in">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">New Guest</h3>
+            </div>
+            <div class="panel-body">
+                @Html.Partial("../Guest/Partial_CreateGuest", newGuest)
+            </div>
+        </div>
         @Html.Partial("../Guest/Partial_ListGuest", Model)
     </div>
 </div>

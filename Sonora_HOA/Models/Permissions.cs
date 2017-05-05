@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Sonora_HOA.Models
 {
@@ -11,25 +12,17 @@ namespace Sonora_HOA.Models
     {
         [Key]
         public int permissionsID { get; set; }
-
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", 
-            ApplyFormatInEditMode = true)]
-        [DataType(DataType.Date)]
-        [Display(Name = "Start Date")]
-        public DateTime startDate { get; set; }
-
-
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
-            ApplyFormatInEditMode = true)]
-        [DataType(DataType.Date)]
-        [Display(Name = "End Date")]
-        public DateTime endDate { get { return this.startDate.AddMonths(6); } }
         
         //Guest who is permited to visit
         [Display(Name = "Guest")]
         public int guestID { get; set; }
         public virtual Guest guest { get; set; }
 
-        public virtual ICollection<Permissions_Visits> permisionsvisits { get; set; }
+        //In the checkin list are registered each permission and period of time it lasts
+        public int checkInListID { get; set; }
+        public virtual CheckInList checkInList { get; set; }
+
+        //Every visits has a checkin list
+        public virtual ICollection<Visits> visits { get; set; }
     }
 }

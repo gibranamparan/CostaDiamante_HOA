@@ -30,9 +30,9 @@
             </dl>
            </div>
         <p>
-            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+            @Html.ActionLink("Edit", "Edit", "Owners", new { id = Model.Id }, null) |
+            @Html.ActionLink("Check in List", "Index", "Permissions", new { id = Model.Id }, null) |
             @Html.ActionLink("Register New Visit", "Create", "Visits", new { id = Model.Id }, null) |
-            @Html.ActionLink("Back to List", "Index") |
         </p>
     </div>
 </div>

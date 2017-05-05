@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Sonora_HOA.Models;
+using static Sonora_HOA.GeneralTools.FiltrosDeSolicitudes;
 
 namespace Sonora_HOA.Controllers
 {
@@ -15,11 +16,21 @@ namespace Sonora_HOA.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Permissions
-        public ActionResult Index()
+        public ActionResult Index(string id)
         {
-            var permissions = db.Permissions.ToList();
-            ViewBag.number = new SelectList(db.Condoes, "condoID", "name");
-            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
+            if (String.IsNullOrEmpty(id))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var owner = db.Owners.Find(id);
+            if (owner == null)
+            {
+                return HttpNotFound();
+            }
+
+            var permissions = db.Permissions.Where(per=>per.guest.ownerID==id);
+            ViewBag.owner = owner;
+
             return View(permissions.ToList());
         }
 
@@ -39,35 +50,20 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Permissions/Create
-        public ActionResult Create(string id)
-        {
-            Permissions permission = new Permissions();
-            var Permissions = db.Permissions.Where(p => p.guest.ownerID == id).ToList();
-            ViewBag.Permissions = Permissions;
-            ViewBag.ownerID = id;
-            ViewBag.condoID = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "condoID", "name");
-            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
-            return View();
-        }
-
-        // POST: Permissions/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "permissionsID,startDate,condoID,guestID")] Permissions permissions, string id)
+        [ValidateHeaderAntiForgeryTokenAttribute]
+        public JsonResult Create(List<Permissions> checkedList)
         {
-            if (ModelState.IsValid)
-            {
-                db.Permissions.Add(permissions);
-                db.SaveChanges();
-                return RedirectToAction("Create","Visits", new { id = id });
+            //Associating condos in the array to owner
+            foreach (Permissions item in checkedList) { 
+                db.Permissions.Add(item);
             }
-            
-            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
-            return View(permissions);
-        }
 
+            int numRegChanged = db.SaveChanges();
+
+            return Json(numRegChanged);
+        }
+        
         // GET: Permissions/Edit/5
         public ActionResult Edit(int? id)
         {
