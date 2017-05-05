@@ -24,13 +24,7 @@ namespace Sonora_HOA.Models
         [DataType(DataType.Date)]
         [Display(Name = "End Date")]
         public DateTime endDate { get { return this.startDate.AddMonths(6); } }
-
-        //Condo where visit is permited
-        [Display(Name = "Number")]
-        public int condoID { get; set; }
-        [ForeignKey("condoID")]
-        public virtual Condo condo { get; set; }
-
+        
         //Guest who is permited to visit
         [Display(Name = "Guest")]
         public int guestID { get; set; }

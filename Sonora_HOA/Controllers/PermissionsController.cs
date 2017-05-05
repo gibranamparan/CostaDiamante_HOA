@@ -17,7 +17,7 @@ namespace Sonora_HOA.Controllers
         // GET: Permissions
         public ActionResult Index()
         {
-            var permissions = db.Permissions.Include(p => p.condo);
+            var permissions = db.Permissions.ToList();
             ViewBag.number = new SelectList(db.Condoes, "condoID", "name");
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName");
             return View(permissions.ToList());
@@ -42,7 +42,7 @@ namespace Sonora_HOA.Controllers
         public ActionResult Create(string id)
         {
             Permissions permission = new Permissions();
-            var Permissions = db.Permissions.Where(p => p.condo.ownerID == id).ToList();
+            var Permissions = db.Permissions.Where(p => p.guest.ownerID == id).ToList();
             ViewBag.Permissions = Permissions;
             ViewBag.ownerID = id;
             ViewBag.condoID = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "condoID", "name");
@@ -63,8 +63,7 @@ namespace Sonora_HOA.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Create","Visits", new { id = id });
             }
-
-            ViewBag.condoID = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "condoID", "name", permissions.condoID);
+            
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
@@ -81,7 +80,7 @@ namespace Sonora_HOA.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name", permissions.condoID);
+
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
@@ -99,7 +98,7 @@ namespace Sonora_HOA.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name", permissions.condoID);
+
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
@@ -107,8 +106,7 @@ namespace Sonora_HOA.Controllers
         // GET: Permissions/Delete/5
         public ActionResult Delete(int? id, string ownerID)
         {
-            var Permissions = db.Permissions.Where(p => p.condo.ownerID == ownerID).ToList();
-            ViewBag.condoID = Permissions.FirstOrDefault().condo.ownerID;
+            var Permissions = db.Permissions.Where(p => p.guest.ownerID == ownerID).ToList();
 
             if (id == null)
             {

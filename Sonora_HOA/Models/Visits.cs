@@ -29,6 +29,7 @@ namespace Sonora_HOA.Models
         [Display(Name = "Departure")]
         public DateTime departureDate { get; set; }
 
-        public virtual ICollection<Permissions_Visits> permisionsvisits {get;set;} 
+        public int condoID { get; set; }
+        public virtual Condo condo { get; set; }
     }
 }

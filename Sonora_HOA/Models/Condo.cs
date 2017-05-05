@@ -25,7 +25,8 @@ namespace Sonora_HOA.Models
         {
             this.name = name;
         }
+
         //A condo can be visited with many permissions
-        public virtual ICollection<Permissions> Permissions { get; set; }
+        public virtual ICollection<Visits> Visits { get; set; }
     }
 }
