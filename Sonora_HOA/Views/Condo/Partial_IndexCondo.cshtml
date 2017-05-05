@@ -1,37 +1,128 @@
-﻿@model Sonora_HOA.Models.Owner
+﻿@model List<Sonora_HOA.Models.Condo>
 @using Sonora_HOA.Models
 
-@{ 
-    Condo newCondo = new Condo();
-    newCondo.ownerID = Model.Id;
-}
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">New Owner's Condo</h3>
-    </div>
-    <div class="panel-body">
-        @Html.Partial("../Condo/Partial_CreateCondo", newCondo)
-    </div>
-</div>
-<table class="table table-hover table-striped">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Condos.FirstOrDefault().name)
-        </th>
-        <th></th>
-    </tr>
+@{
+    bool selectionMode = false;
+    string ownerID = "";
+    if (ViewData["selectionMode"] != null && ViewData["ownerID"] != null)
+    {
+        selectionMode = true;
+        ownerID = (string)ViewData["ownerID"];
 
-@foreach (var item in Model.Condos) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.name)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit","Condo", new { id = item.condoID }, null) |
-            @Html.ActionLink("Details", "Details", "Condo", new { id = item.condoID }, null) |
-            @Html.ActionLink("Delete", "Delete", "Condo", new { id = item.condoID }, null)
-        </td>
-    </tr>
+    }
 }
+@if (selectionMode)
+{
+    <div>
+        <button class="btn btn-success"onclick="associateCondos()">Associate</button>
+        <span class="alert alert-info"><strong>Find and select </strong>the condominiums
+         you want to associate with this owner, Then press <strong>"Associate"</strong>
+         to finish.</span>
+    </div>
+}
+<table class="table table-hover table-striped @(selectionMode?"datatable":"")" datatable-pageLenght="5">
+    <thead>
+        <tr>
+            @if (selectionMode)
+            {
+                <th width="2em">
+                    Select condo
+                </th>
+            }
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().name)
+            </th>
+            @if (!selectionMode) {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0) { 
+            foreach (var item in Model)
+            {
+                <tr>
+                    @if (selectionMode)
+                    {
+                        <td>
+                            <input type="checkbox" value="@item.condoID" condo-name="@item.name" onchange="condoSelectChange(this)"/>
+                        </td>
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.name)
+                    </td>
+                    @if (!selectionMode)
+                    {
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", "Condo", new { id = item.condoID }, null) |
+                            @Html.ActionLink("Details", "Details", "Condo", new { id = item.condoID }, null) |
+                            <a onclick="removeCondo(@item.condoID)">
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="2">
+                    <div class="alert alert-info">No condominiums registered to this owner.</div>
+                </td>
+            </tr>
+        }
+    </tbody>
 
 </table>
+@Html.AntiForgeryToken()
+
+<script>
+    function removeCondo(condoID) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        jQuery.postJSON("/Condo/RemoveFromOwner",{id:condoID},"JSON",
+            function(res){
+                location.reload();
+            },
+            function(request){
+                alert(JSON.stringify(request))
+            }, null, antiForgeryToken)
+        }
+</script>
+@if (selectionMode) { 
+    <script>
+        var checkedCondos = new Array();
+        var ownerID = '@ownerID';
+
+        //Check the condo to be associated
+        function condoSelectChange(cbCondo) {
+            if ($(cbCondo).is(":checked"))
+                checkedCondos.push({
+                    condoID: $(cbCondo).val(),
+                    name: $(cbCondo).attr("condo-name"),
+                    ownerID : ownerID
+                })
+
+            console.log(JSON.stringify(checkedCondos));
+        }
+
+        //Send all checked condos to server to be associated to current owner.
+        function associateCondos() {
+            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            jQuery.postJSON("/Condo/AssociateCondo",
+                { 
+                    condosToAssociate: checkedCondos, 
+                    ownerID: ownerID
+                },"JSON",
+                function (result) {
+                    if (result > 0) {
+                        location.reload();
+                    }
+                },
+                function (request) {
+                    alert("Error: " + JSON.stringify(request));
+                }, null, antiForgeryToken)
+        }
+        
+    </script>
+}

@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Sonora_HOA.Models;
+using static Sonora_HOA.GeneralTools.FiltrosDeSolicitudes;
 
 namespace Sonora_HOA.Controllers
 {
@@ -48,13 +49,13 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "num,name,ownerID")] Condo condo)
+        public ActionResult Create([Bind(Include = "num,name,ownerID")] Condo condo, Boolean fromIndex=false)
         {
             if (ModelState.IsValid)
             {
                 db.Condoes.Add(condo);
                 db.SaveChanges();
-                return RedirectToAction("Details","Owners",new { id=condo.ownerID });
+                return RedirectToAction("Index", "Condo");
             }
 
             ViewBag.ownerID = new SelectList(db.Owners, "Id", "fullName", condo.ownerID);
@@ -115,10 +116,65 @@ namespace Sonora_HOA.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Condo condo = db.Condoes.Find(id);
-            string ownerID = condo.ownerID;
             db.Condoes.Remove(condo);
             db.SaveChanges();
-            return RedirectToAction("Details","Owners",new { id=ownerID});
+            return RedirectToAction("Index", "Condo");
+            //return RedirectToAction("Details","Owners",new { id=ownerID});
+        }
+
+        // POST: Condo/Delete/5
+        [HttpPost]
+        [ValidateHeaderAntiForgeryTokenAttribute]
+        public JsonResult RemoveFromOwner(int id=0)
+        {
+            int num = 0;
+            Condo condo = db.Condoes.Find(id);
+            if (condo != null) { 
+                condo.ownerID = null;
+                var entry = db.Entry(condo);
+                entry.Property(con => con.ownerID).IsModified = true;
+                num = db.SaveChanges();
+            }
+            return Json(num);
+        }
+
+        public JsonResult generateCondos()
+        {
+            var registeredCondos = db.Condoes;
+            string[] chars = { "E", "N", "O" };
+            String condoName = "";
+            //Every condo name is generated for every tower in the complex
+            for (int towerIdx = 0; towerIdx < 3; towerIdx++)
+                for (int piso = 1; piso <= 8; piso++)
+                    for (int condoCounter = 1; condoCounter <=10; condoCounter++) {
+                        condoName = chars[towerIdx] + piso + condoCounter.ToString("00");
+                        //It's registered if doesn't already exists
+                        if(registeredCondos.FirstOrDefault(con=>con.name == condoName) == null)
+                            db.Condoes.Add(new Condo(condoName));
+                    }
+            int numberOfGeneratedCondos = db.SaveChanges();
+
+            return Json(new { numberOfGeneratedCondos = numberOfGeneratedCondos }, 
+                JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ValidateHeaderAntiForgeryTokenAttribute]
+        public JsonResult AssociateCondo(List<Condo> condosToAssociate, string ownerID)
+        {
+            //Associating condos in the array to owner
+            foreach(Condo condo in condosToAssociate)
+                db.Entry(condo).State = EntityState.Modified;
+
+            int numRegChanged = db.SaveChanges();
+
+            return Json(numRegChanged);
+        }
+
+        public JsonResult removeAllCondoes()
+        {
+            var regs = db.Condoes.RemoveRange(db.Condoes);
+            return Json(regs.Count(), JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)

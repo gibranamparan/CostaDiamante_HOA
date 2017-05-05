@@ -32,6 +32,9 @@ namespace Sonora_HOA.Controllers
             {
                 return HttpNotFound();
             }
+
+            ViewBag.notAssociatedCondos = db.Condoes.Where(con => String.IsNullOrEmpty(con.ownerID)).ToList();
+
             return View(owners);
         }
 

@@ -2,39 +2,44 @@
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewDataDictionary vdd = new ViewDataDictionary();
+    vdd.Add("selectionMode", true);
+    vdd.Add("ownerID", Model.Id);
+
+    List<Sonora_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
 }
 @Html.Partial("Partial_infoOwner", Model)
 
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h2 class="panel-title">
+            <span>Owner's condominiums</span>
+        </h2>
+    </div>
+    <div class="panel-body in" id="Partial_IndexCondo">
+        @Html.Partial("../Condo/Partial_IndexCondo", Model.Condos.ToList())
+        <div class="panel panel-default">
+            <div class="panel-heading" onclick="changeIcon(this)"
+                data-toggle="collapse" data-target="#condosTable">
+                <span>Associate new condoes</span>
+                <i class="pull-right fa fa-window-maximize"></i>
+            </div>
+            <div class="panel-body collapse" id="condosTable">
+                @Html.Partial("../Condo/Partial_IndexCondo", notAssociatedCondos, vdd)
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h2 class="panel-title" onclick="changeIcon(this)"
+            data-toggle="collapse" data-target="#Partial_ListGuest">
             <span>Owner's guests for future visits</span>
-            <i class="pull-right fa fa-window-minimize" onclick="changeIcon(this)"
-                data-toggle="collapse" data-target="#Partial_ListGuest"></i>
+            <i class="pull-right fa fa-window-minimize"></i>
         </h2>
     </div>
     <div id="Partial_ListGuest" class="panel-body in">
         @Html.Partial("../Guest/Partial_ListGuest", Model)
     </div>
 </div>
-
-<div class="panel panel-primary">
-    <div class="panel-heading" onclick="changeIcon(this)"
-                data-toggle="collapse" data-target="#Partial_IndexCondo">
-        <h2 class="panel-title">
-            <span>Owner's condominiums</span>
-            <i class="pull-right fa fa-window-minimize"></i>
-        </h2>
-    </div>
-    <div class="panel-body in" id="Partial_IndexCondo">
-        @Html.Partial("../Condo/Partial_IndexCondo", Model)
-    </div>
-</div>
-
-@section Scripts{
-    <script>
-        function changeIcon(bar) {
-            $(bar).find("i").toggleClass("fa-window-minimize fa-window-maximize")
-        }
-    </script>
-}
