@@ -10,17 +10,20 @@ using Sonora_HOA.Models;
 
 namespace Sonora_HOA.Controllers
 {
+    [Authorize]
     public class VisitsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Visits
+        [Authorize(Roles = ApplicationUser.RoleNames.OWNER+","+ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Index()
         {
             return View(db.Visits.ToList());
         }
 
         // GET: Visits/Details/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -36,6 +39,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Visits/Create
+        [Authorize(Roles = ApplicationUser.RoleNames.OWNER + "," + ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Create(string id)
         {
             Visits visit = new Visits();
@@ -50,6 +54,7 @@ namespace Sonora_HOA.Controllers
         // POST: Visits/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = ApplicationUser.RoleNames.OWNER + "," + ApplicationUser.RoleNames.ADMIN)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "visitsID,arrivalDate,departureDate")] Visits visits,string id)
@@ -66,6 +71,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Visits/Edit/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -83,6 +89,7 @@ namespace Sonora_HOA.Controllers
         // POST: Visits/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "visitsID,date,arrivalDate,departureDate")] Visits visits)
@@ -97,6 +104,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Visits/Delete/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -112,6 +120,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // POST: Visits/Delete/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

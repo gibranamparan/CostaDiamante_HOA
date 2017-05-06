@@ -11,11 +11,13 @@ using static Sonora_HOA.GeneralTools.FiltrosDeSolicitudes;
 
 namespace Sonora_HOA.Controllers
 {
+    [Authorize]
     public class PermissionsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Permissions
+        [Authorize(Roles = ApplicationUser.RoleNames.OWNER+","+ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Index(string id)
         {
             if (String.IsNullOrEmpty(id))
@@ -38,6 +40,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Permissions/Details/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -53,6 +56,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Permissions/Create
+        [Authorize(Roles = ApplicationUser.RoleNames.OWNER+","+ApplicationUser.RoleNames.ADMIN)]
         [HttpPost]
         [ValidateHeaderAntiForgeryTokenAttribute]
         public JsonResult Create(List<Permissions> checkedList,CheckInList period,string ownerID)
@@ -69,6 +73,7 @@ namespace Sonora_HOA.Controllers
         }
         
         // GET: Permissions/Edit/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -88,6 +93,7 @@ namespace Sonora_HOA.Controllers
         // POST: Permissions/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "permissionsID,startDate,condoID,guestID")] Permissions permissions)
@@ -104,6 +110,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Permissions/Delete/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Delete(int? id, string ownerID)
         {
             var Permissions = db.Permissions.Where(p => p.guest.ownerID == ownerID).ToList();
@@ -121,6 +128,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // POST: Permissions/Delete/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id, string ownerID)

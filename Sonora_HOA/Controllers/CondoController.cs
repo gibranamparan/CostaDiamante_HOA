@@ -11,6 +11,7 @@ using static Sonora_HOA.GeneralTools.FiltrosDeSolicitudes;
 
 namespace Sonora_HOA.Controllers
 {
+    [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
     public class CondoController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();

@@ -10,6 +10,7 @@ using Sonora_HOA.Models;
 
 namespace Sonora_HOA.Controllers
 {
+    [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
     public class Permissions_VisitsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
