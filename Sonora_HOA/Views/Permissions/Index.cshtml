@@ -83,11 +83,11 @@
             if(yearPeriod == "current"){
                 hidePartialGuest = currentCheckInListID>0;
                 $("#pnlCurrentCheckInList").show();
-                $("#pnlNextCheckInList").hide;
+                $("#pnlNextCheckInList").hide();
             }else{
                 hidePartialGuest = nextCheckInListID>0;
                 $("#pnlCurrentCheckInList").hide();
-                $("#pnlNextCheckInList").show;
+                $("#pnlNextCheckInList").show();
             }
             if(hidePartialGuest){
                 $("#Partial_ListGuest").hide()
