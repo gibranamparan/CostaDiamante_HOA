@@ -33,5 +33,7 @@ namespace Sonora_HOA.Models
         //An owner can register many Guests and has many Condos
         public virtual ICollection<Condo> Condos { get; set; }
         public virtual ICollection<Guest> Guests { get; set; }
+        public virtual ICollection<CheckInList> checkInListHistory { get; set; }
+        
     }
 }

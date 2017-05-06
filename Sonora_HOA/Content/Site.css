@@ -186,7 +186,10 @@ input[readonly='readonly']{
  .form-group img{
      height: 2em;
  }
- form.form-inline button.btn.btn-success {
+ .form-inline {
+    margin-bottom: 1em;
+}
+ .form-inline button.btn.btn-success {
     margin-top: 2em;
 }
 

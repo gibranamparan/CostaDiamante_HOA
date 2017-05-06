@@ -3,20 +3,24 @@
 
 @{ 
     string ownerID = ViewBag.ownerID;
+    List<CheckInList.TimePeriodPermissions> timePeriods = ViewBag.timePeriods;
 }
-
-<div class="alert alert-info">Fill the Check in List for the selected period by selecting the guests in the list below.</div>
-@using (Html.BeginForm("Create", "Permissions",FormMethod.Post,new { @class= "form-inline" }))
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    
-    <div class="form-group col-md-5">
-        <label for="timePeriod">Year Period:</label>
-        @Html.DropDownList("timePeriod",CheckInList.generatePermissionPeriods(), new { @class="form-control"})
+   
+<div class="form-inline">
+    <div class="form-group col-md-10">
+        @Html.LabelFor(model => model.checkInList.period)
+        <select id="period" name="period">
+            @foreach(var item in timePeriods)
+            {
+                <option value="@item.yearPeriod" start-date="@item.StartDate.ToString("yyyy-MM-dd")"
+                        end-date="@item.EndDate.ToString("yyyy-MM-dd")">
+                    @item</option>
+            }
+        </select>
     </div>
-    <button class="btn btn-success" onclick="registerList()">Register</button>
-}
+    <button id="btnRegister" class="btn btn-success" onclick="registerList()" disabled>Register</button>
+</div>
+
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

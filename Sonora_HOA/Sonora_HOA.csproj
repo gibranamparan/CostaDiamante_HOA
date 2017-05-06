@@ -245,6 +245,10 @@
     <Compile Include="Migrations\201705052152263_added_entity_checkinList.Designer.cs">
       <DependentUpon>201705052152263_added_entity_checkinList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705060157346_relationShip_Owner_CheckInList.cs" />
+    <Compile Include="Migrations\201705060157346_relationShip_Owner_CheckInList.Designer.cs">
+      <DependentUpon>201705060157346_relationShip_Owner_CheckInList.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CheckInList.cs" />
@@ -412,6 +416,7 @@
     <Content Include="Views\Condo\Partial_CreateCondo.cshtml" />
     <Content Include="Views\Guest\Partial_CreateGuest.cshtml" />
     <Content Include="Views\Visits\Partial_ListVisits.cshtml" />
+    <Content Include="Views\Permissions\Partial_ShowCheckInList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -454,6 +459,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705052152263_added_entity_checkinList.resx">
       <DependentUpon>201705052152263_added_entity_checkinList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705060157346_relationShip_Owner_CheckInList.resx">
+      <DependentUpon>201705060157346_relationShip_Owner_CheckInList.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

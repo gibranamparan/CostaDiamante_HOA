@@ -12,7 +12,7 @@
     }
 }
 
-
+<div class="alert alert-info">Fill the Check in List for the selected period by selecting the guests in the list below.</div>
 <table class="table table-hover table-striped datatable">
     <thead>
         <tr>
@@ -67,6 +67,7 @@
     </tbody>
 
 </table>
+@Html.AntiForgeryToken()
 
 @if (selectionMode)
 {
@@ -76,10 +77,21 @@
 
         //Check the condo to be associated
         function selectChange(cb) {
-            if ($(cb).is(":checked"))
+            //Item added to the selected list items
+            if ($(cb).is(":checked")){
                 checkedList.push({
                     guestID: $(cb).val(),
                 })
+            }
+            else {
+                //If unchecked, item is removed from the selected list items
+                var id = $(cb).val();
+                checkedList = $.grep(checkedList, function (e) {
+                    return e.guestID != id;
+                });
+            }
+
+            $("#btnRegister").prop('disabled', checkedList.length == 0);
 
             console.log(JSON.stringify(checkedList));
         }
@@ -87,9 +99,16 @@
         //Send all checked condos to server to be associated to current owner.
         function registerList() {
             var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            var selectedPeriod = $("#period").find(":selected");
+            var ownerID = '@ownerID';
+            var period = {
+                startDate: selectedPeriod.attr("start-date"),
+                endDate: selectedPeriod.attr("end-date")
+            }
             jQuery.postJSON("/Permissions/Create",
                 {
                     checkedList: checkedList,
+                    period: period,
                     ownerID: ownerID
                 },"JSON",
                 function (result) {

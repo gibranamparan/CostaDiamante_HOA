@@ -14,7 +14,7 @@
 @if (selectionMode)
 {
     <div>
-        <button class="btn btn-success"onclick="associateCondos()">Associate</button>
+        <button id="btnAssociate" class="btn btn-success"onclick="associateCondos()" disabled>Associate</button>
         <span class="alert alert-info"><strong>Find and select </strong>the condominiums
          you want to associate with this owner, Then press <strong>"Associate"</strong>
          to finish.</span>
@@ -45,7 +45,7 @@
                     @if (selectionMode)
                     {
                         <td>
-                            <input type="checkbox" value="@item.condoID" condo-name="@item.name" onchange="condoSelectChange(this)"/>
+                            <input type="checkbox" value="@item.condoID" condo-name="@item.name" onchange="selectChange(this)"/>
                         </td>
                     }
                     <td>
@@ -91,19 +91,28 @@
 </script>
 @if (selectionMode) { 
     <script>
-        var checkedCondos = new Array();
+        var checkedList = new Array();
         var ownerID = '@ownerID';
 
         //Check the condo to be associated
-        function condoSelectChange(cbCondo) {
-            if ($(cbCondo).is(":checked"))
-                checkedCondos.push({
-                    condoID: $(cbCondo).val(),
-                    name: $(cbCondo).attr("condo-name"),
+        function selectChange(cb) {
+            if ($(cb).is(":checked")) {
+                checkedList.push({
+                    condoID: $(cb).val(),
+                    name: $(cb).attr("condo-name"),
                     ownerID : ownerID
                 })
+            }
+            else {
+                //If unchecked, item is removed from the selected list items
+                var id = $(cb).val();
+                checkedList = $.grep(checkedList, function (e) {
+                    return e.condoID != id;
+                });
+            }
 
-            console.log(JSON.stringify(checkedCondos));
+            $("#btnAssociate").prop('disabled', checkedList.length == 0);
+            console.log(JSON.stringify(checkedList));
         }
 
         //Send all checked condos to server to be associated to current owner.

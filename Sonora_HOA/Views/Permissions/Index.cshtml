@@ -1,27 +1,72 @@
 ﻿@model IEnumerable<Sonora_HOA.Models.Permissions>
 @using Sonora_HOA.Models;
+
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
     Permissions permission = new Permissions();
     Owner owner = ViewBag.owner;
+    List<CheckInList.TimePeriodPermissions> timePeriods = ViewBag.timePeriods;
+    CheckInList currentCheckInList = ViewBag.currentCheckInList;
+    CheckInList nextCheckInList = ViewBag.nextCheckInList;
 
     ViewDataDictionary vdd = new ViewDataDictionary();
     vdd.Add("selectionMode", true);
+    vdd.Add("ownerID", owner.Id);
 }
 <a href="@Url.Action("Details","Owners",new { id = owner.Id})">
-    <i class="glyphicon glyphicon-arrow-left"></i>Back to owner's details
+    <i class="glyphicon glyphicon-arrow-left"></i>Back to Owner's Details
 </a>
 <h2>Owner Family and Guest Check in List</h2>
 @Html.Partial("../Owners/Partial_infoOwner",owner)
 
-<div class="panel panel-info">
+<div class="panel panel-info" id="pnlCurrentCheckInList">
     <div class="panel-heading">
-        <h2 class="panel-title">Check in List</h2>
+        <h2 class="panel-title">Current Check in List</h2>
     </div>
     <div class="panel-body">
-        @Html.Partial("Partial_CreatePermission", permission)
-        @Html.Partial("../Guest/Partial_ListGuest", owner, vdd)
+        @Html.Partial("Partial_ShowCheckInList", currentCheckInList)
+    </div>
+</div>
+
+<div class="panel panel-info hidden" id="pnlNextCheckInList">
+    <div class="panel-heading">
+        <h2 class="panel-title">Next Check in List</h2>
+    </div>
+    <div class="panel-body">
+        @Html.Partial("Partial_ShowCheckInList", nextCheckInList)
+    </div>
+</div>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2 class="panel-title">New Check in List</h2>
+    </div>
+    <div class="panel-body">
+        <div class="form-inline">
+            <div class="form-group col-md-10">
+                @Html.LabelFor(model => currentCheckInList.period)
+                <select id="period" name="period">
+                    @foreach (var item in timePeriods)
+                    {
+                        <option value="@item.yearPeriod" start-date="@item.StartDate.ToString("yyyy-MM-dd")"
+                                end-date="@item.EndDate.ToString("yyyy-MM-dd")">
+                            @item
+                        </option>
+                    }
+                </select>
+            </div>
+            <button id="btnRegister" class="btn btn-success" onclick="registerList()" disabled>Register</button>
+        </div>
+        @if (currentCheckInList.checkInListID == 0)
+        {
+            @Html.Partial("../Guest/Partial_ListGuest", owner, vdd)
+        }else
+        {
+            <div class="alert alert-info">A check In list was already registered for the selected period.
+         You'll be able to register a new one when this period is finished.</div>
+        }
     </div>
 </div>
 

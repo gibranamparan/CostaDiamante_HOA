@@ -28,10 +28,13 @@ namespace Sonora_HOA.Controllers
                 return HttpNotFound();
             }
 
-            var permissions = db.Permissions.Where(per=>per.guest.ownerID==id);
             ViewBag.owner = owner;
+            List<CheckInList.TimePeriodPermissions> timePeriods = CheckInList.generatePermissionPeriods();
+            ViewBag.timePeriods = timePeriods;
+            ViewBag.currentCheckInList = CheckInList.getCurrentCheckInList(owner.Id, db);
+            ViewBag.nextCheckInList = CheckInList.findCheckInListByPeriod(owner.Id, timePeriods.ElementAt(1), db);
 
-            return View(permissions.ToList());
+            return View();
         }
 
         // GET: Permissions/Details/5
@@ -52,12 +55,13 @@ namespace Sonora_HOA.Controllers
         // GET: Permissions/Create
         [HttpPost]
         [ValidateHeaderAntiForgeryTokenAttribute]
-        public JsonResult Create(List<Permissions> checkedList)
+        public JsonResult Create(List<Permissions> checkedList,CheckInList period,string ownerID)
         {
+            CheckInList checkInList = period;
             //Associating condos in the array to owner
-            foreach (Permissions item in checkedList) { 
-                db.Permissions.Add(item);
-            }
+            checkInList.permissions = checkedList;
+            checkInList.ownerID = ownerID;
+            db.CheckInLists.Add(checkInList);
 
             int numRegChanged = db.SaveChanges();
 
