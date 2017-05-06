@@ -79,11 +79,12 @@ namespace Sonora_HOA.Models
         internal static CheckInList findCheckInListByPeriod(string ownerID,CheckInList.TimePeriodPermissions tpp, ApplicationDbContext db)
         {
             Owner owner = db.Owners.Find(ownerID);
-            var checkInList = owner.checkInListHistory.OrderByDescending(list => list.startDate)
-                .Take(3).ToList().FirstOrDefault(cil => cil.period.Equals(tpp));
-            if (checkInList == null)
-                checkInList = new CheckInList();
-            return checkInList;
+            var checkInLists = owner.checkInListHistory.OrderByDescending(list => list.startDate)
+                .Take(3).ToList();
+            var cil = checkInLists.FirstOrDefault(list => list.period.Equals(tpp));
+            if (cil == null)
+                cil = new CheckInList();
+            return cil;
         }
 
         public class TimePeriodPermissions:IEquatable<TimePeriodPermissions>

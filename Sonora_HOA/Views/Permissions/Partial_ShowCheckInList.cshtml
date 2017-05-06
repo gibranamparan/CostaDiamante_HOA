@@ -2,42 +2,49 @@
 
 @if (Model.checkInListID > 0)
 {
-    Html.LabelFor(model => model.period);
-    Model.period.ToString("MMMM/dd/yyyy");
-    <button class="alert alert-danger pull-right">Cancel List</button>
+    <div>
+        @Html.LabelFor(model => model.period):
+        @Model.period.ToString("MMMM/dd/yyyy")
+        <button class="alert alert-danger pull-right">Cancel List</button>
+    </div>
 }
-<table class="table table-hover table-striped">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.permissions.FirstOrDefault().guest.fullName)
-        </th>
-    </tr>
-    @if (Model.permissions!=null && Model.permissions.Count() > 0) { 
-        foreach (var item in Model.permissions) {
+<table class="table table-hover table-striped datatable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.permissions.FirstOrDefault().guest.fullName)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.permissions != null && Model.permissions.Count() > 0)
+        {
+            foreach (var item in Model.permissions)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.guest.fullName)
+                    </td>
+                </tr>
+            }
+        }
+        else if (Model.checkInListID == 0)
+        {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.guest.fullName)
+                    <div class="alert alert-info">There is no Check In List registered for selected period</div>
                 </td>
             </tr>
         }
-    }
-    else if (Model.checkInListID == 0)
-    {
-        <tr>
-            <td>
-                <div class="alert alert-info">There is no current Check In List registered</div>
-            </td>
-        </tr>
-    }
-    else
-    {
-        <tr>
-            <td>
-                <div class="alert alert-danger">
-                    Current Check In List has no guests registered, contact administrator.
-                </div>
-            </td>
-        </tr>
-    }
-
+        else
+        {
+            <tr>
+                <td>
+                    <div class="alert alert-danger">
+                        Current Check In List has no guests registered, contact administrator.
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

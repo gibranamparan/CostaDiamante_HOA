@@ -10,6 +10,7 @@
     List<CheckInList.TimePeriodPermissions> timePeriods = ViewBag.timePeriods;
     CheckInList currentCheckInList = ViewBag.currentCheckInList;
     CheckInList nextCheckInList = ViewBag.nextCheckInList;
+    bool hidePartialGuestList = currentCheckInList.checkInListID > 0;
 
     ViewDataDictionary vdd = new ViewDataDictionary();
     vdd.Add("selectionMode", true);
@@ -20,6 +21,40 @@
 </a>
 <h2>Owner Family and Guest Check in List</h2>
 @Html.Partial("../Owners/Partial_infoOwner",owner)
+
+<div class="panel panel-info">
+    <div class="panel-heading" onclick="changeIcon(this)"
+         data-toggle="collapse" data-target="#pnlNewCheckInList">
+        <span class="panel-title">New Check in List</span>
+        <i class="pull-right fa fa-window-maximize"></i>
+    </div>
+    <div class="panel-body collapse" id="pnlNewCheckInList">
+        <div class="form-inline">
+            <div class="form-group col-md-10">
+                @Html.LabelFor(model => currentCheckInList.period)
+                <select id="period" name="period" onchange="periodChanged(this)">
+                    <option value="current" start-date="@timePeriods[0].StartDate.ToString("yyyy-MM-dd")"
+                            end-date="@timePeriods[0].EndDate.ToString("yyyy-MM-dd")" >
+                        @timePeriods[0]
+                    </option>
+
+                    <option value="next" start-date="@timePeriods[1].StartDate.ToString("yyyy-MM-dd")"
+                            end-date="@timePeriods[1].EndDate.ToString("yyyy-MM-dd")">
+                        @timePeriods[1]
+                    </option>
+                </select>
+            </div>
+            <button id="btnRegister" class="btn btn-success" onclick="registerList()" disabled>Register</button>
+        </div>
+        <div id="Partial_ListGuest" class="@(hidePartialGuestList?"hidden":"")" >
+            @Html.Partial("../Guest/Partial_ListGuest", owner, vdd)
+        </div>
+        <div id="checkInRegisteredMessage" class="alert alert-info @(!hidePartialGuestList?"hidden":"")">
+            A check In list was already registered for the selected period.
+            You'll be able to register a new one when this period is finished.
+        </div>
+    </div>
+</div>
 
 <div class="panel panel-info" id="pnlCurrentCheckInList">
     <div class="panel-heading">
@@ -32,41 +67,38 @@
 
 <div class="panel panel-info hidden" id="pnlNextCheckInList">
     <div class="panel-heading">
-        <h2 class="panel-title">Next Check in List</h2>
+        <h2 class="panel-title">Next Period Check in List</h2>
     </div>
     <div class="panel-body">
         @Html.Partial("Partial_ShowCheckInList", nextCheckInList)
     </div>
 </div>
 
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <h2 class="panel-title">New Check in List</h2>
-    </div>
-    <div class="panel-body">
-        <div class="form-inline">
-            <div class="form-group col-md-10">
-                @Html.LabelFor(model => currentCheckInList.period)
-                <select id="period" name="period">
-                    @foreach (var item in timePeriods)
-                    {
-                        <option value="@item.yearPeriod" start-date="@item.StartDate.ToString("yyyy-MM-dd")"
-                                end-date="@item.EndDate.ToString("yyyy-MM-dd")">
-                            @item
-                        </option>
-                    }
-                </select>
-            </div>
-            <button id="btnRegister" class="btn btn-success" onclick="registerList()" disabled>Register</button>
-        </div>
-        @if (currentCheckInList.checkInListID == 0)
-        {
-            @Html.Partial("../Guest/Partial_ListGuest", owner, vdd)
-        }else
-        {
-            <div class="alert alert-info">A check In list was already registered for the selected period.
-         You'll be able to register a new one when this period is finished.</div>
+@section Scripts{
+    <script>
+        var currentCheckInListID = @currentCheckInList.checkInListID;
+        var nextCheckInListID = @nextCheckInList.checkInListID;
+        function periodChanged(ddl) {
+            var yearPeriod = $(ddl).val();
+            if(yearPeriod == "current"){
+                hidePartialGuest = currentCheckInListID>0;
+                $("#pnlCurrentCheckInList").show();
+                $("#pnlNextCheckInList").hide;
+            }else{
+                hidePartialGuest = nextCheckInListID>0;
+                $("#pnlCurrentCheckInList").hide();
+                $("#pnlNextCheckInList").show;
+            }
+            if(hidePartialGuest){
+                $("#Partial_ListGuest").hide()
+                $("#checkInRegisteredMessage").show()
+            }else{
+                $("#Partial_ListGuest").show()
+                $("#checkInRegisteredMessage").hide()
+            }
         }
-    </div>
-</div>
+
+    </script>    
+    
+}
 
