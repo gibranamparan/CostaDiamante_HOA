@@ -10,7 +10,7 @@ namespace Sonora_HOA.GeneralTools
     public class FiltrosDeSolicitudes
     {
         [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-        public sealed class ValidateHeaderAntiForgeryTokenAttribute : FilterAttribute, IAuthorizationFilter
+        public sealed class ValidateHeaderAntiForgeryToken : FilterAttribute, IAuthorizationFilter
         {
             public void OnAuthorization(AuthorizationContext filterContext)
             {

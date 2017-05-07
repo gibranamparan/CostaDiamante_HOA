@@ -125,7 +125,7 @@ namespace Sonora_HOA.Controllers
 
         // POST: Condo/Delete/5
         [HttpPost]
-        [ValidateHeaderAntiForgeryTokenAttribute]
+        [ValidateHeaderAntiForgeryToken]
         public JsonResult RemoveFromOwner(int id=0)
         {
             int num = 0;
@@ -160,7 +160,7 @@ namespace Sonora_HOA.Controllers
         }
 
         [HttpPost]
-        [ValidateHeaderAntiForgeryTokenAttribute]
+        [ValidateHeaderAntiForgeryToken]
         public JsonResult AssociateCondo(List<Condo> condosToAssociate, string ownerID)
         {
             //Associating condos in the array to owner

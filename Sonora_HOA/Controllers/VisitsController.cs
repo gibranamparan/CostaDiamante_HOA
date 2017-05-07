@@ -6,7 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Sonora_HOA.GeneralTools;
 using Sonora_HOA.Models;
+using static Sonora_HOA.GeneralTools.FiltrosDeSolicitudes;
 
 namespace Sonora_HOA.Controllers
 {
@@ -16,7 +18,6 @@ namespace Sonora_HOA.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Visits
-        [Authorize(Roles = ApplicationUser.RoleNames.OWNER+","+ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Index()
         {
             return View(db.Visits.ToList());
@@ -39,7 +40,6 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Visits/Create
-        [Authorize(Roles = ApplicationUser.RoleNames.OWNER + "," + ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Create(int id=0)
         {
             if (id == 0)
@@ -74,20 +74,27 @@ namespace Sonora_HOA.Controllers
         // POST: Visits/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = ApplicationUser.RoleNames.OWNER + "," + ApplicationUser.RoleNames.ADMIN)]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "visitsID,arrivalDate,departureDate")] Visits visits,string id)
+        [ValidateHeaderAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "condoID,arrivalDate,departureDate,date,guestsInVisit, visitors")] Visits visit)
         {
             if (ModelState.IsValid)
             {
-                visits.date = DateTime.Today;
-                db.Visits.Add(visits);
-                db.SaveChanges();
-                return RedirectToAction("Create","Visits", new { id = id });
+                if (visit.arrivalDate > visit.departureDate)
+                {
+                    ModelState.AddModelError("INVALID_DATES", "Arrival date is bigger than departure date. Check introduced dates.");
+                }else { 
+                    visit.date = DateTime.Today;
+                    db.Visits.Add(visit);
+                    db.SaveChanges();
+                    return RedirectToAction("Index","Visits", new { id = visit.condo.ownerID });
+                }
             }
 
-            return View(visits);
+            Condo condo = db.Condoes.Find(visit.condoID);
+            visit = prepareView(condo);
+
+            return View(visit);
         }
 
         // GET: Visits/Edit/5

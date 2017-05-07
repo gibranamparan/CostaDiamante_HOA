@@ -21,8 +21,7 @@
         <h2 class="panel-title">Visit Notification Form</h2>
     </div>
     <div class="panel-body">
-        @using (Html.BeginForm("Create", "Visits", FormMethod.Post, new { @class = "form-horizontal" }))
-        {
+        <div class="form-inline">
             @Html.AntiForgeryToken()
             @Html.HiddenFor(model => model.date)
             @Html.HiddenFor(model => model.condoID)
@@ -31,64 +30,31 @@
                 <span>@condo.name</span>
             </div>
             <div class="row">
-                <div class="form-group col-md-6">
-                    @Html.LabelFor(model => model.arrivalDate, htmlAttributes:
-                new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.arrivalDate,
-                    new
-                    {
-                        htmlAttributes = new
-                        {
-                            @class = "form-control",
-                            type = "Date",
-                            id = "arrivalDate",
-                            name = "arrivalDate"
-                        }
-                    })
-                        @Html.ValidationMessageFor(model => model.arrivalDate, "",
-                    new { @class = "text-danger" })
-                    </div>
+                <div class="form-group col-md-5">
+                    @Html.LabelFor(model => model.arrivalDate)
+                    @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control", } })
+                    @Html.ValidationMessageFor(model => model.arrivalDate, "", new { @class = "text-danger" })
                 </div>
 
-                <div class="form-group col-md-6">
-                    @Html.LabelFor(model => model.departureDate, htmlAttributes:
-                new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.departureDate,
-                    new
-                    {
-                        htmlAttributes =
-                    new
-                    {
-                        @class = "form-control",
-                        type = "Date",
-                        id = "departureDate",
-                        name = "departureDate"
-                    }
-                    })
-                        @Html.ValidationMessageFor(model => model.departureDate, "",
-                    new { @class = "text-danger" })
-                    </div>
+                <div class="form-group col-md-5">
+                    @Html.LabelFor(model => model.departureDate)
+                    @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control", } })
+                    @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
                 </div>
+                <button id="btnRegister" name="createVisit" class="btn btn-success"
+                        onclick="registerList()" disabled>
+                    Notify Visit
+                </button>
             </div>
-            <div class="row">
-                <div class="form-group col-md-2">
-                    <div class="col-md-2">
-                        <button id="createVisit" name="createVisit"class="btn btn-success"
-                               data-toggle="tooltip" data-placement="top" title="Testing"
-                               onclick="ValidateDates('arrivalDate', 'departureDate');">
-                            Notify Visit
-                        </button>
-                    </div>
-                    <div id="errorMessage" class="alert alert-info col-md-10"
-                         role="alert" hidden>Arrival date should be the same, or before departure date!</div>
-                </div>
+
+            <div id="errorMessage" class="text-danger" hidden>
+                Arrival date should be the same, or before departure date!
             </div>
-        }
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        </div>
         @*Shows current year period checkin lists*@
         <div class="col-md-12">
-            <h3>Current Check In List</h3>
+            <h3>Current Check In List: @checkInList.period.ToString("MMMM/dd/yyyy")</h3>
             @Html.Partial("../Permissions/Partial_ShowCheckInList", checkInList, vdd)
         </div>
     </div>
@@ -102,61 +68,43 @@
         }
 
         //Date picker validation, and button block
-        $("#arrivalDate").change(function () {
+        $("#arrivalDate, #departureDate").change(function () {
             var arrival = document.getElementById("arrivalDate").value;
             var departure = document.getElementById("departureDate").value;
 
-            if (arrival == "" || departure == "") {
+            if (Date.parse(arrival) > Date.parse(departure) || arrival == "" || departure == "") {
                 $('#createVisit').attr('disabled', true)
-                $("#errorMessage").fadeIn(500, function () {
-
-                })
-            }
-            else {
-                //Validates ranges
-                if ((Date.parse(arrival)) > (Date.parse(departure))) {
-
-                    if ($('#createVisit').attr('disabled', true)) {
-                        $("#errorMessage").fadeIn(500, function () {
-
-                        })
-                    }
-                }
-                else {
-                    $('#createVisit').attr('disabled', false)
-                    $("#errorMessage").fadeOut(500, function () {
-
-                    })
-                }
+                $("#errorMessage").fadeIn(500)
+            } else {
+                $('#createVisit').attr('disabled', false)
+                $("#errorMessage").fadeOut(500)
             }
         });
-        $("#departureDate").change(function () {
-            var arrival = document.getElementById("arrivalDate").value;
-            var departure = document.getElementById("departureDate").value;
-            if (departure == "" || arrival == "") {
-                $('#createVisit').attr('disabled', true)
-                $("#errorMessage").fadeIn(500, function () {
 
-                })
+        //Send all checked condos to server to be associated to current owner.
+        function registerList() {
+            console.log(JSON.stringify(checkedList));
+            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            var ownerID = '@condo.ownerID';
+            var visit = {
+                arrivalDate: $('#arrivalDate').val(),
+                departureDate: $('#departureDate').val(),
+                date: $('#date').val(),
+                condoID: $('#condoID').val(),
+                visitors: checkedList
             }
-            else {
-                if ((Date.parse(arrival)) > (Date.parse(departure))) {
-
-                    if ($('#createVisit').attr('disabled', true)) {
-                        $("#errorMessage").fadeIn(500, function () {
-
-                        })
+            jQuery.postJSON("/Visits/Create",
+                { visit: visit },
+                "JSON",
+                function (result) {
+                    if (result > 0) {
+                        location.reload();
                     }
-                }
-                else {
-                    $('#createVisit').attr('disabled', false)
-                    $("#errorMessage").fadeOut(500, function () {
-
-                    })
-                }
-            }
-
-        });
+                },
+                function (request) {
+                    alert("Error: " + JSON.stringify(request));
+                }, null, antiForgeryToken)
+        }
     </script>
     @Scripts.Render("~/bundles/jqueryval")
 }

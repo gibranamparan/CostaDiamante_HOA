@@ -45,7 +45,7 @@
                     @if (selectionMode)
                     {
                         <td>
-                            <input type="checkbox" value="@item.guestID" onchange="selectChange(this)" />
+                            <input type="checkbox" value="@item.permissionsID" onchange="selectChange(this)" />
                         </td>
                     }
                     <td>
@@ -93,14 +93,13 @@
 {
     <script>
         var checkedList = new Array();
-        var ownerID = '@ownerID';
 
         //Check the condo to be associated
         function selectChange(cb) {
             //Item added to the selected list items
             if ($(cb).is(":checked")){
                 checkedList.push({
-                    guestID: $(cb).val(),
+                    permissionsID: $(cb).val(),
                 })
             }
             else {
@@ -115,32 +114,6 @@
 
             console.log(JSON.stringify(checkedList));
         }
-
-        //Send all checked condos to server to be associated to current owner.
-        function registerList() {
-            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
-            var selectedPeriod = $("#period").find(":selected");
-            var ownerID = '@ownerID';
-            var period = {
-                startDate: selectedPeriod.attr("start-date"),
-                endDate: selectedPeriod.attr("end-date")
-            }
-            jQuery.postJSON("/Permissions/Create",
-                {
-                    checkedList: checkedList,
-                    period: period,
-                    ownerID: ownerID
-                },"JSON",
-                function (result) {
-                    if (result > 0) {
-                        location.reload();
-                    }
-                },
-                function (request) {
-                    alert("Error: " + JSON.stringify(request));
-                }, null, antiForgeryToken)
-        }
-
     </script>
 }
 

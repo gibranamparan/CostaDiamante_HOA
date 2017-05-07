@@ -58,7 +58,7 @@ namespace Sonora_HOA.Controllers
         // GET: Permissions/Create
         [Authorize(Roles = ApplicationUser.RoleNames.OWNER+","+ApplicationUser.RoleNames.ADMIN)]
         [HttpPost]
-        [ValidateHeaderAntiForgeryTokenAttribute]
+        [ValidateHeaderAntiForgeryToken]
         public JsonResult Create(List<Permissions> checkedList,CheckInList period,string ownerID)
         {
             CheckInList checkInList = period;
