@@ -9,6 +9,8 @@ using System.Web.Mvc;
 using Sonora_HOA.GeneralTools;
 using Sonora_HOA.Models;
 using static Sonora_HOA.GeneralTools.FiltrosDeSolicitudes;
+using System.Security.Claims;
+using Microsoft.AspNet.Identity;
 
 namespace Sonora_HOA.Controllers
 {
@@ -20,7 +22,9 @@ namespace Sonora_HOA.Controllers
         // GET: Visits
         public ActionResult Index()
         {
-            return View(db.Visits.ToList());
+            string ownerID = User.Identity.GetUserId();
+            Owner owner = db.Owners.Find(ownerID);
+            return View(owner.visitsHistory.ToList());
         }
 
         // GET: Visits/Details/5
@@ -78,6 +82,7 @@ namespace Sonora_HOA.Controllers
         [ValidateHeaderAntiForgeryToken]
         public ActionResult Create([Bind(Include = "condoID,arrivalDate,departureDate,date,guestsInVisit, visitors")] Visits visit)
         {
+            Condo condo = db.Condoes.Find(visit.condoID);
             if (ModelState.IsValid)
             {
                 if (visit.arrivalDate > visit.departureDate)
@@ -87,11 +92,10 @@ namespace Sonora_HOA.Controllers
                     visit.date = DateTime.Today;
                     db.Visits.Add(visit);
                     db.SaveChanges();
-                    return RedirectToAction("Index","Visits", new { id = visit.condo.ownerID });
+                    return RedirectToAction("Index","Visits", new { id = condo.ownerID });
                 }
             }
 
-            Condo condo = db.Condoes.Find(visit.condoID);
             visit = prepareView(condo);
 
             return View(visit);

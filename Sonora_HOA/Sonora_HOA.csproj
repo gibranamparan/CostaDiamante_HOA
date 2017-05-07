@@ -251,6 +251,10 @@
     <Compile Include="Migrations\201705060157346_relationShip_Owner_CheckInList.Designer.cs">
       <DependentUpon>201705060157346_relationShip_Owner_CheckInList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705072147068_relationship_visits_owner.cs" />
+    <Compile Include="Migrations\201705072147068_relationship_visits_owner.Designer.cs">
+      <DependentUpon>201705072147068_relationship_visits_owner.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CheckInList.cs" />
@@ -464,6 +468,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705060157346_relationShip_Owner_CheckInList.resx">
       <DependentUpon>201705060157346_relationShip_Owner_CheckInList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705072147068_relationship_visits_owner.resx">
+      <DependentUpon>201705072147068_relationship_visits_owner.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

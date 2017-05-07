@@ -106,7 +106,7 @@
                 //If unchecked, item is removed from the selected list items
                 var id = $(cb).val();
                 checkedList = $.grep(checkedList, function (e) {
-                    return e.guestID != id;
+                    return e.permissionsID != id;
                 });
             }
 

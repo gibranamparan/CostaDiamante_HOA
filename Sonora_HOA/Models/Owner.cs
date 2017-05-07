@@ -34,6 +34,7 @@ namespace Sonora_HOA.Models
         public virtual ICollection<Condo> Condos { get; set; }
         public virtual ICollection<Guest> Guests { get; set; }
         public virtual ICollection<CheckInList> checkInListHistory { get; set; }
-        
+        public virtual ICollection<Visits> visitsHistory { get; set; }
+
     }
 }
