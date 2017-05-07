@@ -197,6 +197,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CheckInListController.cs" />
     <Compile Include="Controllers\CondoController.cs" />
     <Compile Include="Controllers\GuestController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Controllers\Permissions_VisitsController.cs" />
     <Compile Include="Controllers\VisitsController.cs" />
     <Compile Include="GeneralTools\FiltrosDeSolicitudes.cs" />
+    <Compile Include="GeneralTools\VMConfirmModalAttributes.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -416,6 +418,7 @@
     <Content Include="Views\Guest\Partial_CreateGuest.cshtml" />
     <Content Include="Views\Visits\Partial_ListVisits.cshtml" />
     <Content Include="Views\Permissions\Partial_ShowCheckInList.cshtml" />
+    <Content Include="Views\Shared\Partial_ConfirmationModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

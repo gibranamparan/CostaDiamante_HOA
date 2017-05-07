@@ -40,15 +40,35 @@ namespace Sonora_HOA.Controllers
 
         // GET: Visits/Create
         [Authorize(Roles = ApplicationUser.RoleNames.OWNER + "," + ApplicationUser.RoleNames.ADMIN)]
-        public ActionResult Create(string id)
+        public ActionResult Create(int id=0)
         {
-            Visits visit = new Visits();
-            var Permissions = db.Permissions.Where(p => p.guest.ownerID == id).ToList();
-            ViewBag.Permissions = Permissions;
-            ViewBag.ownerID = id;
-            ViewBag.condoID = new SelectList(db.Condoes.Where(condo => condo.ownerID == id).ToList(), "condoID", "name");
-            ViewBag.guestID = new SelectList(db.Guests.Where(gue => gue.ownerID == id).ToList(), "guestID", "fullName");
+            if (id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Condo condo= db.Condoes.Find(id);
+            if (condo == null)
+            {
+                return HttpNotFound();
+            }
+
+            Visits visit = prepareView(condo);
+
             return View(visit);
+        }
+
+        private Visits prepareView(Condo condo)
+        {
+            ViewBag.condo = condo;
+            ViewBag.checkInList = CheckInList.getCurrentCheckInList(condo.ownerID, db);
+
+            Visits visit = new Visits();
+            visit.date = DateTime.Today;
+            visit.arrivalDate = DateTime.Today.AddDays(1);
+            visit.departureDate = visit.arrivalDate.AddDays(7);
+            visit.condoID = condo.condoID;
+
+            return visit;
         }
 
         // POST: Visits/Create

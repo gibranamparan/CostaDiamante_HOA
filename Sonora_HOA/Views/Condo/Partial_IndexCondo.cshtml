@@ -54,10 +54,11 @@
                     @if (!selectionMode)
                     {
                         <td>
-                            @Html.ActionLink("Edit", "Edit", "Condo", new { id = item.condoID }, null) |
-                            @Html.ActionLink("Details", "Details", "Condo", new { id = item.condoID }, null) |
+                            <a href="@Url.Action("Create", "Visits", new { id = item.condoID })">
+                                <i class="fa fa-book"></i>Notify New Visit
+                            </a> | 
                             <a onclick="removeCondo(@item.condoID)">
-                                <i class="glyphicon glyphicon-remove"></i>
+                                <i class="glyphicon glyphicon-remove"></i>Remove
                             </a>
                         </td>
                     }

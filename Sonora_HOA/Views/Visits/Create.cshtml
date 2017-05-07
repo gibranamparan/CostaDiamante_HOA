@@ -3,89 +3,97 @@
 @{
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    List<Permissions> permissions = ViewBag.Permissions;
-    Permissions permission = new Permissions();
-    //permission.startDate = DateTime.Today;
-    Model.date = DateTime.Today;
-    Model.arrivalDate = DateTime.Today;
-    Model.departureDate = DateTime.Today;
-    string ownerID = ViewBag.ownerID;
-    if (permissions.Count() == 0) {
-        permissions = new List<Permissions>();
-    }
-    Owner owner = ViewBag.owner;
+    Condo condo = ViewBag.condo;
+    CheckInList checkInList = ViewBag.checkInList;
+
+    ViewDataDictionary vdd = new ViewDataDictionary();
+    vdd.Add("selectionMode", true);
 }
 
-@using (Html.BeginForm("Create","Visits", new { id = ownerID }))
-{
-    @Html.AntiForgeryToken()
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <h2 class="panel-title">Create Visit</h2>
-        </div>
-        <div class="panel-body">
-            <div class="form-horizontal">
-                <hr />
+<a href="@Url.Action("Details","Owners",new { id=condo.owner.Id})">
+    <i class="glyphicon glyphicon-arrow-left"></i>Back to Owner's details
+</a>
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.arrivalDate, htmlAttributes: 
-                   new { @class = "control-label col-md-2" })
+@Html.Partial("../Owners/Partial_infoOwner", condo.owner)
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2 class="panel-title">Visit Notification Form</h2>
+    </div>
+    <div class="panel-body">
+        @using (Html.BeginForm("Create", "Visits", FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.date)
+            @Html.HiddenFor(model => model.condoID)
+            <div class="col-md-12">
+                @Html.LabelFor(model => condo.name)
+                <span>@condo.name</span>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(model => model.arrivalDate, htmlAttributes:
+                new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.arrivalDate,
-                       new {
-                           htmlAttributes = new {
-                               @class = "form-control", type="Date",
-                               id ="arrivalDate", name="arrivalDate" }
-                       })
-                        @Html.ValidationMessageFor(model => model.arrivalDate, "", 
-                       new { @class = "text-danger" })
+                    new
+                    {
+                        htmlAttributes = new
+                        {
+                            @class = "form-control",
+                            type = "Date",
+                            id = "arrivalDate",
+                            name = "arrivalDate"
+                        }
+                    })
+                        @Html.ValidationMessageFor(model => model.arrivalDate, "",
+                    new { @class = "text-danger" })
                     </div>
                 </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.departureDate, htmlAttributes: 
-                   new { @class = "control-label col-md-2" })
+                <div class="form-group col-md-6">
+                    @Html.LabelFor(model => model.departureDate, htmlAttributes:
+                new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.EditorFor(model => model.departureDate,
-                       new { htmlAttributes =
-                       new { @class = "form-control", type = "Date",
-                           id = "departureDate", name = "departureDate" } })
-                        @Html.ValidationMessageFor(model => model.departureDate, "", 
-                       new { @class = "text-danger" })
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    
-                    <div class="col-md-offset-2 col-md-10">
-                        <div id="errorMessage" class="alert alert-info"
-                             role="alert" hidden>Arrival date should be the same, or before departure date!</div>
-                        <input id="createVisit" name="createVisit" type="submit" value="Create" data-toggle="tooltip" data-placement="top" title="Testing" onclick="ValidateDates('arrivalDate', 'departureDate');" class="btn btn-success" />
+                    new
+                    {
+                        htmlAttributes =
+                    new
+                    {
+                        @class = "form-control",
+                        type = "Date",
+                        id = "departureDate",
+                        name = "departureDate"
+                    }
+                    })
+                        @Html.ValidationMessageFor(model => model.departureDate, "",
+                    new { @class = "text-danger" })
                     </div>
                 </div>
             </div>
-            <div>
-                @Html.ActionLink("Back to List", "Index")
+            <div class="row">
+                <div class="form-group col-md-2">
+                    <div class="col-md-2">
+                        <button id="createVisit" name="createVisit"class="btn btn-success"
+                               data-toggle="tooltip" data-placement="top" title="Testing"
+                               onclick="ValidateDates('arrivalDate', 'departureDate');">
+                            Notify Visit
+                        </button>
+                    </div>
+                    <div id="errorMessage" class="alert alert-info col-md-10"
+                         role="alert" hidden>Arrival date should be the same, or before departure date!</div>
+                </div>
             </div>
+        }
+        @*Shows current year period checkin lists*@
+        <div class="col-md-12">
+            <h3>Current Check In List</h3>
+            @Html.Partial("../Permissions/Partial_ShowCheckInList", checkInList, vdd)
         </div>
-    </div>    
-}
-
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h2 class="panel-title">
-            <span>
-                New Permission
-            </span>
-            <i class="pull-right fa fa-window-minimize" onclick="changeIcon(this)"
-               data-toggle="collapse" data-target="#Partial_CreatePermission"></i>
-        </h2>
-    </div>
-    <div class="panel-body in" id="Partial_CreatePermission">
-        @Html.Partial("../Permissions/Partial_CreatePermission", permission)
     </div>
 </div>
-@Html.Partial("../Permissions/Partial_PermissionList", permissions)
+
 
 @section Scripts {
     <script>
@@ -125,7 +133,7 @@
         $("#departureDate").change(function () {
             var arrival = document.getElementById("arrivalDate").value;
             var departure = document.getElementById("departureDate").value;
-            if (departure == ""||arrival == "") {
+            if (departure == "" || arrival == "") {
                 $('#createVisit').attr('disabled', true)
                 $("#errorMessage").fadeIn(500, function () {
 
@@ -147,7 +155,7 @@
                     })
                 }
             }
-           
+
         });
     </script>
     @Scripts.Render("~/bundles/jqueryval")

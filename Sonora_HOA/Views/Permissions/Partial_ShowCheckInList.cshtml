@@ -1,16 +1,36 @@
 ﻿@model Sonora_HOA.Models.CheckInList
+@using Sonora_HOA.GeneralTools
+
+@{ 
+    string modalID = "mdlConfirmation" + Model.checkInListID;
+
+    bool selectionMode = false;
+    string ownerID = "";
+    if (ViewData["selectionMode"] != null)
+    {
+        selectionMode = true;
+        ownerID = (string)ViewData["ownerID"];
+    }
+}
 
 @if (Model.checkInListID > 0)
 {
-    <div>
+    <div class='@(selectionMode?"hidden":"")'>
         @Html.LabelFor(model => model.period):
         @Model.period.ToString("MMMM/dd/yyyy")
-        <button class="alert alert-danger pull-right">Cancel List</button>
+        <button type="button" class="alert alert-danger pull-right"
+                data-toggle="modal" href='#@modalID'>Cancel List</button>
     </div>
 }
 <table class="table table-hover table-striped datatable">
     <thead>
         <tr>
+            @if (selectionMode)
+            {
+                <th width="2em">
+                    Select Guest
+                </th>
+            }
             <th>
                 @Html.DisplayNameFor(model => model.permissions.FirstOrDefault().guest.fullName)
             </th>
@@ -22,6 +42,12 @@
             foreach (var item in Model.permissions)
             {
                 <tr>
+                    @if (selectionMode)
+                    {
+                        <td>
+                            <input type="checkbox" value="@item.guestID" onchange="selectChange(this)" />
+                        </td>
+                    }
                     <td>
                         @Html.DisplayFor(modelItem => item.guest.fullName)
                     </td>
@@ -48,3 +74,73 @@
         }
     </tbody>
 </table>
+
+@Html.Partial("../Shared/Partial_ConfirmationModal", new VMConfirmModalAttributes
+{
+    modalID = modalID,
+    modalTitle = "Confirm cancelation",
+    primaryMessage = "You are going to cancel the selected guest and family check in list. " +
+        "If you confirm, the owner or administrator must have to create a new check in list in order to schedule a new visit in this period of year.",
+    action = "Delete",
+    controller = "CheckInList",
+    routeVals = new { id = Model.checkInListID },
+    modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
+    callType = VMConfirmModalAttributes.CallType.POSTBACK
+})
+
+
+@if (selectionMode)
+{
+    <script>
+        var checkedList = new Array();
+        var ownerID = '@ownerID';
+
+        //Check the condo to be associated
+        function selectChange(cb) {
+            //Item added to the selected list items
+            if ($(cb).is(":checked")){
+                checkedList.push({
+                    guestID: $(cb).val(),
+                })
+            }
+            else {
+                //If unchecked, item is removed from the selected list items
+                var id = $(cb).val();
+                checkedList = $.grep(checkedList, function (e) {
+                    return e.guestID != id;
+                });
+            }
+
+            $("#btnRegister").prop('disabled', checkedList.length == 0);
+
+            console.log(JSON.stringify(checkedList));
+        }
+
+        //Send all checked condos to server to be associated to current owner.
+        function registerList() {
+            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            var selectedPeriod = $("#period").find(":selected");
+            var ownerID = '@ownerID';
+            var period = {
+                startDate: selectedPeriod.attr("start-date"),
+                endDate: selectedPeriod.attr("end-date")
+            }
+            jQuery.postJSON("/Permissions/Create",
+                {
+                    checkedList: checkedList,
+                    period: period,
+                    ownerID: ownerID
+                },"JSON",
+                function (result) {
+                    if (result > 0) {
+                        location.reload();
+                    }
+                },
+                function (request) {
+                    alert("Error: " + JSON.stringify(request));
+                }, null, antiForgeryToken)
+        }
+
+    </script>
+}
+
