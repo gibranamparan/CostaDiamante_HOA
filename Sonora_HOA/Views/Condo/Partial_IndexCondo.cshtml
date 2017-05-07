@@ -1,5 +1,6 @@
 ﻿@model List<Sonora_HOA.Models.Condo>
 @using Sonora_HOA.Models
+@using Microsoft.AspNet.Identity
 
 @{
     bool selectionMode = false;
@@ -56,10 +57,14 @@
                         <td>
                             <a href="@Url.Action("Create", "Visits", new { id = item.condoID })">
                                 <i class="fa fa-book"></i>Notify New Visit
-                            </a> | 
-                            <a onclick="removeCondo(@item.condoID)">
-                                <i class="glyphicon glyphicon-remove"></i>Remove
-                            </a>
+                            </a> 
+                            @if(Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                            {
+                                @:| <a onclick="removeCondo(@item.condoID)">
+                                @:<i class="glyphicon glyphicon-remove"></i>Remove
+                                @:</a>
+                            }
+                            
                         </td>
                     }
                 </tr>

@@ -1,4 +1,6 @@
 ﻿@model Sonora_HOA.Models.Owner
+@using Microsoft.AspNet.Identity
+@using Sonora_HOA.Models
 
 <div class="panel panel-info">
     <div class="panel-heading">
@@ -30,9 +32,10 @@
             </dl>
            </div>
         <p>
+
             <a href="@Url.Action("Edit", "Owners", new { id = Model.Id })">
                 <i class="fa fa-pencil"></i>Edit
-            </a>|
+            </a>
             <a href="@Url.Action("Index", "Permissions", new { id = Model.Id })">
                 <i class="fa fa-check-square-o"></i>Check in List
             </a>

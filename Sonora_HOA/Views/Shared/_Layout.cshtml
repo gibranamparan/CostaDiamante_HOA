@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+@using Sonora_HOA.Models
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -54,9 +57,19 @@
                     {*@
                         <ul>
                             <!--<li><a href="~/Home/Index">Homepage</a></li>-->
-                            <li><a href="~/Owners">Owners</a></li>
-                            <li><a href="~/Condo">Condos</a></li>
-                            <li><a href="~/Visits">Visits</a></li>
+                            @*@if (Request.IsAuthenticated && Context.User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                            {*@
+                                <li><a href="~/Owners">Owners List</a></li>
+                                <li><a href="~/Condo">Condos</a></li>
+                                <li><a href="~/Visits">Visits Report</a></li>
+                            @*}
+                            else
+                            {*@
+                                @*<li><a href="@Url.Action("Details", "Owners", new { id = Model.Id })">Notify New Visit</a></li>
+                                <li><a href="@Url.Action("Details", "Owners", new { id = Model.Id })">Check in List</a></li>
+        <li><a href="~/Visits">Visits Record</a></li>
+    }*@
+
                         </ul>
                     @*}*@
 

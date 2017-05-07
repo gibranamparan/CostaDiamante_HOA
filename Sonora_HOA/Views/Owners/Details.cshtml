@@ -1,4 +1,6 @@
 ﻿@model Sonora_HOA.Models.Owner
+@using Microsoft.AspNet.Identity
+@using Sonora_HOA.Models
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,11 +12,14 @@
     Sonora_HOA.Models.Guest newGuest = new Sonora_HOA.Models.Guest();
     newGuest.ownerID = Model.Id;
 }
-<a href="@Url.Action("Index","Owners")">
-    <i class="glyphicon glyphicon-arrow-left"></i>Back to Owners List
-</a>
 
-@Html.Partial("Partial_infoOwner", Model)
+@if (Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+{
+    <a href="@Url.Action("Index","Owners")">
+        <i class="glyphicon glyphicon-arrow-left"></i>Back to Owners List
+    </a>
+    @Html.Partial("Partial_infoOwner", Model)
+}
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h2 class="panel-title">
