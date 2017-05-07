@@ -1,6 +1,7 @@
 ﻿@model Sonora_HOA.Models.CheckInList
 @using Sonora_HOA.GeneralTools
-
+@using Microsoft.AspNet.Identity
+@using Sonora_HOA.Models
 @{ 
     string modalID = "mdlConfirmation" + Model.checkInListID;
 
@@ -18,8 +19,13 @@
     <div class='@(selectionMode?"hidden":"")'>
         @Html.LabelFor(model => model.period):
         @Model.period.ToString("MMMM/dd/yyyy")
-        <button type="button" class="alert alert-danger pull-right"
-                data-toggle="modal" href='#@modalID'>Cancel List</button>
+        @if (Request.IsAuthenticated && Context.User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+        {
+            <button type="button" class="alert alert-danger pull-right"
+                    data-toggle="modal" href='#@modalID'>
+                Cancel List
+            </button>
+        }
     </div>
 }
 <table class="table table-hover table-striped datatable">
