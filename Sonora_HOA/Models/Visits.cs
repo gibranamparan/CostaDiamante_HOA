@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sonora_HOA.GeneralTools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Sonora_HOA.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
         ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
-        [Display(Name = "Date")]
+        [Display(Name = "Notification Date")]
         public DateTime date { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
@@ -28,6 +29,10 @@ namespace Sonora_HOA.Models
         [DataType(DataType.Date)]
         [Display(Name = "Departure")]
         public DateTime departureDate { get; set; }
+
+        public TimePeriod timePeriod { get {
+                return new TimePeriod(this.arrivalDate, this.departureDate);
+            } }
 
         //A visits is for one condo
         public int condoID { get; set; }

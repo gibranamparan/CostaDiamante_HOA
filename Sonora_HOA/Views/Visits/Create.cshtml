@@ -25,6 +25,7 @@
             @Html.AntiForgeryToken()
             @Html.HiddenFor(model => model.date)
             @Html.HiddenFor(model => model.condoID)
+            @Html.HiddenFor(model => model.ownerID)
             <div class="col-md-12">
                 @Html.LabelFor(model => condo.name)
                 <span>@condo.name</span>
@@ -47,9 +48,7 @@
                 </button>
             </div>
 
-            <div id="errorMessage" class="text-danger" hidden>
-                Arrival date should be the same, or before departure date!
-            </div>
+            <div id="errorMessage" class="text-danger" hidden></div>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         </div>
         @*Shows current year period checkin lists*@
@@ -74,7 +73,7 @@
 
             if (Date.parse(arrival) > Date.parse(departure) || arrival == "" || departure == "") {
                 $('#createVisit').attr('disabled', true)
-                $("#errorMessage").fadeIn(500)
+                $("#errorMessage").html("Arrival date should be the same, or before departure date!").fadeIn(500)
             } else {
                 $('#createVisit').attr('disabled', false)
                 $("#errorMessage").fadeOut(500)
@@ -91,14 +90,19 @@
                 departureDate: $('#departureDate').val(),
                 date: $('#date').val(),
                 condoID: $('#condoID').val(),
+                ownerID: $('#ownerID').val(),
                 visitors: checkedList
             }
             jQuery.postJSON("/Visits/Create",
                 { visit: visit },
                 "JSON",
                 function (result) {
-                    if (result > 0) {
-                        location.reload();
+                    if (result.savedRegs > 0) {
+                        $("#errorMessage").fadeOut(500)
+                        window.location.replace('/Visits/Index')
+                    } else {
+                        var error = result.error;
+                        $("#errorMessage").html(error).fadeIn(500)
                     }
                 },
                 function (request) {

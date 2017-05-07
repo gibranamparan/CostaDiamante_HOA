@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sonora_HOA.GeneralTools;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -87,14 +88,14 @@ namespace Sonora_HOA.Models
             return cil;
         }
 
-        public class TimePeriodPermissions:IEquatable<TimePeriodPermissions>
+        public class TimePeriodPermissions:TimePeriod
         {
             public enum YearPeriod { Invalid, First, Second }
             private readonly DateTime DT_START1 = new DateTime(DateTime.Today.Year, 1, 1);
             private readonly DateTime DT_END1 = new DateTime(DateTime.Today.Year, 06, 30);
             private readonly DateTime DT_START2 = new DateTime(DateTime.Today.Year, 07, 1);
             private readonly DateTime DT_END2 = new DateTime(DateTime.Today.Year, 12, 31);
-            private DateTime startDate, endDate;
+            
             public YearPeriod yearPeriod {
                 get {
                     YearPeriod result=YearPeriod.Invalid;
@@ -112,19 +113,6 @@ namespace Sonora_HOA.Models
 
             public DateTime StartDate { get { return this.startDate; } }
             public DateTime EndDate { get { return this.endDate; } }
-
-            public override string ToString()
-            {
-                return string.Format("{0:MMM/dd/yyyy} - {1:MMM/dd/yyyy}",
-                         this.startDate, this.endDate);
-            }
-
-            public string ToString(string dateFormat)
-            {
-                return string.Format("{0:"+ dateFormat + "} - {1:"+ dateFormat + "}",
-                         this.startDate, this.endDate);
-            }
-
 
             public TimePeriodPermissions() { }
             public TimePeriodPermissions(int year, YearPeriod period)
@@ -152,11 +140,7 @@ namespace Sonora_HOA.Models
                 this.startDate = cil.startDate;
                 this.endDate = cil.endDate;
             }
-
-            public bool isInside(DateTime date)
-            {
-                return date >= this.startDate && date <= this.endDate;
-            }
+            
 
             public void setYear(int year)
             {
