@@ -29,8 +29,8 @@ namespace Sonora_HOA.Models
 
         public static class RoleNames
         {
-            public static string OWNER = "Owner";
-            public static string ADMIN = "Admin";
+            public const string OWNER = "Owner";
+            public const string ADMIN = "Admin";
         }
 
     }
