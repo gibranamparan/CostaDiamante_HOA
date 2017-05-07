@@ -3,41 +3,87 @@
 @{
     ViewBag.Title = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string dateFormat = "MMMM/dd/yyyy";
 }
+<a href='@Url.Action("Index")'>
+    <i class="glyphicon glyphicon-arrow-left"></i> Back to Visits Report
+</a>
 
-<h2>Details</h2>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2 class="panel-title">
+            <strong>Period of time: </strong>@Model.timePeriod
+        </h2>
+    </div>
+    <div class="panel-body">
+        <hr />
+        <dl class="dl-horizontal col-md-4">
+            <dt>
+                @Html.DisplayNameFor(model => model.date)
+            </dt>
+            <dd>
+                @Model.date.ToLongDateString()
+            </dd>
+        </dl>
 
-<div>
-    <h4>Visits</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.date)
-        </dt>
+        <dl class="dl-horizontal col-md-4">
+            <dt>
+                @Html.DisplayNameFor(model => model.arrivalDate)
+            </dt>
+            <dd>
+                @Model.arrivalDate.ToLongDateString()
+            </dd>
+        </dl>
 
-        <dd>
-            @Html.DisplayFor(model => model.date)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.arrivalDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.arrivalDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.departureDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.departureDate)
-        </dd>
-
-    </dl>
+        <dl class="dl-horizontal col-md-4">
+            <dt>
+                @Html.DisplayNameFor(model => model.departureDate)
+            </dt>
+            <dd>
+                @Model.departureDate.ToLongDateString()
+            </dd>
+        </dl>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.visitsID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+</div>
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h2 class="panel-title">
+            Visitors
+        </h2>
+    </div>
+    <div class="panel-body">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.visitors
+         .FirstOrDefault().permissions.guest.fullName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int num = 1;
+                    foreach (var item in Model.visitors
+                            .OrderBy(vis => vis.permissions.guest.fullName))
+                    {
+                        <tr>
+                            <td>
+                                @num
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => item.permissions.guest.fullName)
+                            </td>
+                        </tr>
+                        num++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

@@ -22,9 +22,18 @@ namespace Sonora_HOA.Controllers
         // GET: Visits
         public ActionResult Index()
         {
-            string ownerID = User.Identity.GetUserId();
-            Owner owner = db.Owners.Find(ownerID);
-            return View(owner.visitsHistory.ToList());
+            List<Visits> visits = new List<Visits>();
+            //If user is admin, shows every visit in database
+            if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                visits = db.Visits.ToList();
+            //If user is an owner, shows just his visits
+            else if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
+            {
+                string ownerID = User.Identity.GetUserId();
+                Owner owner = db.Owners.Find(ownerID);
+                visits = owner.visitsHistory.ToList();
+            }
+            return View(visits);
         }
 
         // GET: Visits/Details/5
@@ -81,26 +90,29 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "condoID,arrivalDate,departureDate,date,guestsInVisit, visitors, ownerID")]
+        public JsonResult Create([Bind(Include = "condoID,arrivalDate,departureDate,date,guestsInVisit, visitors, ownerID")]
             Visits visit)
         {
             if (ModelState.IsValid)
             {
                 if (visit.arrivalDate > visit.departureDate)
                 {
-                    ModelState.AddModelError("INVALID_DATES", "Arrival date is bigger than departure date. Check introduced dates.");
-                }else { 
+                    return Json(new { savedRegs = 0, error = "Arrival date is bigger than departure date. Check introduced dates." });
+                }
+                else { 
                     visit.date = DateTime.Today;
                     db.Visits.Add(visit);
-                    db.SaveChanges();
-                    return RedirectToAction("Index","Visits", new { id = visit.ownerID });
+                    int savedRegs = db.SaveChanges();
+                    return Json(new { savedRegs = savedRegs, error = "" });
                 }
             }
 
             Condo condo = db.Condoes.Find(visit.condoID);
             visit = prepareView(condo);
 
-            return View(visit);
+            return Json(new {
+                savedRegs = 0, error = "Some of the data introduced is wrong, check and try again."+
+                "If problem persists, contact administrator." });
         }
 
         // GET: Visits/Edit/5

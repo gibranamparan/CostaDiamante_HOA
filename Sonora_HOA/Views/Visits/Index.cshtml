@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Sonora_HOA.Models.Visits>
+﻿@using Sonora_HOA.Models
+@model IEnumerable<Sonora_HOA.Models.Visits>
 
 @{
     ViewBag.Title = "Index";
@@ -10,36 +11,58 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.arrivalDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.departureDate)
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.arrivalDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.departureDate)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.visitsID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.visitsID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.visitsID })
-        </td>
-    </tr>
-}
+<table class="table table-hover table-striped datatable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.condoID)
+            </th>
+            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) { 
+            <th>
+                @Html.DisplayNameFor(model => model.owner.fullName)
+            </th>
+            }
+            <th>
+                @Html.DisplayNameFor(model => model.arrivalDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.departureDate)
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => item.condo.name)
+                </td>
+                @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                {
+                    <td>
+                        @Html.DisplayFor(model => item.owner.fullName)
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.arrivalDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.departureDate)
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.visitsID })">
+                        <i class="fa fa-address-book"></i> Guests List
+                    </a>
+                    @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                    {
+                        @(" | ")
+                        <a href="@Url.Action("Delete", new { id = item.visitsID })">
+                            <i class="glyphicon glyphicon-remove"></i> Cancel
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
 
 </table>
