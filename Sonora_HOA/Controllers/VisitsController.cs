@@ -71,6 +71,7 @@ namespace Sonora_HOA.Controllers
             visit.arrivalDate = DateTime.Today.AddDays(1);
             visit.departureDate = visit.arrivalDate.AddDays(7);
             visit.condoID = condo.condoID;
+            visit.ownerID = condo.ownerID;
 
             return visit;
         }
@@ -80,9 +81,9 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "condoID,arrivalDate,departureDate,date,guestsInVisit, visitors")] Visits visit)
+        public ActionResult Create([Bind(Include = "condoID,arrivalDate,departureDate,date,guestsInVisit, visitors, ownerID")]
+            Visits visit)
         {
-            Condo condo = db.Condoes.Find(visit.condoID);
             if (ModelState.IsValid)
             {
                 if (visit.arrivalDate > visit.departureDate)
@@ -92,10 +93,11 @@ namespace Sonora_HOA.Controllers
                     visit.date = DateTime.Today;
                     db.Visits.Add(visit);
                     db.SaveChanges();
-                    return RedirectToAction("Index","Visits", new { id = condo.ownerID });
+                    return RedirectToAction("Index","Visits", new { id = visit.ownerID });
                 }
             }
 
+            Condo condo = db.Condoes.Find(visit.condoID);
             visit = prepareView(condo);
 
             return View(visit);

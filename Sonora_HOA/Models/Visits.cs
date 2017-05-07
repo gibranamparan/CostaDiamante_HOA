@@ -34,7 +34,7 @@ namespace Sonora_HOA.Models
         public virtual Condo condo { get; set; }
 
         //A visits is for one condo
-        public int ownerID { get; set; }
+        public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
 
         //Every visits has a checkin list
