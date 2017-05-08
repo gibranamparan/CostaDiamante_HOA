@@ -217,3 +217,9 @@ ul.usrPanel li a {
     border: none;
     z-index: 5;
 }
+
+@media print{
+    #main > .inner {
+        padding: 0;
+    }
+}

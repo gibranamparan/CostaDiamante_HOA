@@ -23,7 +23,13 @@
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h2 class="panel-title">
-            <span>Owner's condominiums</span>
+            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) {
+                <span>Owner's condominiums</span>
+            }
+            else if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
+            {
+                <span>Your condominiums</span>
+            }
         </h2>
     </div>
     <div class="panel-body in" id="Partial_IndexCondo">

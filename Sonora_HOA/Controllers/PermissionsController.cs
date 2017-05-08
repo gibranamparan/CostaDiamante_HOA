@@ -17,8 +17,8 @@ namespace Sonora_HOA.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Permissions
-        [Authorize(Roles = ApplicationUser.RoleNames.OWNER+","+ApplicationUser.RoleNames.ADMIN)]
-        public ActionResult Index(string id)
+        [Authorize(Roles = ApplicationUser.RoleNames.OWNER + "," + ApplicationUser.RoleNames.ADMIN)]
+        public ActionResult Index(string id, bool openCheckInList = false)
         {
             if (String.IsNullOrEmpty(id))
             {
@@ -35,6 +35,7 @@ namespace Sonora_HOA.Controllers
             ViewBag.timePeriods = timePeriods;
             ViewBag.currentCheckInList = CheckInList.getCurrentCheckInList(owner.Id, db);
             ViewBag.nextCheckInList = CheckInList.findCheckInListByPeriod(owner.Id, timePeriods.ElementAt(1), db);
+            ViewBag.openCheckInList = openCheckInList;
 
             return View();
         }

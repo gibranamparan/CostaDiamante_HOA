@@ -35,7 +35,8 @@ namespace Sonora_HOA
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
-                      "~/Content/jquery.dataTables.min.css"));
+                      "~/Content/jquery.dataTables.min.css",
+                      "~/Content/icomoon.css"));
 
             bundles.Add(new StyleBundle("~/Content/template").Include(
                       "~/assets/css/main.css",

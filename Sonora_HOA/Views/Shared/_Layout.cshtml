@@ -16,10 +16,12 @@
     <div id="wrapper">
         <!-- Main -->
         <div id="main">
-            @Html.Partial("_LoginPartial")
+            <div class="hidden-print">
+                @Html.Partial("_LoginPartial")
+            </div>
             <div class="inner">
                 <!-- Header -->
-                <header id="header"></header>
+                <header id="header" class="hidden-print"></header>
 
                 <!-- Banner -->
                 <section id="container banner">
@@ -27,21 +29,26 @@
                         @RenderBody()
                     </div>
                 </section>
-                <hr />
-                <footer>
-                    <p>&copy; @DateTime.Now.Year - Sonoran Resort HOA</p>
+                <hr class="hidden-print"/>
+                <footer class="hidden-print">
+                    <p>&copy; @DateTime.Now.Year - Sonoran Spa Resort Notification System</p>
+                    <p style="font-size: .8em">Developed by 
+                        <a target="_blank" href="http://www.netcodesolutions.net/">
+                            <span class="icon-netcode"><span class="path1"></span><span class="path2"></span></span> Netcode
+                        </a>
+                    </p>
                 </footer>
 
             </div>
         </div>
 
         <!-- Sidebar -->
-        <div id="sidebar">
+        <div id="sidebar" class="hidden-print">
             <div class="inner">
 
                 <!-- Menu -->
 
-                <nav id="menu">
+                <nav id="menu" >
                     <header class="major">
                         <a href="/">
                             <img src="~/images/logo.png" alt="Sonoran HOA" class="img-responsive">

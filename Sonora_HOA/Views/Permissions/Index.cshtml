@@ -15,6 +15,12 @@
     bool hidePartialGuestList = currentCheckInList.checkInListID > 0;
     string confirmationModalID = "confirmationModal";
 
+    bool openCheckInList = false;
+    if (ViewBag.openCheckInList)
+    {
+        openCheckInList = true;
+    }
+
     ViewDataDictionary vdd = new ViewDataDictionary();
     vdd.Add("selectionMode", true);
     vdd.Add("ownerID", owner.Id);
@@ -34,9 +40,9 @@
     <div class="panel-heading" onclick="changeIcon(this)"
          data-toggle="collapse" data-target="#pnlNewCheckInList">
         <span class="panel-title">New Check in List</span>
-        <i class="pull-right fa fa-window-maximize"></i>
+        <i class='pull-right fa fa-window-@(!openCheckInList?"maximize":"minimize")'></i>
     </div>
-    <div class="panel-body collapse" id="pnlNewCheckInList">
+    <div class='panel-body @(!openCheckInList?"collapse":"in")' id='pnlNewCheckInList'>
         <div class="form-inline">
             <div class="form-group col-md-10">
                 @*Dropdown to show the current and next 6 months periods*@
@@ -65,9 +71,12 @@
             @Html.Partial("../Guest/Partial_ListGuest", owner, vdd)
         </div>
         @*Else, Blocks selection and shows message*@
-        <div id="checkInRegisteredMessage" class="alert alert-info" style="display:@(!hidePartialGuestList?"none":"block")">
-            A check In list was already registered for the selected period.
-            You'll be able to register a new one when this period is finished.
+        <div id="checkInRegisteredMessage" class="alert alert-info" 
+             style="display:@(!hidePartialGuestList?"none":"block")">
+            A <strong>Check In list was already registered</strong> for the selected period. 
+            You'll be able to register a new one when this period is finished. 
+            You can notify a new visit in <strong>"Condominiums"</strong> section clicking 
+            <a href='@Url.Action("Details","Owners",new { id= owner.Id })'>here</a>.
         </div>
     </div>
 </div>
@@ -98,7 +107,7 @@
     modalTitle = "Confirm Check In List Registration",
     primaryMessage = "You are going to confirm a Check In List with the selected guest and family list. " +
         "If you confirm, you wont be able cancel it until the period of 6 months "+
-        "<strong id='spanPeriod'>"+ timePeriods.ElementAt(0) + "</strong> period is finished.",
+        "<strong id='spanPeriod'>"+ timePeriods.ElementAt(0) + "</strong> is finished.",
     javascriptFunction= "registerList",
     modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.INFO),
     callType = VMConfirmModalAttributes.CallType.JAVASCRIPT

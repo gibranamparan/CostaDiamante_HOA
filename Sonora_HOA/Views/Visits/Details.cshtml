@@ -1,13 +1,19 @@
 ﻿@model Sonora_HOA.Models.Visits
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Visit - Guests List";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string dateFormat = "MMMM/dd/yyyy";
 }
-<a href='@Url.Action("Index")'>
-    <i class="glyphicon glyphicon-arrow-left"></i> Back to Visits Report
-</a>
+
+<div class="hidden-print" style="margin-bottom: 2em">
+    <a href='@Url.Action("Index")'>
+        <i class="glyphicon glyphicon-arrow-left"></i> Back to Visits Report
+    </a>
+
+    <button class="btn btn-info pull-right" onclick="window.print()">
+        <i class="fa fa-print"></i> Print
+    </button>
+</div>
 
 <div class="panel panel-info">
     <div class="panel-heading">
@@ -17,25 +23,37 @@
     </div>
     <div class="panel-body">
         <hr />
-        <dl class="dl-horizontal col-md-4">
+        <dl class="dl-horizontal col-xs-4">
             <dt>
                 @Html.DisplayNameFor(model => model.date)
             </dt>
             <dd>
                 @Model.date.ToLongDateString()
             </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.owner.fullName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.owner.fullName)
+            </dd>
         </dl>
 
-        <dl class="dl-horizontal col-md-4">
+        <dl class="dl-horizontal col-xs-4">
             <dt>
                 @Html.DisplayNameFor(model => model.arrivalDate)
             </dt>
             <dd>
                 @Model.arrivalDate.ToLongDateString()
             </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.condo.name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.condo.name)
+            </dd>
         </dl>
 
-        <dl class="dl-horizontal col-md-4">
+        <dl class="dl-horizontal col-xs-4">
             <dt>
                 @Html.DisplayNameFor(model => model.departureDate)
             </dt>

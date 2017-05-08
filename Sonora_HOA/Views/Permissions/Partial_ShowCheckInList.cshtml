@@ -63,17 +63,29 @@
         else if (Model.checkInListID == 0)
         {
             <tr>
-                <td>
-                    <div class="alert alert-info">There is no Check In List registered for selected period</div>
+                <td colspan="2">
+                    <div class="alert alert-info">
+                        <strong>No Check In List registered</strong> for selected period.
+                        @if (selectionMode) { 
+                        <span>
+                            Create a new one clicking
+                            <a href='@Url.Action("Index","Permissions",new { id=ownerID, openCheckInList = true })'>here</a>
+                            and then clicking on <strong>"New Check In List"</strong> panel.
+                        </span> 
+                        }
+                    </div>
                 </td>
             </tr>
         }
         else
         {
             <tr>
-                <td>
+                <td colspan="2">
                     <div class="alert alert-danger">
-                        Current Check In List has no guests registered, contact administrator.
+                        Current Check In List has no guests registered, 
+                        you can register common guests for your account clicking 
+                        <a href='@Url.Action("Details","Owners",new { id=ownerID})'>here</a>.
+                        Else, contact administrator.
                     </div>
                 </td>
             </tr>

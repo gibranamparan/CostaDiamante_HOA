@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Sonora_HOA.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Sonora_HOA.Controllers
 {
@@ -23,14 +24,22 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Owners/Details/5
-        [Authorize(Roles = ApplicationUser.RoleNames.OWNER+","+ApplicationUser.RoleNames.ADMIN)]
+        [Authorize]
         public ActionResult Details(string id)
         {
-            if (id == null)
+            Owner owners = null;
+            if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                owners = db.Owners.Find(id);
             }
-            Owner owners = db.Owners.Find(id);
+            else if(User.IsInRole(ApplicationUser.RoleNames.OWNER))
+            {
+                owners = db.Owners.Find(User.Identity.GetUserId());
+            }
             if (owners == null)
             {
                 return HttpNotFound();

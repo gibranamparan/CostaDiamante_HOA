@@ -9,6 +9,7 @@
 
     ViewDataDictionary vdd = new ViewDataDictionary();
     vdd.Add("selectionMode", true);
+    vdd.Add("ownerID", Model.ownerID);
 }
 
 <a href="@Url.Action("Details","Owners",new { id=condo.owner.Id})">
