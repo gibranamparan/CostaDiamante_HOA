@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Sonora_HOA.Models.Permissions>
 @using Sonora_HOA.Models;
 @using Sonora_HOA.GeneralTools;
+@using Microsoft.AspNet.Identity;
 
 @{
     ViewBag.Title = "Index";
@@ -22,7 +23,10 @@
     <i class="glyphicon glyphicon-arrow-left"></i>Back to Owner's Details
 </a>
 <h2>Owner Family and Guest Check in List</h2>
-@Html.Partial("../Owners/Partial_infoOwner",owner)
+@if(Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+{
+    @Html.Partial("../Owners/Partial_infoOwner", owner)
+}
 
 @*Panel to create a new CheckInList selecting guest from a list*@
 <div class="panel panel-info">

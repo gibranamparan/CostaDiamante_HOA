@@ -1,5 +1,6 @@
 ﻿@model Sonora_HOA.Models.Visits
 @using Sonora_HOA.Models
+@using Microsoft.AspNet.Identity
 @{
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,7 +15,10 @@
     <i class="glyphicon glyphicon-arrow-left"></i>Back to Owner's details
 </a>
 
-@Html.Partial("../Owners/Partial_infoOwner", condo.owner)
+@if (Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+{
+    @Html.Partial("../Owners/Partial_infoOwner", condo.owner)
+}
 
 <div class="panel panel-info">
     <div class="panel-heading">
