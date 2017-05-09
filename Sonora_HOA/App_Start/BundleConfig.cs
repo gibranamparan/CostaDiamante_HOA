@@ -8,10 +8,11 @@ namespace Sonora_HOA
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            /*SCRIPTS BUNDLES*/
             bundles.Add(new ScriptBundle("~/bundles/template").Include(
-            "~/assets/js/skel.min.js",
-            "~/assets/js/util.js",
-            "~/assets/js/main.js"));
+                        "~/Scripts/skel.min.js",
+                        "~/Scripts/util.js",
+                        "~/Scripts/main.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
@@ -32,15 +33,16 @@ namespace Sonora_HOA
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
-            bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
-                      "~/Content/site.css",
-                      "~/Content/jquery.dataTables.min.css",
-                      "~/Content/icomoon.css"));
-
+            /*STYLE BUNDLES*/
             bundles.Add(new StyleBundle("~/Content/template").Include(
-                      "~/assets/css/main.css",
-                      "~/assets/css/font-awesome.min.css"));
+                      "~/Content/main.css",
+                      "~/Content/bootstrap.css",
+                      "~/Content/Site.css",
+                      "~/Content/jquery.dataTables.min.css"));
+
+            bundles.Add(new StyleBundle("~/Content/icons").Include(
+                      "~/Content/font-awesome.min.css",
+                      "~/Content/icomoon.css"));
         }
     }
 }

@@ -211,7 +211,6 @@ input[readonly='readonly']{
     background: #009979;
     position: absolute;
     right: 0;
-    width: 23em;
     text-align: right;
     box-shadow: 0.1em 0.2em 2em grey;
     border-radius: 0 0 0em 1em;

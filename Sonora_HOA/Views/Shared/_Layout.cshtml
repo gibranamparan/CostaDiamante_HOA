@@ -7,8 +7,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Sonoran Restorts Notifications System</title>
-    @Styles.Render("~/Content/template")
-    @Styles.Render("~/Content/css")
+        @Styles.Render("~/Content/template")
+        @Styles.Render("~/Content/icons")
 </head>
 
 <body>
@@ -45,38 +45,27 @@
         <!-- Sidebar -->
         <div id="sidebar" class="hidden-print">
             <div class="inner">
-
                 <!-- Menu -->
-
                 <nav id="menu" >
                     <header class="major">
                         <a href="/">
                             <img src="~/images/logo.png" alt="Sonoran HOA" class="img-responsive">
                         </a>
                     </header>
-                    <header class="major">
-                        @*<ul>
-                            <li>@Html.Partial("_LoginPartial")</li>
-                        </ul>*@
-                    </header>
-
-                        <ul>
-                            @*<li><a href="~/Home/Index">Homepage</a></li>*@
-                            @if (Request.IsAuthenticated && Context.User.IsInRole(ApplicationUser.RoleNames.ADMIN))
-                            {
-                                <li><a href="~/Owners">Owners List</a></li>
-                                <li><a href="~/Condo">Condos</a></li>
-                                <li><a href="~/Visits">Visits Report</a></li>
-                            }
-                            else
-                            {
-                                <li><a href="@Url.Action("Details","Owners",new { id = User.Identity.GetUserId() })">Notify New Visit</a></li>
-                                <li><a href="@Url.Action("Index","Permissions",new { id = User.Identity.GetUserId() })">Check in List</a></li>
-                                <li><a href="~/Visits">Visits Record</a></li>
-                            }
-
-                        </ul>
-
+                    <ul>
+                        @if (Request.IsAuthenticated && Context.User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                        {
+                            <li><a href="~/Owners">Owners List</a></li>
+                            <li><a href="~/Condo">Condos</a></li>
+                            <li><a href="~/Visits">Visits Report</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="@Url.Action("Details","Owners",new { id = User.Identity.GetUserId() })">Notify New Visit</a></li>
+                            <li><a href="@Url.Action("Index","Permissions",new { id = User.Identity.GetUserId() })">Check in List</a></li>
+                            <li><a href="~/Visits">Visits Record</a></li>
+                        }
+                    </ul>
                 </nav>
             </div>
         </div>
