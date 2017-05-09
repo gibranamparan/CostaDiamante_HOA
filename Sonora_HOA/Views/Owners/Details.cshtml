@@ -20,6 +20,7 @@
     </a>
     @Html.Partial("Partial_infoOwner", Model)
 }
+
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h2 class="panel-title">
@@ -47,23 +48,24 @@
     </div>
 </div>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">
-        <h2 class="panel-title" onclick="changeIcon(this)"
-            data-toggle="collapse" data-target="#Partial_ListGuest">
-            <span>Owner's guests for future visits</span>
-            <i class="pull-right fa fa-window-minimize"></i>
-        </h2>
-    </div>
-    <div id="Partial_ListGuest" class="panel-body in">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">New Guest</h3>
-            </div>
-            <div class="panel-body">
-                @Html.Partial("../Guest/Partial_CreateGuest", newGuest)
-            </div>
+    
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h2 class="panel-title" onclick="changeIcon(this)"
+                data-toggle="collapse" data-target="#Partial_ListGuest">
+                <span>Owner's guests for future visits</span>
+                <i class="pull-right fa fa-window-minimize"></i>
+            </h2>
         </div>
-        @Html.Partial("../Guest/Partial_ListGuest", Model)
+        <div id="Partial_ListGuest" class="panel-body in">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">New Guest</h3>
+                </div>
+                <div class="panel-body">
+                    @Html.Partial("../Guest/Partial_CreateGuest", newGuest)
+                </div>
+            </div>
+            @Html.Partial("../Guest/Partial_ListGuest", Model)
+        </div>
     </div>
-</div>

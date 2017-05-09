@@ -27,7 +27,7 @@ namespace Sonora_HOA.Controllers
                 return HttpNotFound();
             }
 
-            var visits = db.Visits.Where(vis => vis.visitors.First()
+            var visits = db.Visits.Where(vis => vis.visitors.ToList().FirstOrDefault()
                 .permissions.checkInListID == checkInList.checkInListID);
             db.Visits.RemoveRange(visits);
             db.CheckInLists.Remove(checkInList);

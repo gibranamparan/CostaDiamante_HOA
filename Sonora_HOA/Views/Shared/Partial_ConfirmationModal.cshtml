@@ -14,7 +14,7 @@
             </div>
             <div class="modal-footer">
                 @if (Model.callType != VMConfirmModalAttributes.CallType.NONE) {
-                    <a class="btn btn-@Model.modalStyle"
+                    <a id="btnConfirm" class="btn btn-@Model.modalStyle"
                         href="@(Model.callType == VMConfirmModalAttributes.CallType.POSTBACK?
                         Url.Action(Model.action,Model.controller,Model.routeVals):"#")"
                         onclick="@(Model.callType == VMConfirmModalAttributes.CallType.JAVASCRIPT?

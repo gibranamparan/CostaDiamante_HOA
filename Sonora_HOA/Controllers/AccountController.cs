@@ -98,7 +98,7 @@ namespace Sonora_HOA.Controllers
             var user = UserManager.FindByName(model.Email);
             if (UserManager.IsInRole(user.Id, ApplicationUser.RoleNames.ADMIN))
             {
-                return RedirectToAction("Index", "Owners");
+                return RedirectToAction("Index", "Visits");
             }else
             {
                 return RedirectToAction("Details", "Owners",new { id = user.Id});

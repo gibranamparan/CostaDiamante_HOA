@@ -1,8 +1,10 @@
 ﻿@model List<Sonora_HOA.Models.Condo>
 @using Sonora_HOA.Models
+@using Sonora_HOA.GeneralTools
 @using Microsoft.AspNet.Identity
 
 @{
+    string confirmationModalID = "removeConfirmation";
     bool selectionMode = false;
     string ownerID = "";
     if (ViewData["selectionMode"] != null && ViewData["ownerID"] != null)
@@ -11,6 +13,16 @@
         ownerID = (string)ViewData["ownerID"];
 
     }
+    VMConfirmModalAttributes removeConfirmationModalOptions = new VMConfirmModalAttributes
+    {
+        modalID = confirmationModalID,
+        modalTitle = "Confirm Check In List Registration",
+        primaryMessage = "You are going to remove the condo <strong id='condoName'></strong>"+
+        " from owner's list, all visits notification related to this condo will be deleted.",
+        javascriptFunction = "removeCondo",
+        modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
+        callType = VMConfirmModalAttributes.CallType.JAVASCRIPT
+    };
 }
 @if (selectionMode)
 {
@@ -57,12 +69,14 @@
                         <td>
                             <a href="@Url.Action("Create", "Visits", new { id = item.condoID })">
                                 <i class="fa fa-book"></i>Notify New Visit
-                            </a> 
+                            </a> | 
                             @if(Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                             {
-                                @:| <a onclick="removeCondo(@item.condoID)">
-                                @:<i class="glyphicon glyphicon-remove"></i>Remove
-                                @:</a>
+                                <a data-toggle="modal" href='#@confirmationModalID'
+                                   condo-name="@item.name" condo-id="@item.condoID"
+                                   onclick="prepareConfirmationModal(this)">
+                                    <i class="glyphicon glyphicon-remove"></i>Remove
+                                </a>
                             }
                             
                         </td>
@@ -70,11 +84,13 @@
                 </tr>
             }
         }
-        else
+        else if(!selectionMode)
         {
             <tr>
                 <td colspan="2">
-                    <div class="alert alert-info">No condominiums registered to this owner.</div>
+                    <div class="alert alert-info">
+                        No condominiums registered to this owner.
+                    </div>
                 </td>
             </tr>
         }
@@ -83,7 +99,17 @@
 </table>
 @Html.AntiForgeryToken()
 
+@Html.Partial("../Shared/Partial_ConfirmationModal", removeConfirmationModalOptions)
+
 <script>
+    function prepareConfirmationModal(link) {
+        nameFunction = '@removeConfirmationModalOptions.javascriptFunction';
+        condoName = $(link).attr("condo-name");
+        condoID = $(link).attr("condo-id");
+        $(".modal-footer #btnConfirm").attr("onclick", nameFunction + "(" + condoID + ")")
+        $(".modal-body #condoName").html(condoName)
+    }
+
     function removeCondo(condoID) {
         var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
         jQuery.postJSON("/Condo/RemoveFromOwner",{id:condoID},"JSON",
@@ -126,7 +152,7 @@
             var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
             jQuery.postJSON("/Condo/AssociateCondo",
                 { 
-                    condosToAssociate: checkedCondos, 
+                    condosToAssociate: checkedList,
                     ownerID: ownerID
                 },"JSON",
                 function (result) {

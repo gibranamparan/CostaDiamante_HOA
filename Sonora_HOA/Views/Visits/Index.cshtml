@@ -1,13 +1,54 @@
-﻿@using Sonora_HOA.Models
-@model IEnumerable<Sonora_HOA.Models.Visits>
+﻿@model IEnumerable<Sonora_HOA.Models.Visits>
+@using Sonora_HOA.Models
+@using Sonora_HOA.GeneralTools
 
 @{
     ViewBag.Title = "Visits Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    TimePeriod periodReported = ViewBag.periodReported;
+    VMConfirmModalAttributes modalOptions = new VMConfirmModalAttributes
+    {
+        modalID = "cancelVisitConfirmation",
+        modalTitle = "Confirm Visit Cancelation",
+        primaryMessage = "You are going to confirm the cancelation of the selected visit.",
+        routeVals = null,
+        modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
+        callType = VMConfirmModalAttributes.CallType.JAVASCRIPT,
+        javascriptFunction = "confirmVisitCancelation"
+    };
 }
 
 <h2>Visits</h2>
 
+@using (Html.BeginForm("Index","Visits",FormMethod.Get,null))
+{
+    <div class="form-inline">
+        <div class="row">
+            <div class="form-group col-md-5">
+                @Html.LabelFor(model => periodReported.startDate)
+                @Html.EditorFor(model => periodReported.startDate,
+           new { htmlAttributes = new { @class = "form-control", } })
+            </div>
+
+            <div class="form-group col-md-5">
+                @Html.LabelFor(model => periodReported.endDate)
+                @Html.EditorFor(model => periodReported.endDate,
+           new { htmlAttributes = new { @class = "form-control", } })
+            </div>
+            <button id="btnSearch" name="searchVisits" class="btn btn-primary">
+                <i class="fa fa-search"></i> Search
+            </button>
+        </div>
+        <div id="errorMessage" class="field-validation-error"></div>
+    </div>
+}
+
+@if (Model.Count() == 0)
+{
+    <div class="alert alert-info">
+        No visits have been notified in selected period.
+    </div>
+}
 <table class="table table-hover table-striped datatable">
     <thead>
         <tr>
@@ -41,10 +82,10 @@
                     </td>
                 }
                 <td>
-                    @Html.DisplayFor(modelItem => item.arrivalDate)
+                    @item.arrivalDate.ToLongDateString()
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.departureDate)
+                    @item.departureDate.ToLongDateString()
                 </td>
                 <td>
                     <a href="@Url.Action("Details", new { id = item.visitsID })">
@@ -53,7 +94,8 @@
                     @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                     {
                         @(" | ")
-                        <a href="@Url.Action("Delete", new { id = item.visitsID })">
+                        <a onclick="prepareModal(@item.visitsID)"
+                           data-toggle="modal" href='#@modalOptions.modalID'>
                             <i class="glyphicon glyphicon-remove"></i> Cancel
                         </a>
                     }
@@ -63,3 +105,52 @@
     </tbody>
 
 </table>
+@Html.AntiForgeryToken()
+@Html.Partial("../Shared/Partial_ConfirmationModal", modalOptions)
+    <script>
+        function prepareModal(id) {
+            $('.modal-footer #btnConfirm')
+                .attr('onclick','@(modalOptions.javascriptFunction)('+id+')')
+        }
+
+        function confirmVisitCancelation(id) {
+            var antiForgeryToken = $('input[name=__RequestVerificationToken]').val();
+            jQuery.postJSON("/Visits/DeleteConfirmed",
+                { id: id},
+                "JSON",
+                function (result) {
+                    if (result.savedRegs > 0) {
+                        window.location.reload()
+                    } else {
+                        var error = result.error;
+                    }
+                },
+                function (request) {
+                    alert("Error: " + JSON.stringify(request));
+                }, null, antiForgeryToken)
+        }
+    </script>
+
+@section Scripts{
+<script>
+    //Date picker validation, and button block
+    $("#periodReported_startDate, #periodReported_endDate").change(function () {
+        var arrival = $("#periodReported_startDate").val();
+        var departure = $("#periodReported_endDate").val();
+
+        if (Date.parse(arrival) > Date.parse(departure) || arrival == "" || departure == "") {
+            $("#errorMessage").html('"From date" must be less than "To Date"').fadeIn(500)
+        } else {
+            $("#errorMessage").fadeOut(500)
+        }
+        enableOrDisableBtnRegister();
+    });
+
+    function enableOrDisableBtnRegister() {
+        var arrival = $("#periodReported_startDate").val();
+        var departure = $("#periodReported_endDate").val();
+        var enable = arrival && departure && Date.parse(arrival) <= Date.parse(departure);
+        $("#btnSearch").attr('disabled', !enable);
+    }
+</script>
+}

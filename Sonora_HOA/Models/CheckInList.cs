@@ -1,6 +1,7 @@
 ﻿using Sonora_HOA.GeneralTools;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -13,7 +14,9 @@ namespace Sonora_HOA.Models
     {
         public int checkInListID { get; set; }
 
+        [DisplayName("From")]
         public DateTime startDate { get; set; }
+        [DisplayName("To")]
         public DateTime endDate { get; set; }
         
         //A condo has one owner
@@ -21,12 +24,27 @@ namespace Sonora_HOA.Models
         [Display(Name = "Owner")]
         public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
-
+        
         [Display(Name ="Year Period")]
-        public TimePeriodPermissions period { get { return new TimePeriodPermissions(this); } }
+        public virtual TimePeriodPermissions period {
+            get {
+                return new TimePeriodPermissions(this);
+            }
+        }
 
         public virtual ICollection<Permissions> permissions { get; set; }
 
+        public void setPeriod(TimePeriodPermissions tpp)
+        {
+            this.startDate = tpp.startDate;
+            this.endDate = tpp.endDate;
+        }
+
+        /// <summary>
+        /// Generate a list of two elements, first element reprsents the recurrent semester
+        /// of the year, second element the next semester.
+        /// </summary>
+        /// <returns>Two elements TimePeriodPermissions.</returns>
         public static List<TimePeriodPermissions> generatePermissionPeriods()
         {
             List<TimePeriodPermissions> objs = new List<TimePeriodPermissions>();
@@ -39,7 +57,7 @@ namespace Sonora_HOA.Models
                 TimePeriodPermissions(DateTime.Today.Year,
                 TimePeriodPermissions.YearPeriod.Second);
             //If Today is later than the first semester
-            if (!tp1.isInside(DateTime.Today) && DateTime.Today > tp1.StartDate)
+            if (!tp1.hasInside(DateTime.Today) && DateTime.Today > tp1.StartDate)
             {
                 TimePeriodPermissions tpm = new TimePeriodPermissions(tp2);
                 //Second semester becomes the first one of the next year
@@ -67,9 +85,13 @@ namespace Sonora_HOA.Models
             var cils = owner.checkInListHistory
                 .OrderByDescending(list => list.startDate);
             var cil = cils.Take(2).ToList()
-                .FirstOrDefault(list => list.period.isInside(DateTime.Today));
-            if (cil == null)
+                .FirstOrDefault(list => list.period.hasInside(DateTime.Today));
+            if (cil == null) { 
                 cil = new CheckInList();
+                //Sets current period
+                cil.setPeriod(new TimePeriodPermissions(DateTime.Today.Year,
+                    TimePeriodPermissions.yearPeriodOfDate(DateTime.Today)));
+            }
             return cil;
         }
 
@@ -88,53 +110,89 @@ namespace Sonora_HOA.Models
             return cil;
         }
 
+        /// <summary>
+        /// Represents a period of the year where guest are registered to be allowed to visits
+        /// a owner's condo.
+        /// </summary>
         public class TimePeriodPermissions:TimePeriod
         {
+            private static readonly DateTime DT_START1 = new DateTime(DateTime.Today.Year, 1, 1);
+            private static readonly DateTime DT_END1 = new DateTime(DateTime.Today.Year, 06, 30);
+            private static readonly DateTime DT_START2 = new DateTime(DateTime.Today.Year, 07, 1);
+            private static readonly DateTime DT_END2 = new DateTime(DateTime.Today.Year, 12, 31);
+
+            public DateTime StartDate { get { return this.startDate; } }
+            public DateTime EndDate { get { return this.endDate; } }
+
+            /// <summary>
+            /// Enumerates fir First Semester, Second Semester or invalid dates.
+            /// </summary>
             public enum YearPeriod { Invalid, First, Second }
-            private readonly DateTime DT_START1 = new DateTime(DateTime.Today.Year, 1, 1);
-            private readonly DateTime DT_END1 = new DateTime(DateTime.Today.Year, 06, 30);
-            private readonly DateTime DT_START2 = new DateTime(DateTime.Today.Year, 07, 1);
-            private readonly DateTime DT_END2 = new DateTime(DateTime.Today.Year, 12, 31);
-            
             public YearPeriod yearPeriod {
                 get {
                     YearPeriod result=YearPeriod.Invalid;
                     if(startDate.Year == endDate.Year) { 
-                        if (startDate.Day == this.DT_START1.Day && startDate.Month == this.DT_START1.Month
-                            && endDate.Day == this.DT_END1.Day && endDate.Month == this.DT_END1.Month)
+                        if (startDate.Day == TimePeriodPermissions.DT_START1.Day && startDate.Month == TimePeriodPermissions.DT_START1.Month
+                            && endDate.Day == TimePeriodPermissions.DT_END1.Day && endDate.Month == TimePeriodPermissions.DT_END1.Month)
                             result = YearPeriod.First;
-                        if (startDate.Day == this.DT_START2.Day && startDate.Month == this.DT_START2.Month
-                            && endDate.Day == this.DT_END2.Day && endDate.Month == this.DT_END2.Month)
+                        if (startDate.Day == TimePeriodPermissions.DT_START2.Day && startDate.Month == TimePeriodPermissions.DT_START2.Month
+                            && endDate.Day == TimePeriodPermissions.DT_END2.Day && endDate.Month == TimePeriodPermissions.DT_END2.Month)
                             result = YearPeriod.Second;
                     }
                     return result;
                 }
             }
 
-            public DateTime StartDate { get { return this.startDate; } }
-            public DateTime EndDate { get { return this.endDate; } }
+            /// <summary>
+            /// By default, an instance with current year and period will be generated
+            /// </summary>
+            public TimePeriodPermissions(){  }
 
-            public TimePeriodPermissions() { }
+            public static YearPeriod yearPeriodOfDate(DateTime dt)
+            {
+                TimePeriod tp1 = new TimePeriod(TimePeriodPermissions.DT_START1, TimePeriodPermissions.DT_END1);
+                TimePeriod tp2 = new TimePeriod(TimePeriodPermissions.DT_START1, TimePeriodPermissions.DT_END1);
+                YearPeriod yp = YearPeriod.Invalid;
+                if (tp1.hasInside(dt))
+                    yp = YearPeriod.First;
+                else if (tp2.hasInside(dt))
+                    yp = YearPeriod.Second;
+
+                return yp;
+            }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="year">Year where is the six months period.</param>
+            /// <param name="period">Period enumeration (first or second).</param>
             public TimePeriodPermissions(int year, YearPeriod period)
             {
                 if (period == YearPeriod.First)
                 {
-                    this.startDate = this.DT_START1.AddYears(year - this.DT_START1.Year);
-                    this.endDate = this.DT_END1.AddYears(year - this.DT_END1.Year);
+                    this.startDate = TimePeriodPermissions.DT_START1.AddYears(year - TimePeriodPermissions.DT_START1.Year);
+                    this.endDate = TimePeriodPermissions.DT_END1.AddYears(year - TimePeriodPermissions.DT_END1.Year);
                 }
                 else if (period == YearPeriod.Second)
                 {
-                    this.startDate = this.DT_START2.AddYears(year - this.DT_START2.Year);
-                    this.endDate = this.DT_END2.AddYears(year - this.DT_END2.Year);
+                    this.startDate = TimePeriodPermissions.DT_START2.AddYears(year - TimePeriodPermissions.DT_START2.Year);
+                    this.endDate = TimePeriodPermissions.DT_END2.AddYears(year - TimePeriodPermissions.DT_END2.Year);
                 }
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="tp2">An already instanced period.</param>
             public TimePeriodPermissions(TimePeriodPermissions tp2)
             {
                 this.startDate = tp2.StartDate;
                 this.endDate = tp2.EndDate;
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="cil">Another instanced CheckIInList, the period will be copied.</param>
             public TimePeriodPermissions(CheckInList cil)
             {
                 this.startDate = cil.startDate;
@@ -144,8 +202,8 @@ namespace Sonora_HOA.Models
 
             public void setYear(int year)
             {
-                this.startDate = this.DT_START2.AddYears(year - this.DT_START2.Year);
-                this.endDate = this.DT_END2.AddYears(year - this.DT_END2.Year);
+                this.startDate = TimePeriodPermissions.DT_START2.AddYears(year - TimePeriodPermissions.DT_START2.Year);
+                this.endDate = TimePeriodPermissions.DT_END2.AddYears(year - TimePeriodPermissions.DT_END2.Year);
             }
 
             public bool Equals(TimePeriodPermissions other)

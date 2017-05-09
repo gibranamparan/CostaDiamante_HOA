@@ -28,7 +28,8 @@
         }
     </div>
 }
-<table class="table table-hover table-striped datatable">
+<table class='table table-hover table-striped
+       @(Model.checkInListID>0 && Model.permissions.Count()>0?"datatable":"")'>
     <thead>
         <tr>
             @if (selectionMode)
@@ -51,7 +52,7 @@
                     @if (selectionMode)
                     {
                         <td>
-                            <input type="checkbox" value="@item.permissionsID" onchange="selectChange(this)" />
+                            <input type="checkbox" value="@item.permissionsID" onchange="selectChange(this); enableOrDisableBtnRegister()" />
                         </td>
                     }
                     <td>
@@ -65,11 +66,11 @@
             <tr>
                 <td colspan="2">
                     <div class="alert alert-info">
-                        <strong>No Check In List registered</strong> for selected period.
+                        <strong>No Check In List registered</strong> for selected period (@Model.period).
                         @if (selectionMode) { 
                         <span>
                             Create a new one clicking
-                            <a href='@Url.Action("Index","Permissions",new { id=ownerID, openCheckInList = true })'>here</a>
+                            <strong><a href='@Url.Action("Index","Permissions",new { id=ownerID, openCheckInList = true })'>here</a></strong>
                             and then clicking on <strong>"New Check In List"</strong> panel.
                         </span> 
                         }
@@ -98,8 +99,9 @@
 {
     modalID = modalID,
     modalTitle = "Confirm cancelation",
-    primaryMessage = "You are going to cancel the selected guest and family check in list. " +
-        "If you confirm, the owner or administrator must have to create a new check in list in order to schedule a new visit in this period of year.",
+    primaryMessage = "You are going to <strong>cancel the selected \"Guest and Family Check in List\"</strong>. " +
+        "If you confirm, the associated <strong>\"Visit Notifications\"</strong> to this check in list will be <strong>canceled too</strong>. " +
+        "You'll need to create a new \"Check in List\" in order to schedule a new visit in this period of the year.",
     action = "Delete",
     controller = "CheckInList",
     routeVals = new { id = Model.checkInListID },
@@ -116,10 +118,14 @@
         //Check the condo to be associated
         function selectChange(cb) {
             //Item added to the selected list items
-            if ($(cb).is(":checked")){
-                checkedList.push({
+            if ($(cb).is(":checked")) {
+                if (checkedList.length<(@Visits.MAX_GUESTS_ALLOWED)){
+                    checkedList.push({
                     permissionsID: $(cb).val(),
                 })
+                } else {
+                    $(cb).attr('checked', false);
+                }
             }
             else {
                 //If unchecked, item is removed from the selected list items

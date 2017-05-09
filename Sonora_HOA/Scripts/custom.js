@@ -6,7 +6,6 @@ function changeIcon(bar) {
     $(bar).find("i").toggleClass("fa-window-minimize fa-window-maximize")
 }
 
-
 //Agrega funcion a JQuery para permitir solicitudes asincronas identificandose como usuario logeado
 jQuery.postJSON = function (url, data, dataType, success, fail, always, antiForgeryToken) {
     if (dataType === void 0) { dataType = "json"; }

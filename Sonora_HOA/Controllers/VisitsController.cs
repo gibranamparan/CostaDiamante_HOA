@@ -18,9 +18,9 @@ namespace Sonora_HOA.Controllers
     public class VisitsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-
+        
         // GET: Visits
-        public ActionResult Index()
+        public ActionResult Index(TimePeriod periodReported)
         {
             List<Visits> visits = new List<Visits>();
             //If user is admin, shows every visit in database
@@ -33,6 +33,15 @@ namespace Sonora_HOA.Controllers
                 Owner owner = db.Owners.Find(ownerID);
                 visits = owner.visitsHistory.ToList();
             }
+            if (periodReported.Equals(new TimePeriod()))
+                periodReported = new TimePeriod(DateTime.Today, DateTime.Today.AddDays(7));
+
+            //Se filtran visitas
+            visits = visits.Where(vis => periodReported
+                .hasInside(vis.timePeriod.startDate))
+                .OrderBy(vis=>vis.timePeriod.startDate).ToList();
+
+            ViewBag.periodReported = periodReported;
             return View(visits);
         }
 
@@ -95,15 +104,25 @@ namespace Sonora_HOA.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (visit.arrivalDate > visit.departureDate)
+                //Invalid range
+                if (visit.arrivalDate > visit.departureDate) 
+                    return Json(new { savedRegs = 0, error = "Introduced time range is not valid. " });
+                //Visitors quantity more than allowed
+                else if (visit.visitors.Count() > Visits.MAX_GUESTS_ALLOWED)
                 {
-                    return Json(new { savedRegs = 0, error = "Arrival date is bigger than departure date. Check introduced dates." });
+                    return Json(new { savedRegs = 0, error = "Try notifiying a visit authorizing max. 8 guests. " });
                 }
-                else { 
-                    visit.date = DateTime.Today;
-                    db.Visits.Add(visit);
-                    int savedRegs = db.SaveChanges();
-                    return Json(new { savedRegs = savedRegs, error = "" });
+                else {
+                    CheckInList currentCil = CheckInList.getCurrentCheckInList(visit.ownerID, db);
+                    if (currentCil.period.hasInside(visit.timePeriod))
+                    {
+                        visit.date = DateTime.Today;
+                        db.Visits.Add(visit);
+                        int savedRegs = db.SaveChanges();
+                        return Json(new { savedRegs = savedRegs, error = "" });
+                    }
+                    else
+                        return Json(new { savedRegs = 0, error = "Selected dates are out of current Check In List year period. " });
                 }
             }
 
@@ -166,14 +185,13 @@ namespace Sonora_HOA.Controllers
 
         // POST: Visits/Delete/5
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        [ValidateHeaderAntiForgeryToken]
+        public JsonResult DeleteConfirmed(int id)
         {
             Visits visits = db.Visits.Find(id);
             db.Visits.Remove(visits);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            int savedRegs = db.SaveChanges();
+            return Json(new { savedRegs = savedRegs });
         }
 
         protected override void Dispose(bool disposing)

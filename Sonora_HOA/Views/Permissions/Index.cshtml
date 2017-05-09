@@ -34,6 +34,7 @@
     @Html.Partial("../Owners/Partial_infoOwner", owner)
 }
 
+
 @*Panel to create a new CheckInList selecting guest from a list*@
 <div class="panel panel-info">
     @*Collapsable panel*@
@@ -80,6 +81,14 @@
         </div>
     </div>
 </div>
+
+@if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
+{
+    <div class="alert alert-info">
+        In this list you register <strong>non-paying</strong> family and guests that will stay in your unit while
+        you are not in attendance. Owners may have any guests with them while owner is also staying in their condo.
+    </div>
+}
 
 @*Panel to show current checkin lists*@
 <div class="panel panel-info" id="pnlCurrentCheckInList">

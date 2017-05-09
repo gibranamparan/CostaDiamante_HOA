@@ -17,7 +17,7 @@ namespace Sonora_HOA.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Permissions
-        [Authorize(Roles = ApplicationUser.RoleNames.OWNER + "," + ApplicationUser.RoleNames.ADMIN)]
+        [Authorize]
         public ActionResult Index(string id, bool openCheckInList = false)
         {
             if (String.IsNullOrEmpty(id))
@@ -31,12 +31,21 @@ namespace Sonora_HOA.Controllers
             }
 
             ViewBag.owner = owner;
+            //Time periods list to populate dropdown selection
             List<CheckInList.TimePeriodPermissions> timePeriods = CheckInList.generatePermissionPeriods();
             ViewBag.timePeriods = timePeriods;
-            ViewBag.currentCheckInList = CheckInList.getCurrentCheckInList(owner.Id, db);
-            ViewBag.nextCheckInList = CheckInList.findCheckInListByPeriod(owner.Id, timePeriods.ElementAt(1), db);
-            ViewBag.openCheckInList = openCheckInList;
 
+            CheckInList currentCheckInList = CheckInList.getCurrentCheckInList(owner.Id, db);
+            ViewBag.currentCheckInList = currentCheckInList;
+
+            CheckInList nextCheckInList = CheckInList.findCheckInListByPeriod(owner.Id, timePeriods.ElementAt(1), db);
+            if (nextCheckInList.checkInListID == 0)
+                nextCheckInList.setPeriod(new CheckInList.TimePeriodPermissions(timePeriods.ElementAt(1)));
+
+            ViewBag.nextCheckInList = nextCheckInList;
+
+            //Indicates if new checkinlist form must be opened by default
+            ViewBag.openCheckInList = openCheckInList;
             return View();
         }
 
@@ -57,7 +66,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Permissions/Create
-        [Authorize(Roles = ApplicationUser.RoleNames.OWNER+","+ApplicationUser.RoleNames.ADMIN)]
+        [Authorize]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
         public JsonResult Create(List<Permissions> checkedList,CheckInList period,string ownerID)

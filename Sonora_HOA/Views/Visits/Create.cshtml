@@ -59,6 +59,7 @@
         @*Shows current year period checkin lists*@
         <div class="col-md-12">
             <h3>Current Check In List: @checkInList.period.ToString("MMMM/dd/yyyy")</h3>
+            <div class="alert alert-info"><strong>Max. 8 guest</strong> to be authorized for this visit.</div>
             @Html.Partial("../Permissions/Partial_ShowCheckInList", checkInList, vdd)
         </div>
     </div>
@@ -67,23 +68,39 @@
 
 @section Scripts {
     <script>
+        var cilStartDate = Date.parse('@checkInList.period.startDate.ToString("yyyy-MM-dd")')
+        var cilEndDate = Date.parse('@checkInList.period.endDate.ToString("yyyy-MM-dd")')
+
         function changeIcon(boton) {
             $(boton).toggleClass("fa-window-minimize fa-window-maximize")
         }
 
         //Date picker validation, and button block
-        $("#arrivalDate, #departureDate").change(function () {
-            var arrival = document.getElementById("arrivalDate").value;
-            var departure = document.getElementById("departureDate").value;
+        $("#arrivalDate, #departureDate").on('input',function () {
+            enableOrDisableBtnRegister();
+        });
 
-            if (Date.parse(arrival) > Date.parse(departure) || arrival == "" || departure == "") {
-                $('#createVisit').attr('disabled', true)
-                $("#errorMessage").html("Arrival date should be the same, or before departure date!").fadeIn(500)
+        function enableOrDisableBtnRegister(){
+            var arrival = Date.parse($("#arrivalDate").val());
+            var departure = Date.parse($("#departureDate").val());
+
+            var valCheckList = checkedList.length>0;
+            var valRange = arrival <= departure;
+            var valCheckInRange = arrival >= cilStartDate && arrival <= cilEndDate
+            && departure >= cilStartDate && departure <= cilEndDate;
+
+            var enable = valCheckList && valRange && valCheckInRange;
+            var errorMsg = (!valCheckList ? "No guest has been selected. " : "")
+                + (!valRange ? "Introduced time range is not valid. " : "")
+                + (!valCheckInRange ? "Selected dates are out of current Check In List year period. " : "");
+
+            $("#btnRegister").attr('disabled', !enable);
+            if (!enable) {
+                $("#errorMessage").html(errorMsg).fadeIn(500)
             } else {
-                $('#createVisit').attr('disabled', false)
                 $("#errorMessage").fadeOut(500)
             }
-        });
+        }
 
         //Send all checked condos to server to be associated to current owner.
         function registerList() {
@@ -104,7 +121,9 @@
                 function (result) {
                     if (result.savedRegs > 0) {
                         $("#errorMessage").fadeOut(500)
-                        window.location.replace('/Visits/Index')
+                        window.location.replace('/Visits/Index/?' +
+                            'periodReported.startDate=' + $('#arrivalDate').val() +
+                            '&periodReported.endDate=' + $('#departureDate').val())
                     } else {
                         var error = result.error;
                         $("#errorMessage").html(error).fadeIn(500)

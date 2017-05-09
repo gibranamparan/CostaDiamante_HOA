@@ -1,13 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sonora_HOA.GeneralTools
 {
     public class TimePeriod
     {
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode =true,
+            DataFormatString ="{0:yyyy-MM-dd}")]
+        [DisplayName("From")]
         public DateTime startDate { get; set; }
+
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true,
+            DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayName("To")]
         public DateTime endDate { get; set; }
 
         public TimePeriod() { }
@@ -24,7 +35,7 @@ namespace Sonora_HOA.GeneralTools
 
         public override string ToString()
         {
-            return string.Format("{0:MMM/dd/yyyy} - {1:MMM/dd/yyyy}",
+            return string.Format("{0:MMMM/dd/yyyy} - {1:MMMM/dd/yyyy}",
                      this.startDate, this.endDate);
         }
 
@@ -33,9 +44,18 @@ namespace Sonora_HOA.GeneralTools
             return string.Format("{0:" + dateFormat + "} - {1:" + dateFormat + "}",
                      this.startDate, this.endDate);
         }
-        public bool isInside(DateTime date)
+        public bool hasInside(DateTime date)
         {
             return date >= this.startDate && date <= this.endDate;
+        }
+        public bool hasInside(TimePeriod other)
+        {
+            return other.startDate>=this.startDate && other.startDate<=this.endDate
+                && other.endDate>=this.startDate && other.endDate<=this.endDate;
+        }
+        public bool Equals(TimePeriod other)
+        {
+            return this.startDate == other.startDate && this.endDate == other.endDate;
         }
     }
 }

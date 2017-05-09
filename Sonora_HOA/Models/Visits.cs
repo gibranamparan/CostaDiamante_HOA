@@ -9,6 +9,8 @@ namespace Sonora_HOA.Models
 {
     public class Visits
     {
+        public static int MAX_GUESTS_ALLOWED = 8;
+
         [Key]
         public int visitsID { get; set; }
 

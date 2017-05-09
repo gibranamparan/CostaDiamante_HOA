@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Sonora_HOA.Models;
+using static Sonora_HOA.GeneralTools.FiltrosDeSolicitudes;
 
 namespace Sonora_HOA.Controllers
 {
@@ -98,32 +99,21 @@ namespace Sonora_HOA.Controllers
             return View(guest);
         }
 
-        // GET: Guest/Delete/5
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN + "," + ApplicationUser.RoleNames.OWNER)]
-        public ActionResult Delete(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Guest guest = db.Guests.Find(id);
-            if (guest == null)
-            {
-                return HttpNotFound();
-            }
-            return View(guest);
-        }
-
         // POST: Guest/Delete/5
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN + "," + ApplicationUser.RoleNames.OWNER)]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        [Authorize]
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public JsonResult Delete(int id = 0)
         {
             Guest guest = db.Guests.Find(id);
-            db.Guests.Remove(guest);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            if (guest == null) 
+                return Json(new { regSaved = 0 });
+            else
+            {
+                db.Guests.Remove(guest);
+                int regSaved = db.SaveChanges();
+                return Json(new { regSaved = regSaved });
+            }
         }
 
         protected override void Dispose(bool disposing)

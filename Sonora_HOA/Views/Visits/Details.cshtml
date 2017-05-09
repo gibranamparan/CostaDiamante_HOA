@@ -34,7 +34,9 @@
                 @Html.DisplayNameFor(model => model.owner.fullName)
             </dt>
             <dd>
-                @Html.DisplayFor(model => model.owner.fullName)
+                <a href="@Url.Action("Details","Owners",new { id = Model.ownerID})">
+                    @Html.DisplayFor(model => model.owner.fullName)
+                </a>
             </dd>
         </dl>
 
