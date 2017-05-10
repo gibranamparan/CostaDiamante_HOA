@@ -46,6 +46,7 @@ namespace Sonora_HOA.Models
         {
             return new ApplicationDbContext();
         }
+        
 
         public System.Data.Entity.DbSet<Sonora_HOA.Models.Owner> Owners { get; set; }
 

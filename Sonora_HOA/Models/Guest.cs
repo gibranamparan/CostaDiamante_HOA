@@ -19,6 +19,7 @@ namespace Sonora_HOA.Models
         public string lastName { get; set; }
 
         //One guest can be invited and registered by one owner
+        [Required] //Cascade delete
         [ForeignKey("owner")]
         [Display(Name = "Owner")]
         public string ownerID { get; set; }

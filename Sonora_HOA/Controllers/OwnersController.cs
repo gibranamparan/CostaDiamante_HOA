@@ -11,13 +11,12 @@ using Microsoft.AspNet.Identity;
 
 namespace Sonora_HOA.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
     public class OwnersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Owners
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Index()
         {
             return View(db.Owners.ToList());
@@ -28,48 +27,26 @@ namespace Sonora_HOA.Controllers
         public ActionResult Details(string id)
         {
             Owner owners = null;
-            if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
-            {
-                if (id == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
+
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //If admin, get the requested owner
+            else if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                 owners = db.Owners.Find(id);
-            }
-            else if(User.IsInRole(ApplicationUser.RoleNames.OWNER))
-            {
-                owners = db.Owners.Find(User.Identity.GetUserId());
-            }
+            //If owner, show only his details
+            else if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
+                owners = db.Owners.Find(User.Identity.GetUserId()); 
+            
             if (owners == null)
-            {
                 return HttpNotFound();
-            }
 
-            ViewBag.notAssociatedCondos = db.Condoes.Where(con => String.IsNullOrEmpty(con.ownerID)).ToList();
-
-            return View(owners);
-        }
-
-        // POST: Owners/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName,name,lastName")] Owner owners)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Owners.Add(owners);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            ViewBag.notAssociatedCondos = db.Condoes.Where(con => 
+                String.IsNullOrEmpty(con.ownerID)).ToList();
 
             return View(owners);
         }
-
+        
         // GET: Owners/Edit/5
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -88,7 +65,6 @@ namespace Sonora_HOA.Controllers
         // POST: Owners/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName,name,lastName")] Owner owners)
@@ -103,7 +79,6 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Owners/Delete/5
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -119,12 +94,24 @@ namespace Sonora_HOA.Controllers
         }
 
         // POST: Owners/Delete/5
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
             Owner owners = db.Owners.Find(id);
+            var condos = owners.Condos.ToList();
+            var cils = owners.checkInListHistory.ToList();
+            var visits = owners.visitsHistory.ToList();
+            foreach (var condo in condos)
+            {
+                condo.ownerID = null;
+                db.Entry(condo).State = EntityState.Modified;
+            }
+            foreach (var cil in cils)
+                db.CheckInLists.Remove(cil);
+            foreach (var visit in visits)
+                db.Visits.Remove(visit);
+
             db.Owners.Remove(owners);
             db.SaveChanges();
             return RedirectToAction("Index");

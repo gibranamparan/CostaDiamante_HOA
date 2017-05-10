@@ -59,7 +59,7 @@
                             <li><a href="~/Condo">Condos</a></li>
                             <li><a href="~/Visits">Visits Report</a></li>
                         }
-                        else
+                        else if(Request.IsAuthenticated && Context.User.IsInRole(ApplicationUser.RoleNames.OWNER))
                         {
                             <li><a href="@Url.Action("Details","Owners",new { id = User.Identity.GetUserId() })">Notify New Visit</a></li>
                             <li><a href="@Url.Action("Index","Permissions",new { id = User.Identity.GetUserId() })">Check in List</a></li>
