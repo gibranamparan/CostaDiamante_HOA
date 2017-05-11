@@ -83,26 +83,32 @@ namespace Sonora_HOA.Models
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
+        [Required]
         [DisplayName("Name")]
         public string name { get; set; }
 
         [DisplayName("Phone")]
         public string phone { get; set; }
 
+        [Required]
         [DisplayName("Last Name")]
         public string lastname { get; set; }
 
         [DisplayName("Register as Administrator")]
         public bool registerAsAdmin { get; set; }
+        
+        public string hash { get; set; }
+        
 
         public RegisterViewModel() { }
-        public RegisterViewModel(Owner owner)
+        public RegisterViewModel(ApplicationUser owner)
         {
             this.Email = owner.Email;
             this.name = owner.name;
             this.phone = owner.PhoneNumber;
             this.lastname = owner.lastName;
             this.userID = owner.Id;
+            this.hash = owner.PasswordHash;
         }
     }
 

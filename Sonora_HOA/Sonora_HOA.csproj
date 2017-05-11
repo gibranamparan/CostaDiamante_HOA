@@ -259,6 +259,10 @@
     <Compile Include="Migrations\201705100317415_cascadeDelete_Owner_Guest.Designer.cs">
       <DependentUpon>201705100317415_cascadeDelete_Owner_Guest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705110129553_checkInlist_Permission_Relationship.cs" />
+    <Compile Include="Migrations\201705110129553_checkInlist_Permission_Relationship.Designer.cs">
+      <DependentUpon>201705110129553_checkInlist_Permission_Relationship.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CheckInList.cs" />
@@ -396,9 +400,9 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
-    <Content Include="Views\Owners\Delete.cshtml" />
+    <Content Include="Views\Account\Delete.cshtml" />
     <Content Include="Views\Owners\Details.cshtml" />
-    <Content Include="Views\Owners\Edit.cshtml" />
+    <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="Views\Owners\Index.cshtml" />
     <Content Include="Views\Guest\Create.cshtml" />
     <Content Include="Views\Guest\Delete.cshtml" />
@@ -435,6 +439,7 @@
     <Content Include="Views\Visits\Partial_ListVisits.cshtml" />
     <Content Include="Views\Permissions\Partial_ShowCheckInList.cshtml" />
     <Content Include="Views\Shared\Partial_ConfirmationModal.cshtml" />
+    <Content Include="Views\Account\Partial_UserForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -489,6 +494,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705100317415_cascadeDelete_Owner_Guest.resx">
       <DependentUpon>201705100317415_cascadeDelete_Owner_Guest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705110129553_checkInlist_Permission_Relationship.resx">
+      <DependentUpon>201705110129553_checkInlist_Permission_Relationship.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

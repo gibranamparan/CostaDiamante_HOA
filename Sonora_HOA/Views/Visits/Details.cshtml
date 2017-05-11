@@ -1,4 +1,5 @@
-﻿@model Sonora_HOA.Models.Visits
+﻿@using Sonora_HOA.Models
+@model Sonora_HOA.Models.Visits
 
 @{
     ViewBag.Title = "Visit - Guests List";
@@ -23,22 +24,26 @@
     </div>
     <div class="panel-body">
         <hr />
-        <dl class="dl-horizontal col-xs-4">
-            <dt>
-                @Html.DisplayNameFor(model => model.date)
-            </dt>
-            <dd>
-                @Model.date.ToLongDateString()
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.owner.fullName)
-            </dt>
-            <dd>
-                <a href="@Url.Action("Details","Owners",new { id = Model.ownerID})">
-                    @Html.DisplayFor(model => model.owner.fullName)
-                </a>
-            </dd>
-        </dl>
+
+        @if (!User.IsInRole(ApplicationUser.RoleNames.OWNER))
+        {
+            <dl class="dl-horizontal col-xs-4">
+                <dt>
+                    @Html.DisplayNameFor(model => model.date)
+                </dt>
+                <dd>
+                    @Model.date.ToLongDateString()
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.owner.fullName)
+                </dt>
+                <dd>
+                    <a href="@Url.Action("Details", "Owners", new { id = Model.ownerID })">
+                        @Html.DisplayFor(model => model.owner.fullName)
+                    </a>
+                </dd>
+            </dl>
+        }
 
         <dl class="dl-horizontal col-xs-4">
             <dt>

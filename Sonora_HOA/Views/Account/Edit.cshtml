@@ -1,0 +1,21 @@
+﻿@model Sonora_HOA.Models.RegisterViewModel
+
+@{
+    string roleName = ViewBag.roleName;
+
+    ViewBag.Title = "Edit "+ roleName + " Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    Boolean editMode = ViewBag.editMode;
+    ViewDataDictionary vdd = new ViewDataDictionary();
+    vdd.Add("editMode", editMode);
+}
+
+<a href="@Url.Action("Index","Owners")">
+    <i class="glyphicon glyphicon-arrow-left"></i> Back to Owners / Users list
+</a>
+
+<h2>@ViewBag.Title</h2>
+<div class="alert alert-info">Leave password fields in blank if you don't want to update passwords, 
+    so that this fields won't be modified</div>
+@Html.Partial("Partial_UserForm")

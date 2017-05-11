@@ -35,20 +35,25 @@
     </div>
     <div class="panel-body in" id="Partial_IndexCondo">
         @Html.Partial("../Condo/Partial_IndexCondo", Model.Condos.ToList())
-        <div class="panel panel-default">
-            <div class="panel-heading" onclick="changeIcon(this)"
-                data-toggle="collapse" data-target="#condosTable">
-                <span>Associate new condoes</span>
-                <i class="pull-right fa fa-window-maximize"></i>
+
+        @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+        {
+            //Table for condos selection to associate with owner
+            <div class="panel panel-default">
+                <div class="panel-heading" onclick="changeIcon(this)"
+                    data-toggle="collapse" data-target="#condosTable">
+                    <span>Associate new condoes</span>
+                    <i class="pull-right fa fa-window-maximize"></i>
+                </div>
+                <div class="panel-body collapse" id="condosTable">
+                    @Html.Partial("../Condo/Partial_IndexCondo", notAssociatedCondos, vdd)
+                </div>
             </div>
-            <div class="panel-body collapse" id="condosTable">
-                @Html.Partial("../Condo/Partial_IndexCondo", notAssociatedCondos, vdd)
-            </div>
-        </div>
+        }
     </div>
 </div>
 
-    
+    @*Form to register new guest associated to current owner, table included*@
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h2 class="panel-title" onclick="changeIcon(this)"

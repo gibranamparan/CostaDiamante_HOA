@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNet.Identity
+@using Sonora_HOA.Models
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
@@ -6,9 +7,18 @@
     @Html.AntiForgeryToken()
 
     <ul class="nav navbar-nav navbar-right usrPanel">
+        @{ 
+            string userName = (new ApplicationDbContext()).Users.Find(User.Identity.GetUserId()).name;
+            string rolName = ApplicationUser.RoleNames.ADMIN;
+            if (User.IsInRole(ApplicationUser.RoleNames.OWNER)) {
+                rolName = ApplicationUser.RoleNames.OWNER;
+            }
         <li>
-            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+            @*Html.ActionLink(String.Format("Hello {0} {1}!",rolName, userName),
+    "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })*@
+            <a>@String.Format("Hello {0} {1}!", rolName, userName)</a>
         </li>
+        }
         <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
     </ul>
     }

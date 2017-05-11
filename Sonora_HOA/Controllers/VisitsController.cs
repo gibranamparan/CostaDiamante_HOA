@@ -46,7 +46,6 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Visits/Details/5
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Details(int? id)
         {
             if (id == null)

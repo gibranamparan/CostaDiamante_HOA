@@ -10,7 +10,7 @@ using Sonora_HOA.Models;
 
 namespace Sonora_HOA.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
     public class ManageController : Controller
     {
         private ApplicationSignInManager _signInManager;

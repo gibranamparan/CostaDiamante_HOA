@@ -1,13 +1,14 @@
 ﻿@model Sonora_HOA.Models.Condo
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Register new Owner";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<a href="@Url.Action("Index")">
+    <i class="glyphicon glyphicon-arrow-left"></i> Back to owners list
+</a>
 
-<h2>Create</h2>
-
-
+<h2>@ViewBag.Title</h2>
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
@@ -38,10 +39,6 @@
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

@@ -20,16 +20,6 @@ namespace Sonora_HOA.Models
             this.PhoneNumber = model.phone;
         }
 
-        [DisplayName("Name")]
-        public string name { get; set; }
-        [DisplayName("Last Name")]
-        public string lastName { get; set; }
-
-        [DisplayName("Owner Full Name")]
-        public string fullName {
-            get { return this.name + " " + this.lastName; }
-        }
-
         //An owner can register many Guests and has many Condos
         public virtual ICollection<Condo> Condos { get; set; }
         public virtual ICollection<Guest> Guests { get; set; }

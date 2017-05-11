@@ -11,6 +11,8 @@ using Microsoft.Owin.Security;
 using Sonora_HOA.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Security.Principal;
+using System.Net;
+using System.Data.Entity;
 
 namespace Sonora_HOA.Controllers
 {
@@ -19,6 +21,7 @@ namespace Sonora_HOA.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         public AccountController()
         {
@@ -189,34 +192,112 @@ namespace Sonora_HOA.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
-        //
-        // POST: /Account/Register
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(RegisterViewModel vmOwner)
+
+        // GET: Owners/Edit/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        public ActionResult Edit(string id)
         {
-            if (ModelState.IsValid)
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var user = db.Users.Find(id);
+            if(user==null)
+                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+
+            RegisterViewModel vmOwner = prepareView(user); 
+            return View(vmOwner);
+        }
+
+        private RegisterViewModel prepareView(ApplicationUser user)
+        {
+            RegisterViewModel vmOwner = new RegisterViewModel(user);
+            string roleName = UserManager.GetRoles(user.Id).FirstOrDefault();
+
+            ViewBag.userID = user.Id;
+            ViewBag.editMode = true;
+            ViewBag.roleName = roleName;
+
+            return vmOwner;
+        }
+
+        // POST: Owners/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        public async System.Threading.Tasks.Task<ActionResult> Edit(RegisterViewModel vmOwner)
+        {
+            ApplicationUser userEdited = new ApplicationUser(vmOwner);
+            UserStore<ApplicationUser> store = new UserStore<ApplicationUser>(db);
+
+            string newPassword = vmOwner.Password;
+            //If new password was introduced, it is encripted and saved
+            if (!String.IsNullOrEmpty(newPassword))
             {
-                Owner owner = new Owner(vmOwner);
-
-                ApplicationDbContext context = new ApplicationDbContext();
-                UserStore<ApplicationUser> store = new UserStore<ApplicationUser>(context);
-
-                //If a new password has been introduced, it is modified.
-                if (!String.IsNullOrEmpty(vmOwner.Password)) { 
-                    UserManager<ApplicationUser> UserManager = new UserManager<ApplicationUser>(store);
-                    String hashedNewPassword = UserManager.PasswordHasher.HashPassword(vmOwner.Password);
-                    await store.SetPasswordHashAsync(owner, hashedNewPassword);
-                }
-
-                await store.UpdateAsync(owner);
-                int updatedRegs = context.SaveChanges();
-                return RedirectToAction("Index", "Owner");
+                //Is found in db just to update his password
+                UserManager<ApplicationUser> UserManager = new UserManager<ApplicationUser>(store);
+                String hashedNewPassword = UserManager.PasswordHasher.HashPassword(newPassword);
+                await store.SetPasswordHashAsync(userEdited, hashedNewPassword);
+            }
+            
+            //It is possible to update the user if password is not introduced, it means it will still invariable
+            bool updateWithPasswordInvariable = ModelState.Where(ms => ms.Value.Errors.Count() > 0).Count() == 1
+                && ModelState["Password"].Errors.Count == 1;
+            if (ModelState.IsValid || updateWithPasswordInvariable)
+            {
+                //Remaininig fields are updated
+                //db.Entry(userEdited).State = EntityState.Modified;
+                await store.UpdateAsync(userEdited);
+                var updatedRegs = db.SaveChangesAsync();
+                return RedirectToAction("Index", "Owners");
             }
 
-            // If we got this far, something failed, redisplay form
+            vmOwner = prepareView(userEdited);
             return View(vmOwner);
+        }
+
+        // GET: Owners/Delete/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        public ActionResult Delete(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var user = db.Users.Find(id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            string roleName = UserManager.GetRoles(user.Id).FirstOrDefault();
+            ViewBag.roleName = roleName;
+            return View(user);
+        }
+
+        // POST: Owners/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        public ActionResult DeleteConfirmed(string id)
+        {
+            Owner owners = db.Owners.Find(id);
+            var condos = owners.Condos.ToList();
+            var cils = owners.checkInListHistory.ToList();
+            var visits = owners.visitsHistory.ToList();
+            foreach (var condo in condos)
+            {
+                condo.ownerID = null;
+                db.Entry(condo).State = EntityState.Modified;
+            }
+            foreach (var cil in cils)
+                db.CheckInLists.Remove(cil);
+            foreach (var visit in visits)
+                db.Visits.Remove(visit);
+
+            db.Owners.Remove(owners);
+            db.SaveChanges();
+            return RedirectToAction("Index", "Owners");
         }
 
         //

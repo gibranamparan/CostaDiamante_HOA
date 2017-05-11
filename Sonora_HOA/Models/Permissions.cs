@@ -19,7 +19,7 @@ namespace Sonora_HOA.Models
         public virtual Guest guest { get; set; }
 
         //In the checkin list are registered each permission and period of time it lasts
-        public int checkInListID { get; set; }
+        public int? checkInListID { get; set; }
         public virtual CheckInList checkInList { get; set; }
 
         //Every visits has a checkin list

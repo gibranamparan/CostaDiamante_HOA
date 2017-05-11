@@ -1,4 +1,14 @@
-﻿@model Sonora_HOA.Models.Owner
+﻿@using Sonora_HOA.Models
+@model Sonora_HOA.Models.ApplicationUser
+
+@{ 
+    String roleName = ApplicationUser.RoleNames.OWNER;
+    if (ViewData["roleName"] != null)
+    {
+        roleName = (string)ViewData["roleName"];
+    }
+}
+
 @using Microsoft.AspNet.Identity
 @using Sonora_HOA.Models
 
@@ -12,13 +22,15 @@
         <div>
             <hr />
             <dl class="dl-horizontal col-md-4">
-                <dt>
-                    @Html.DisplayNameFor(model => model.fullName)
-                </dt>
+                @if (!User.IsInRole(ApplicationUser.RoleNames.OWNER)) { 
+                    <dt>
+                        @Html.DisplayNameFor(model => model.fullName)
+                    </dt>
 
-                <dd>
-                    @Html.DisplayFor(model => model.fullName)
-                </dd>
+                    <dd>
+                        @Html.DisplayFor(model => model.fullName)
+                    </dd>
+                }
 
             </dl>
             <dl class="dl-horizontal col-md-4">
@@ -42,16 +54,17 @@
             </dl>
            </div>
         <p>
-
-            <a href="@Url.Action("Details", new { id = Model.Id })">
-                <i class="fa fa-list-alt"></i> Details
-            </a> | 
-            <a href="@Url.Action("Edit", "Owners", new { id = Model.Id })">
+            <a href="@Url.Action("Edit", "Account", new { id = Model.Id })">
                 <i class="fa fa-pencil"></i>Edit
-            </a> | 
-            <a href="@Url.Action("Index", "Permissions", new { id = Model.Id })">
-                <i class="fa fa-check-square-o"></i>Check in List
-            </a>
+            </a> |
+            @if(roleName == ApplicationUser.RoleNames.OWNER) { 
+                <a href="@Url.Action("Details","Owners", new { id = Model.Id })">
+                    <i class="fa fa-list-alt"></i> Details
+                </a> @(" |")
+                <a href="@Url.Action("Index", "Permissions", new { id = Model.Id })">
+                    <i class="fa fa-check-square-o"></i>Check in List
+                </a>
+            }
         </p>
     </div>
 </div>

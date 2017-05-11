@@ -3,12 +3,14 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.ComponentModel;
 
 namespace Sonora_HOA.Models
 {
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
+
         public ApplicationUser() { }
         public ApplicationUser(RegisterViewModel model)
         {
@@ -17,6 +19,19 @@ namespace Sonora_HOA.Models
             this.UserName = model.Email;
             this.Email = model.Email;
             this.PhoneNumber = model.phone;
+            this.name = model.name;
+            this.lastName= model.lastname;
+            this.PasswordHash = model.hash;
+        }
+
+        public ApplicationUser(RegisterViewModel model, ApplicationDbContext db) : this(model)
+        {
+            var userFromDB = db.Users.Find(model.userID);
+
+            this.EmailConfirmed = userFromDB.EmailConfirmed;
+            this.PhoneNumberConfirmed = this.PhoneNumberConfirmed;
+            this.TwoFactorEnabled = this.TwoFactorEnabled;
+            this.LockoutEnabled = this.LockoutEnabled;
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -25,6 +40,17 @@ namespace Sonora_HOA.Models
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
             return userIdentity;
+        }
+
+        [DisplayName("Name")]
+        public string name { get; set; }
+        [DisplayName("Last Name")]
+        public string lastName { get; set; }
+
+        [DisplayName("Owner Full Name")]
+        public string fullName
+        {
+            get { return this.name + " " + this.lastName; }
         }
 
         public static class RoleNames

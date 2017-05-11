@@ -91,7 +91,7 @@
 
             var enable = valCheckList && valRange && valCheckInRange;
             var errorMsg = (!valCheckList ? "No guest has been selected. " : "")
-                + (!valRange ? "Introduced time range is not valid. " : "")
+                + (!valRange ? "Be sure arrival date is before departure date. " : "")
                 + (!valCheckInRange ? "Selected dates are out of current Check In List year period. " : "");
 
             $("#btnRegister").attr('disabled', !enable);
