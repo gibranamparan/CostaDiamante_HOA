@@ -67,7 +67,7 @@ else
                 </th>
             }
             <th>
-                @Html.DisplayNameFor(model => model.fullName)
+                @Html.DisplayNameFor(model => model.Guests.FirstOrDefault().fullName)
             </th>
             @if (!selectionMode)
             {

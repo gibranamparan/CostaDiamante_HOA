@@ -13,8 +13,12 @@ namespace Sonora_HOA.Models
         [Key]
         [Display(Name = "Guest")]
         public int guestID { get; set; }
+
+        [Required]
         [Display(Name = "Name")]
         public string name { get; set; }
+
+        [Required]
         [Display(Name = "Last Name")]
         public string lastName { get; set; }
 
