@@ -98,8 +98,8 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public JsonResult Create([Bind(Include = "condoID,arrivalDate,departureDate,date,guestsInVisit, visitors, ownerID")]
-            Visits visit)
+        public JsonResult Create([Bind(Include = "condoID,arrivalDate,departureDate,date,guestsInVisit,"+
+            "visitors, ownerID")] Visits visit)
         {
             if (ModelState.IsValid)
             {
@@ -112,10 +112,16 @@ namespace Sonora_HOA.Controllers
                     return Json(new { savedRegs = 0, error = "Try notifiying a visit authorizing max. 8 guests. " });
                 }
                 else {
+                    //Checking if visit time is inside current checkinlist
                     CheckInList currentCil = CheckInList.getCurrentCheckInList(visit.ownerID, db);
                     if (currentCil.period.hasInside(visit.timePeriod))
                     {
                         visit.date = DateTime.Today;
+                        foreach(var pv in visit.visitors) {
+                            var permission = db.Permissions.Find(pv.permissionsID);
+                            pv.guestFullName = db.Guests.Find(permission.guestID).fullName;
+                        }
+
                         db.Visits.Add(visit);
                         int savedRegs = db.SaveChanges();
                         return Json(new { savedRegs = savedRegs, error = "" });

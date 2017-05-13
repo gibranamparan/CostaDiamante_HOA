@@ -16,10 +16,11 @@
     </button>
 </div>
 
+@*Details visits*@
 <div class="panel panel-info">
     <div class="panel-heading">
         <h2 class="panel-title">
-            <strong>Period of time: </strong>@Model.timePeriod
+            <strong>@Html.DisplayNameFor(model=>model.visitsID):</strong> @Model.visitsID | <strong>Period of time: </strong>@Model.timePeriod
         </h2>
     </div>
     <div class="panel-body">
@@ -38,9 +39,10 @@
                     @Html.DisplayNameFor(model => model.owner.fullName)
                 </dt>
                 <dd>
-                    <a href="@Url.Action("Details", "Owners", new { id = Model.ownerID })">
+                    <a class="hidden-print" href="@Url.Action("Details", "Owners", new { id = Model.ownerID })">
                         @Html.DisplayFor(model => model.owner.fullName)
                     </a>
+                    <span class="visible-print">@Model.owner.fullName</span>
                 </dd>
             </dl>
         }
@@ -68,9 +70,10 @@
                 @Model.departureDate.ToLongDateString()
             </dd>
         </dl>
-</div>
+    </div>
 </div>
 
+@*Visitors List*@
 <div class="panel panel-info">
     <div class="panel-heading">
         <h2 class="panel-title">
@@ -85,8 +88,10 @@
                         #
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.visitors
-         .FirstOrDefault().permissions.guest.fullName)
+                        @Html.DisplayNameFor(model => model.visitors.FirstOrDefault().guestFullName)
+                    </th>
+                    <th class="hidden-print">
+
                     </th>
                 </tr>
             </thead>
@@ -94,14 +99,20 @@
                 @{
                     int num = 1;
                     foreach (var item in Model.visitors
-                            .OrderBy(vis => vis.permissions.guest.fullName))
+                            .OrderBy(vis => vis.guestFullName))
                     {
                         <tr>
                             <td>
                                 @num
                             </td>
                             <td>
-                                @Html.DisplayFor(model => item.permissions.guest.fullName)
+                                @Html.DisplayFor(model => item.guestFullName)
+                            </td>
+                            <td class="hidden-print">
+                                <a href='@Url.Action("Delete","Permissions_Visits",
+                                  new { id = item.permissions_visitsID })'>
+                                    <i class="glyphicon glyphicon-remove"></i> Remove
+                                </a>
                             </td>
                         </tr>
                         num++;

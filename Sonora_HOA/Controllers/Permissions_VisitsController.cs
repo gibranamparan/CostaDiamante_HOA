@@ -107,11 +107,14 @@ namespace Sonora_HOA.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Permissions_Visits permissions_Visits = db.Permissions_Visits.Find(id);
+            int visitID = permissions_Visits.visitsID;
             if (permissions_Visits == null)
             {
                 return HttpNotFound();
             }
-            return View(permissions_Visits);
+            db.Permissions_Visits.Remove(permissions_Visits);
+            db.SaveChanges();
+            return RedirectToAction("Details", "Visits", new { id = visitID });
         }
 
         // POST: Permissions_Visits/Delete/5

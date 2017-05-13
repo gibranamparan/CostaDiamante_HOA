@@ -53,6 +53,9 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.visitsID)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.condoID)
             </th>
             @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) { 
@@ -72,6 +75,9 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    @Html.DisplayFor(model => item.visitsID)
+                </td>
                 <td>
                     @Html.DisplayFor(model => item.condo.name)
                 </td>

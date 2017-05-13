@@ -263,6 +263,18 @@
     <Compile Include="Migrations\201705110129553_checkInlist_Permission_Relationship.Designer.cs">
       <DependentUpon>201705110129553_checkInlist_Permission_Relationship.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705130018468_requieredFields_GuestName.cs" />
+    <Compile Include="Migrations\201705130018468_requieredFields_GuestName.Designer.cs">
+      <DependentUpon>201705130018468_requieredFields_GuestName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705130204429_reuiqered_CheckInList_Permissions.cs" />
+    <Compile Include="Migrations\201705130204429_reuiqered_CheckInList_Permissions.Designer.cs">
+      <DependentUpon>201705130204429_reuiqered_CheckInList_Permissions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705130216108_permissionVisit_Permission_CanBeNull.cs" />
+    <Compile Include="Migrations\201705130216108_permissionVisit_Permission_CanBeNull.Designer.cs">
+      <DependentUpon>201705130216108_permissionVisit_Permission_CanBeNull.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CheckInList.cs" />
@@ -497,6 +509,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705110129553_checkInlist_Permission_Relationship.resx">
       <DependentUpon>201705110129553_checkInlist_Permission_Relationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705130018468_requieredFields_GuestName.resx">
+      <DependentUpon>201705130018468_requieredFields_GuestName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705130204429_reuiqered_CheckInList_Permissions.resx">
+      <DependentUpon>201705130204429_reuiqered_CheckInList_Permissions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705130216108_permissionVisit_Permission_CanBeNull.resx">
+      <DependentUpon>201705130216108_permissionVisit_Permission_CanBeNull.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

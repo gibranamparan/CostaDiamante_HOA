@@ -12,6 +12,7 @@ namespace Sonora_HOA.Models
         public static int MAX_GUESTS_ALLOWED = 8;
 
         [Key]
+        [Display(Name = "Notification #")]
         public int visitsID { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",

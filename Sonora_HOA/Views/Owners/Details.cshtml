@@ -11,6 +11,10 @@
     List<Sonora_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
     Sonora_HOA.Models.Guest newGuest = new Sonora_HOA.Models.Guest();
     newGuest.ownerID = Model.Id;
+
+    bool errorGuest = ViewBag.errorGuest;
+    ViewDataDictionary vddNewGuest = new ViewDataDictionary();
+    vddNewGuest.Add("errorGuestName", errorGuest);
 }
 
 @if (Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
@@ -68,7 +72,7 @@
                     <h3 class="panel-title">New Guest</h3>
                 </div>
                 <div class="panel-body">
-                    @Html.Partial("../Guest/Partial_CreateGuest", newGuest)
+                    @Html.Partial("../Guest/Partial_CreateGuest", newGuest, vddNewGuest)
                 </div>
             </div>
             @Html.Partial("../Guest/Partial_ListGuest", Model)

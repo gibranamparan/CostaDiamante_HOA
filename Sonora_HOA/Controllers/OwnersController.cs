@@ -30,7 +30,7 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Owners/Details/5
-        public ActionResult Details(string id)
+        public ActionResult Details(string id, bool errorGuest=false)
         {
             Owner owners = null;
 
@@ -48,6 +48,8 @@ namespace Sonora_HOA.Controllers
 
             ViewBag.notAssociatedCondos = db.Condoes.Where(con =>
                 String.IsNullOrEmpty(con.ownerID)).ToList();
+
+            ViewBag.errorGuest = errorGuest;
 
             return View(owners);
         }

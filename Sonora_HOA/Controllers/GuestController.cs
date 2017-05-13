@@ -56,14 +56,16 @@ namespace Sonora_HOA.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ownerID,name,lastName")] Guest guest)
         {
+            bool errorGuest=false;
             if (ModelState.IsValid)
             {
                 db.Guests.Add(guest);
                 db.SaveChanges();
-                return RedirectToAction("Details","Owners",new { Id = guest.ownerID});
+                return RedirectToAction("Details", "Owners", new { Id = guest.ownerID });
             }
 
-            return View();
+            errorGuest = true;
+            return RedirectToAction("Details", "Owners", new { Id = guest.ownerID, errorGuest = errorGuest });
         }
 
         // GET: Guest/Edit/5
@@ -106,12 +108,32 @@ namespace Sonora_HOA.Controllers
         public JsonResult Delete(int id = 0)
         {
             Guest guest = db.Guests.Find(id);
+            string ownerID = guest.ownerID;
+            CheckInList currentCil = CheckInList.getCurrentCheckInList(ownerID, db);
+
             if (guest == null) 
                 return Json(new { regSaved = 0 });
             else
             {
+                //Find All the permission related to this guest
+                List<Permissions_Visits> guestPermissions = db.Permissions_Visits
+                    .Where(per => per.permissions.guestID == id).ToList();
+                foreach(var pv in guestPermissions)
+                {
+                    //To remove permissions, the link to the visitors lists have to be removed
+                    pv.permissionsID = null;
+                    db.Entry(pv).State = EntityState.Modified;
+                }
+
                 db.Guests.Remove(guest);
                 int regSaved = db.SaveChanges();
+
+                if (currentCil.permissions.Count() == 0)
+                {
+                    db.CheckInLists.Remove(currentCil);
+                    db.SaveChanges();
+                }
+
                 return Json(new { regSaved = regSaved });
             }
         }
