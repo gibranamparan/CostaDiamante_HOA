@@ -23,21 +23,6 @@ namespace Sonora_HOA.Controllers
             return View(condoes.ToList());
         }
 
-        // GET: Condo/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Condo condo = db.Condoes.Find(id);
-            if (condo == null)
-            {
-                return HttpNotFound();
-            }
-            return View(condo);
-        }
-
         // GET: Condo/Create
         public ActionResult Create()
         {
@@ -84,7 +69,7 @@ namespace Sonora_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "number,name,ownerID")] Condo condo)
+        public ActionResult Edit([Bind(Include = "condoID,name,ownerID")] Condo condo)
         {
             if (ModelState.IsValid)
             {

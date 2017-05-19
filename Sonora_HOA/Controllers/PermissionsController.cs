@@ -71,17 +71,21 @@ namespace Sonora_HOA.Controllers
         [ValidateHeaderAntiForgeryToken]
         public JsonResult Create(List<Permissions> checkedList,CheckInList period,string ownerID)
         {
+            int numRegChanged = 0;
             CheckInList checkInList = period;
             //Associating condos in the array to owner
             checkInList.permissions = checkedList;
             checkInList.ownerID = ownerID;
-            db.CheckInLists.Add(checkInList);
-
-            int numRegChanged = db.SaveChanges();
+            if(checkedList.Count()>0 && !String.IsNullOrEmpty(ownerID) && period!=null)
+            { 
+                db.CheckInLists.Add(checkInList);
+                numRegChanged = db.SaveChanges();
+            }
 
             return Json(numRegChanged);
         }
-        
+
+        /*
         // GET: Permissions/Edit/5
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Edit(int? id)
@@ -99,7 +103,6 @@ namespace Sonora_HOA.Controllers
             ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
             return View(permissions);
         }
-
         // POST: Permissions/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -135,7 +138,7 @@ namespace Sonora_HOA.Controllers
                 return HttpNotFound();
             }
             return View(permissions);
-        }
+        }*/
 
         // POST: Permissions/Delete/5
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
@@ -148,6 +151,44 @@ namespace Sonora_HOA.Controllers
             db.SaveChanges();
             return RedirectToAction("Create","Visits", new { id = ownerID });
         }
+
+
+        /*
+        [Authorize]
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public JsonResult Delete(int id = 0)
+        {
+            Guest guest = db.Guests.Find(id);
+            string ownerID = guest.ownerID;
+            CheckInList currentCil = CheckInList.getCurrentCheckInList(ownerID, db);
+
+            if (guest == null) 
+                return Json(new { regSaved = 0 });
+            else
+            {
+                //Find All the permission related to this guest
+                List<Permissions_Visits> guestPermissions = db.Permissions_Visits
+                    .Where(per => per.permissions.guestID == id).ToList();
+                foreach(var pv in guestPermissions)
+                {
+                    //To remove permissions, the link to the visitors lists have to be removed
+                    pv.permissionsID = null;
+                    db.Entry(pv).State = EntityState.Modified;
+                }
+
+                db.Guests.Remove(guest);
+                int regSaved = db.SaveChanges();
+
+                if (currentCil.permissions.Count() == 0)
+                {
+                    db.CheckInLists.Remove(currentCil);
+                    db.SaveChanges();
+                }
+
+                return Json(new { regSaved = regSaved });
+            }
+        }*/
 
         protected override void Dispose(bool disposing)
         {

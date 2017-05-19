@@ -9,78 +9,42 @@
 
     Permissions permission = new Permissions();
     Owner owner = ViewBag.owner;
+    //Time periods for selection list
     List<CheckInList.TimePeriodPermissions> timePeriods = ViewBag.timePeriods;
+
+    //Current and next checkinlist
     CheckInList currentCheckInList = ViewBag.currentCheckInList;
     CheckInList nextCheckInList = ViewBag.nextCheckInList;
-    bool hidePartialGuestList = currentCheckInList.checkInListID > 0;
+
+    //Hide a CheckInList when it doesnt exist to show a form to register a new one
+    bool hidePartialGuestListInCurrent = currentCheckInList.checkInListID > 0;
+    bool hidePartialGuestListInNext =  nextCheckInList.checkInListID > 0;
+
+    //Confirmation modal ID
     string confirmationModalID = "confirmationModal";
 
-    bool openCheckInList = false;
-    if (ViewBag.openCheckInList)
-    {
-        openCheckInList = true;
-    }
+    //
+    ViewDataDictionary vddCurrent = new ViewDataDictionary();
+    vddCurrent.Add("selectionMode", true);
+    vddCurrent.Add("ownerID", owner.Id);
+    vddCurrent.Add("listID", "current");
 
-    ViewDataDictionary vdd = new ViewDataDictionary();
-    vdd.Add("selectionMode", true);
-    vdd.Add("ownerID", owner.Id);
+    ViewDataDictionary vddNext = new ViewDataDictionary();
+    vddNext.Add("selectionMode", true);
+    vddNext.Add("ownerID", owner.Id);
+    vddNext.Add("listID", "next");
 }
 <a href="@Url.Action("Details","Owners",new { id = owner.Id})">
     <i class="glyphicon glyphicon-arrow-left"></i>Back to Owner's Details
 </a>
 <h2>Owner Family and Guest Check in List</h2>
-@if(Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+
+@*Owner details panel*@
+@if(User.IsInRole(ApplicationUser.RoleNames.ADMIN))
 {
     @Html.Partial("../Owners/Partial_infoOwner", owner)
 }
 
-
-@*Panel to create a new CheckInList selecting guest from a list*@
-<div class="panel panel-info">
-    @*Collapsable panel*@
-    <div class="panel-heading" onclick="changeIcon(this)"
-         data-toggle="collapse" data-target="#pnlNewCheckInList">
-        <span class="panel-title">New Check in List</span>
-        <i class='pull-right fa fa-window-@(!openCheckInList?"maximize":"minimize")'></i>
-    </div>
-    <div class='panel-body @(!openCheckInList?"collapse":"in")' id='pnlNewCheckInList'>
-        <div class="form-inline">
-            <div class="form-group col-md-10">
-                @*Dropdown to show the current and next 6 months periods*@
-                @Html.LabelFor(model => currentCheckInList.period)
-                <select id="period" name="period" onchange="periodChanged(this)">
-                    <option value="current" start-date="@timePeriods[0].StartDate.ToString("yyyy-MM-dd")"
-                            end-date="@timePeriods[0].EndDate.ToString("yyyy-MM-dd")" >
-                        @timePeriods[0]
-                    </option>
-
-                    <option value="next" start-date="@timePeriods[1].StartDate.ToString("yyyy-MM-dd")"
-                            end-date="@timePeriods[1].EndDate.ToString("yyyy-MM-dd")">
-                        @timePeriods[1]
-                    </option>
-                </select>
-            </div>
-            @*Open modal to confirm checkin list registration*@
-
-            <button type="button" class="btn btn-success" id="btnRegister"
-                    data-toggle="modal" href='#@confirmationModalID' disabled>
-                Register
-            </button>
-        </div>
-        @*Shows the guest list for selection, shown when checkinList is found for selected year period*@
-        <div id="Partial_ListGuest" style="display:@(hidePartialGuestList?"none":"block")" >
-            @Html.Partial("../Guest/Partial_ListGuest", owner, vdd)
-        </div>
-        @*Else, Blocks selection and shows message*@
-        <div id="checkInRegisteredMessage" class="alert alert-info" 
-             style="display:@(!hidePartialGuestList?"none":"block")">
-            A <strong>Check In list was already registered</strong> for the selected period. 
-            You'll be able to register a new one when this period is finished. 
-            You can notify a new visit in <strong>"Condominiums"</strong> section clicking 
-            <a href='@Url.Action("Details","Owners",new { id= owner.Id })'>here</a>.
-        </div>
-    </div>
-</div>
 
 @if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
 {
@@ -89,24 +53,65 @@
         you are not in attendance. Owners may have any guests with them while owner is also staying in their condo.
     </div>
 }
-
-@*Panel to show current checkin lists*@
-<div class="panel panel-info" id="pnlCurrentCheckInList">
+@*Panel to create a new CheckInList creating guests from a form*@
+<div class="panel panel-info">
+    @*Collapsable panel*@
     <div class="panel-heading">
-        <h2 class="panel-title">Current Check in List</h2>
+        <span class="panel-title">New Check in List</span>
     </div>
-    <div class="panel-body">
-        @Html.Partial("Partial_ShowCheckInList", currentCheckInList)
-    </div>
-</div>
+    <div class='panel-body' id='pnlNewCheckInList'>
+        <div class="form-inline">
+            <div class="row">
+                <div class="form-group col-md-10">
+                    @*Dropdown to show the current and next 6 months periods*@
+                    @Html.LabelFor(model => currentCheckInList.period)
+                    <select id="period" name="period" onchange="periodChanged(this)">
+                        <option value="current" start-date="@timePeriods[0].StartDate.ToString("yyyy-MM-dd")"
+                                end-date="@timePeriods[0].EndDate.ToString("yyyy-MM-dd")">
+                            @timePeriods[0]
+                        </option>
 
-@*Panel to show next year period checkin lists*@
-<div class="panel panel-info" style="display:none" id="pnlNextCheckInList">
-    <div class="panel-heading">
-        <h2 class="panel-title">Next Period Check in List</h2>
-    </div>
-    <div class="panel-body">
-        @Html.Partial("Partial_ShowCheckInList", nextCheckInList)
+                        <option value="next" start-date="@timePeriods[1].StartDate.ToString("yyyy-MM-dd")"
+                                end-date="@timePeriods[1].EndDate.ToString("yyyy-MM-dd")">
+                            @timePeriods[1]
+                        </option>
+                    </select>
+                </div>
+                @*Open modal to confirm checkin list registration*@
+
+                <button type="button" class="btn btn-success" id="btnRegister"
+                        data-toggle="modal" href='#@confirmationModalID' disabled 
+                        style="display:@(hidePartialGuestListInCurrent?"none":"inline-block")">
+                    Register
+                </button>
+            </div>
+        </div>
+
+        @*Panel to show current checkin lists*@
+        <div id="pnlCurrentCheckInList" class="panel-body" style="display:block">
+            <h3>Current Check In List</h3>
+            @*Shows the guest list for selection, shown when checkinList is found for selected year period*@
+            <div id="Partial_ListGuest" style="display:@(hidePartialGuestListInCurrent?"none":"block")">
+                @Html.Partial("../Guest/Partial_ListPermissions", currentCheckInList.permissions, vddCurrent)
+            </div>
+            @*Else, Blocks selection and shows message*@
+            <div id="checkInRegisteredMessage" style="display:@(!hidePartialGuestListInCurrent?"none":"block")">
+                @Html.Partial("Partial_ShowCheckInList", currentCheckInList)
+            </div>
+        </div>
+    
+        @*Panel to show next year period checkin lists*@
+        <div id="pnlNextCheckInList" class="panel-body" style="display:none">
+            <h3>Next Period Check In List</h3>
+            @*Shows the guest list for selection, shown when checkinList is found for selected year period*@
+            <div id="Partial_ListGuest" style="display:@(hidePartialGuestListInNext?"none":"block")">
+                @Html.Partial("../Guest/Partial_ListPermissions", nextCheckInList.permissions, vddNext)
+            </div>
+            @*Else, Blocks selection and shows message*@
+            <div id="checkInRegisteredMessage" style="display:@(!hidePartialGuestListInNext?"none":"block")">
+                @Html.Partial("Partial_ShowCheckInList", nextCheckInList)
+            </div>
+        </div>
     </div>
 </div>
 
@@ -127,29 +132,84 @@
         var currentCheckInListID = @currentCheckInList.checkInListID;
         var nextCheckInListID = @nextCheckInList.checkInListID;
         function periodChanged(ddl) {
+            //Get data from selected period in dropdown
             var yearPeriod = $(ddl).val();
             var periodName = $(ddl).children(':selected').html();
+            var showCurrent = yearPeriod == "current";
+
             $('#spanPeriod').html(periodName);
             //Current and Next chenck in list panels are hide or shown
-            if(yearPeriod == "current"){
+            if(showCurrent)
                 hidePartialGuest = currentCheckInListID>0;
-                $("#pnlCurrentCheckInList").show();
-                $("#pnlNextCheckInList").hide();
-            }else{
+            else
                 hidePartialGuest = nextCheckInListID>0;
-                $("#pnlCurrentCheckInList").hide();
-                $("#pnlNextCheckInList").show();
-            }
+
+            $("#pnlCurrentCheckInList").slideDownOrUp(showCurrent);
+            $("#pnlNextCheckInList").slideDownOrUp(!showCurrent);
+
             //Guest selection or blocking message are hide or shown
-            if(hidePartialGuest){
-                $("#Partial_ListGuest").hide()
-                $("#checkInRegisteredMessage").show()
-            }else{
-                $("#Partial_ListGuest").show()
-                $("#checkInRegisteredMessage").hide()
-            }
+            $("#btnRegister").fadeInOrOut(!hidePartialGuest);
+            $("#Partial_ListGuest").fadeInOrOut(!hidePartialGuest)
+            $("#checkInRegisteredMessage").fadeInOrOut(hidePartialGuest)
+
+            var validList = validateSelectedList();
+            $("#btnRegister").prop('disabled',!validList);
         }
 
+        function getSelectedCheckedList() {
+            //The checkedList in this scope takes the value of the selected period list
+            var selPeriodName = $("#period").val();
+            if (selPeriodName == "current")
+                return { visitors:checkedListcurrent, checkInListID : @currentCheckInList.checkInListID };
+            else if (selPeriodName == "next")
+                return { visitors:checkedListnext, checkInListID : @nextCheckInList.checkInListID };
+        }
+
+        //Send all checked condos to server to be associated to current owner.
+        function registerList() {
+            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            var selectedPeriod = $("#period").find(":selected");
+            var val = $("#period").val();
+            var period = {
+                startDate: selectedPeriod.attr("start-date"),
+                endDate: selectedPeriod.attr("end-date")
+            }
+            var checkedList
+            if(val=="current")
+                checkedList = checkedListcurrent;
+            if(val=="next")
+                checkedList = checkedListnext;
+
+            jQuery.postJSON("/Permissions/Create",
+                {
+                    checkedList: checkedList,
+                    period: period,
+                    ownerID: '@owner.Id'
+                },"JSON",
+                function (result) {
+                    if (result > 0) {
+                        location.reload();
+                    }
+                },
+                function (request) {
+                    alert("Error: " + JSON.stringify(request));
+                }, null, antiForgeryToken)
+        }
+
+        function validateSelectedList(){
+            var selectedList = getSelectedCheckedList();
+            var guests = selectedList.visitors;
+            return guests.length>0;
+        }
+
+        function getSelectedCheckedList() {
+            //The checkedList in this scope takes the value of the selected period list
+            var selPeriodName = $("#period").val();
+            if (selPeriodName == "current")
+                return { visitors:checkedListcurrent, checkInListID : @currentCheckInList.checkInListID };
+            else if (selPeriodName == "next")
+                return { visitors:checkedListnext, checkInListID : @nextCheckInList.checkInListID };
+        }
     </script>    
 }
 

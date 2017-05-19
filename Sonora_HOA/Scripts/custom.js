@@ -2,6 +2,8 @@
     $('table.datatable').DataTable();
 })
 
+$(document).tooltip();
+
 function changeIcon(bar) {
     $(bar).find("i").toggleClass("fa-window-minimize fa-window-maximize")
 }
@@ -28,3 +30,26 @@ jQuery.postJSON = function (url, data, dataType, success, fail, always, antiForg
 
     return jQuery.ajax(ajax);
 };
+
+$.fn.slideDownOrUp = function (show) {
+    return show ? this.slideDown() : this.slideUp();
+}
+
+$.fn.fadeInOrOut = function (status) {
+    return status ? this.fadeIn() : this.fadeOut();
+}
+
+Date.prototype.addDays = function (days) {
+    var dat = new Date(this.valueOf());
+    dat.setDate(dat.getDate() + days);
+    return dat;
+}
+
+Date.prototype.dateISOFormat = function (days) {
+    var dat = new Date(this.valueOf());
+    return dat.toISOString().slice(0, 10);
+}
+
+boolParse = function (myStr){
+    return myStr.toLowerCase()=='true';
+}

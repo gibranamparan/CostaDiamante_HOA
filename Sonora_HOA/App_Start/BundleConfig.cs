@@ -16,6 +16,7 @@ namespace Sonora_HOA
 
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/jquery-ui-{version}.js",
                         "~/Scripts/jquery.mask.js",
                         "~/Scripts/jquery.dataTables.min.js",
                         "~/Scripts/numeral.min.js",
@@ -43,6 +44,9 @@ namespace Sonora_HOA
             bundles.Add(new StyleBundle("~/Content/icons").Include(
                       "~/Content/font-awesome.min.css",
                       "~/Content/icomoon.css"));
+
+            bundles.Add(new StyleBundle("~/Content/jqueryui").Include(
+                      "~/Content/themes/base/*.css"));
         }
     }
 }

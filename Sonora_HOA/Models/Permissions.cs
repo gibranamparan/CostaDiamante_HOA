@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,11 +13,21 @@ namespace Sonora_HOA.Models
     {
         [Key]
         public int permissionsID { get; set; }
-        
-        //Guest who is permited to visit
-        [Display(Name = "Guest")]
-        public int guestID { get; set; }
-        public virtual Guest guest { get; set; }
+
+        /*Guest Data*/
+        [Required]
+        [Display(Name = "Name")]
+        public string name { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string lastName { get; set; }
+
+        [DisplayName("Guest Full Name")]
+        public string fullName
+        {
+            get { return this.name + " " + this.lastName; }
+        }
 
         //In the checkin list are registered each permission and period of time it lasts
         [Required]

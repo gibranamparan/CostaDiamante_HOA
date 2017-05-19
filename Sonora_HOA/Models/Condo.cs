@@ -11,7 +11,7 @@ namespace Sonora_HOA.Models
     {
         [Key]
         public int condoID { get; set; }
-        [Display(Name = "Condo Name")]
+        [Display(Name = "Condo Number")]
         public string name { get; set; }
 
         //A condo has one owner

@@ -33,15 +33,14 @@ namespace Sonora_HOA.Controllers
         public ActionResult Details(string id, bool errorGuest=false)
         {
             Owner owners = null;
-
-            if (id == null)
+            //If owner, show only his details
+            if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
+                owners = db.Owners.Find(User.Identity.GetUserId());
+            else if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             //If admin, get the requested owner
             else if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                 owners = db.Owners.Find(id);
-            //If owner, show only his details
-            else if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
-                owners = db.Owners.Find(User.Identity.GetUserId());
 
             if (owners == null)
                 return HttpNotFound();

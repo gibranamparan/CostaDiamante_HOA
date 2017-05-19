@@ -50,12 +50,13 @@ input[readonly='readonly']{
         color: white;
     }
     
-    .panel-info .panel-heading{
+    .panel-info>.panel-heading{
         background-color: #00C197 !important;
         border-color:  #00C197 !important;
+        color: white;
     }
 
-    .panel-info .panel-title{
+    .panel-default>.panel-title{
         color: white !important;
     }
 
@@ -186,13 +187,18 @@ input[readonly='readonly']{
      cursor: pointer;
  }
 
+ .logoPrintPanel img{
+     margin: auto;
+     margin-bottom: 1em;
+ }
+
  /*Forms*/
  .form-group img{
      height: 2em;
- }
+ }/*
  .form-inline {
     margin-bottom: 1em;
-}
+}*/
  .form-inline .btn {
     margin-top: 2em;
 }
@@ -214,11 +220,16 @@ input[readonly='readonly']{
     text-align: right;
     box-shadow: 0.1em 0.2em 2em grey;
     border-radius: 0 0 0em 1em;
+    margin: 0;
 }
 ul.usrPanel li a {
     color: white;
     border: none;
     z-index: 5;
+}
+
+.tblWildcards{
+
 }
 
 @media print{

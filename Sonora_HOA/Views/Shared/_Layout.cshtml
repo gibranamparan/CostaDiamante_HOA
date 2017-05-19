@@ -6,9 +6,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Sonoran Restorts Notifications System</title>
-        @Styles.Render("~/Content/template")
-        @Styles.Render("~/Content/icons")
+    <title>@ViewBag.Title - Notifications System - Sonoran Spa Resort</title>
+    @Styles.Render("~/Content/template")
+    @Styles.Render("~/Content/icons")
+    @Styles.Render("~/Content/jqueryui")
 </head>
 
 <body>
@@ -48,7 +49,14 @@
                 <!-- Menu -->
                 <nav id="menu" >
                     <header class="major">
-                        <a href="/">
+                        @{ 
+                            string urlHome = @"/";
+                            if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
+                            {
+                                urlHome += @"Owners/Details";
+                            }
+                        }
+                        <a href='@urlHome'>
                             <img src="~/images/logo.png" alt="Sonoran HOA" class="img-responsive">
                         </a>
                     </header>
@@ -59,10 +67,10 @@
                             <li><a href="~/Condo">Condos</a></li>
                             <li><a href="~/Visits">Visits Report</a></li>
                         }
-                        else if(Request.IsAuthenticated && Context.User.IsInRole(ApplicationUser.RoleNames.OWNER))
+                        else if (Request.IsAuthenticated && Context.User.IsInRole(ApplicationUser.RoleNames.OWNER))
                         {
-                            <li><a href="@Url.Action("Details","Owners",new { id = User.Identity.GetUserId() })">Notify New Visit</a></li>
                             <li><a href="@Url.Action("Index","Permissions",new { id = User.Identity.GetUserId() })">Check in List</a></li>
+                            <li><a href="@Url.Action("Details","Owners",new { id = User.Identity.GetUserId() })">Notify New Visit</a></li>
                             <li><a href="~/Visits">Your Visits History</a></li>
                         }
                     </ul>

@@ -20,8 +20,11 @@ namespace Sonora_HOA.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         
         // GET: Visits
-        public ActionResult Index(TimePeriod periodReported)
+        public ActionResult Index(Visits.VMVisitsFilter visitsFilter)
         {
+            TimePeriod periodReported = visitsFilter.TimePeriod;
+            bool isInHouse = visitsFilter.isInHouse;
+
             List<Visits> visits = new List<Visits>();
             //If user is admin, shows every visit in database
             if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
@@ -37,12 +40,18 @@ namespace Sonora_HOA.Controllers
                 periodReported = new TimePeriod(DateTime.Today, DateTime.Today.AddDays(7));
 
             //Se filtran visitas
-            visits = visits.Where(vis => periodReported
-                .hasInside(vis.timePeriod.startDate))
-                .OrderBy(vis=>vis.timePeriod.startDate).ToList();
+            if (!isInHouse) { 
+                visits = visits.Where(vis => periodReported
+                    .hasInside(vis.timePeriod.startDate))
+                    .OrderBy(vis=>vis.timePeriod.startDate).ToList();
+            }else
+            {
+                visits = visits.Where(vis => vis.isInHouseInPeriod(periodReported))
+                    .OrderBy(vis => vis.timePeriod.startDate).ToList();
+            }
 
-            ViewBag.periodReported = periodReported;
-            return View(visits);
+            ViewBag.result = visits;
+            return View(visitsFilter);
         }
 
         // GET: Visits/Details/5
@@ -67,8 +76,14 @@ namespace Sonora_HOA.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Condo condo= db.Condoes.Find(id);
-            if (condo == null)
+            Condo condo = null;
+            if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) { 
+                condo = db.Condoes.Find(id);
+            }else if (User.IsInRole(ApplicationUser.RoleNames.OWNER)){
+                var user = db.Owners.Find(User.Identity.GetUserId());
+                condo = user.Condos.FirstOrDefault(con => con.condoID == id);
+            }
+            if (condo == null || condo.condoID == 0)
             {
                 return HttpNotFound();
             }
@@ -90,6 +105,18 @@ namespace Sonora_HOA.Controllers
             visit.condoID = condo.condoID;
             visit.ownerID = condo.ownerID;
 
+            //Time periods list to populate dropdown selection
+            List<CheckInList.TimePeriodPermissions> timePeriods = CheckInList.generatePermissionPeriods();
+            ViewBag.timePeriods = timePeriods;
+
+            CheckInList currentCheckInList = CheckInList.getCurrentCheckInList(condo.ownerID, db);
+            ViewBag.currentCheckInList = currentCheckInList;
+
+            CheckInList nextCheckInList = CheckInList.findCheckInListByPeriod(condo.ownerID, timePeriods.ElementAt(1), db);
+            if (nextCheckInList.checkInListID == 0)
+                nextCheckInList.setPeriod(new CheckInList.TimePeriodPermissions(timePeriods.ElementAt(1)));
+            ViewBag.nextCheckInList = nextCheckInList;
+
             return visit;
         }
 
@@ -99,27 +126,25 @@ namespace Sonora_HOA.Controllers
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
         public JsonResult Create([Bind(Include = "condoID,arrivalDate,departureDate,date,guestsInVisit,"+
-            "visitors, ownerID")] Visits visit)
+            "visitors,ownerID,checkInListID,wildcards")]
+            Visits visit, int checkInListID)
         {
             if (ModelState.IsValid)
             {
                 //Invalid range
                 if (visit.arrivalDate > visit.departureDate) 
                     return Json(new { savedRegs = 0, error = "Introduced time range is not valid. " });
-                //Visitors quantity more than allowed
-                else if (visit.visitors.Count() > Visits.MAX_GUESTS_ALLOWED)
-                {
-                    return Json(new { savedRegs = 0, error = "Try notifiying a visit authorizing max. 8 guests. " });
-                }
                 else {
                     //Checking if visit time is inside current checkinlist
-                    CheckInList currentCil = CheckInList.getCurrentCheckInList(visit.ownerID, db);
-                    if (currentCil.period.hasInside(visit.timePeriod))
+                    CheckInList cil = db.CheckInLists.Find(checkInListID);
+                    if (cil.period.hasInside(visit.timePeriod))
                     {
                         visit.date = DateTime.Today;
-                        foreach(var pv in visit.visitors) {
+                        //In case checkin list and permissions are removed, the visitors in the visit list
+                        //are keeping the full name to be printed
+                        foreach(var pv in visit.visitors.Where(vis=>!vis.isWildCard)) {//For those who are not wildcards (latest have fullname already)
                             var permission = db.Permissions.Find(pv.permissionsID);
-                            pv.guestFullName = db.Guests.Find(permission.guestID).fullName;
+                            pv.guestFullName = db.Permissions.Find(permission.permissionsID).fullName;
                         }
 
                         db.Visits.Add(visit);

@@ -28,8 +28,10 @@ namespace Sonora_HOA.Controllers
             }
 
             var visits = db.Visits.Where(vis => vis.visitors.ToList().FirstOrDefault()
-                .permissions.checkInListID == checkInList.checkInListID);
+                .permissions.checkInListID == checkInList.checkInListID).ToList();
+
             db.Visits.RemoveRange(visits);
+            db.SaveChanges();
             db.CheckInLists.Remove(checkInList);
             db.SaveChanges();
 

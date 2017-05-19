@@ -25,7 +25,7 @@ namespace Sonora_HOA.Models
         public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
         
-        [Display(Name ="Year Period")]
+        [Display(Name ="Period")]
         public virtual TimePeriodPermissions period {
             get {
                 return new TimePeriodPermissions(this);
@@ -91,6 +91,8 @@ namespace Sonora_HOA.Models
                 //Sets current period
                 cil.setPeriod(new TimePeriodPermissions(DateTime.Today.Year,
                     TimePeriodPermissions.yearPeriodOfDate(DateTime.Today)));
+                //Associate new permissions list
+                cil.permissions = new List<Permissions>();
             }
             return cil;
         }
@@ -105,8 +107,10 @@ namespace Sonora_HOA.Models
             var checkInLists = owner.checkInListHistory.OrderByDescending(list => list.startDate)
                 .Take(3).ToList();
             var cil = checkInLists.FirstOrDefault(list => list.period.Equals(tpp));
-            if (cil == null)
+            if (cil == null) { 
                 cil = new CheckInList();
+                cil.permissions = new List<Permissions>();
+            }
             return cil;
         }
 

@@ -50,9 +50,16 @@ namespace Sonora_HOA.GeneralTools
         }
         public bool hasInside(TimePeriod other)
         {
-            return other.startDate>=this.startDate && other.startDate<=this.endDate
-                && other.endDate>=this.startDate && other.endDate<=this.endDate;
+            return other.startDate >= this.startDate && other.startDate <= this.endDate
+                && other.endDate >= this.startDate && other.endDate <= this.endDate;
         }
+
+        public bool hasPartInside(TimePeriod other)
+        {
+            return other.startDate >= this.startDate && other.startDate <= this.endDate
+                || other.endDate >= this.startDate && other.endDate <= this.endDate;
+        }
+
         public bool Equals(TimePeriod other)
         {
             return this.startDate == other.startDate && this.endDate == other.endDate;

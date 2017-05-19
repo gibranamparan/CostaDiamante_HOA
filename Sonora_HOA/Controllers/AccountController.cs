@@ -153,7 +153,8 @@ namespace Sonora_HOA.Controllers
 
         //
         // GET: /Account/Register
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        //[Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        [AllowAnonymous]
         public ActionResult Register()
         {
             return View();
@@ -162,7 +163,8 @@ namespace Sonora_HOA.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        //[Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {

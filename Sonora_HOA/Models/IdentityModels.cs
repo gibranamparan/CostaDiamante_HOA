@@ -22,6 +22,7 @@ namespace Sonora_HOA.Models
             this.name = model.name;
             this.lastName= model.lastname;
             this.PasswordHash = model.hash;
+            this.SecurityStamp = model.stamp;
         }
 
         public ApplicationUser(RegisterViewModel model, ApplicationDbContext db) : this(model)
@@ -75,9 +76,7 @@ namespace Sonora_HOA.Models
         
 
         public System.Data.Entity.DbSet<Sonora_HOA.Models.Owner> Owners { get; set; }
-
-        public System.Data.Entity.DbSet<Sonora_HOA.Models.Guest> Guests { get; set; }
-
+        
         public System.Data.Entity.DbSet<Sonora_HOA.Models.Condo> Condoes { get; set; }
 
         public System.Data.Entity.DbSet<Sonora_HOA.Models.Permissions> Permissions { get; set; }

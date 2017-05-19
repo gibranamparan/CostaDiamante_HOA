@@ -14,14 +14,14 @@
 
 <div class="panel panel-info">
     <div class="panel-heading">
-        <h2 class="panel-title">
-            <strong>Owner's General Information</strong>
-        </h2>
+        <span class="panel-title">
+            Owner's General Information
+        </span>
     </div>
     <div class="panel-body">
         <div>
             <hr />
-            <dl class="dl-horizontal col-md-4">
+            <dl class="dl-horizontal col-md-6">
                 @if (!User.IsInRole(ApplicationUser.RoleNames.OWNER)) { 
                     <dt>
                         @Html.DisplayNameFor(model => model.fullName)
@@ -33,7 +33,7 @@
                 }
 
             </dl>
-            <dl class="dl-horizontal col-md-4">
+            <dl class="dl-horizontal col-md-6">
                 <dt>
                     @Html.DisplayNameFor(model => model.Email)
                 </dt>
@@ -43,17 +43,8 @@
                 </dd>
 
             </dl>
-            <dl class="dl-horizontal col-md-4">
-                <dt>
-                    @Html.DisplayNameFor(model => model.PhoneNumber)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.PhoneNumber)
-                </dd>
-            </dl>
-           </div>
-        <p>
+        </div>
+        <div class="col-md-12">
             <a href="@Url.Action("Edit", "Account", new { id = Model.Id })">
                 <i class="fa fa-pencil"></i>Edit
             </a> |
@@ -65,7 +56,7 @@
                     <i class="fa fa-check-square-o"></i>Check in List
                 </a>
             }
-        </p>
+        </div>
     </div>
 </div>
 

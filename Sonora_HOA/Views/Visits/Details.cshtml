@@ -15,6 +15,9 @@
         <i class="fa fa-print"></i> Print
     </button>
 </div>
+<div class="logoPrintPanel visible-print">
+    <img src="/images/logo_print.png" alt="Sonoran HOA" class="img-responsive">
+</div>
 
 @*Details visits*@
 <div class="panel panel-info">
@@ -24,8 +27,6 @@
         </h2>
     </div>
     <div class="panel-body">
-        <hr />
-
         @if (!User.IsInRole(ApplicationUser.RoleNames.OWNER))
         {
             <dl class="dl-horizontal col-xs-4">
@@ -88,7 +89,6 @@
                         #
                     </th>
                     <th>
-                        @Html.DisplayNameFor(model => model.visitors.FirstOrDefault().guestFullName)
                     </th>
                     <th class="hidden-print">
 
@@ -98,7 +98,7 @@
             <tbody>
                 @{
                     int num = 1;
-                    foreach (var item in Model.visitors
+                    foreach (var item in Model.visitors.Where(vis => !vis.isWildCard)
                             .OrderBy(vis => vis.guestFullName))
                     {
                         <tr>
@@ -120,6 +120,46 @@
                 }
             </tbody>
         </table>
+        @if(Model.visitors.Where(vis => vis.isWildCard).Count() > 0) { 
+            <strong>Extra visitors</strong>
+            <table class="tblWildcards">
+                <thead>
+                    <tr>
+                        <th>
+                            #
+                        </th>
+                        <th>
+                        </th>
+                        <th class="hidden-print">
+
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var item in Model.visitors.Where(vis=>vis.isWildCard)
+                                .OrderBy(vis => vis.guestFullName))
+                        {
+                            <tr>
+                                <td>
+                                    @num
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(model => item.guestFullName)
+                                </td>
+                                <td class="hidden-print">
+                                    <a href='@Url.Action("Delete","Permissions_Visits",
+                                      new { id = item.permissions_visitsID })'>
+                                        <i class="glyphicon glyphicon-remove"></i> Remove
+                                    </a>
+                                </td>
+                            </tr>
+                            num++;
+                        }
+                    }
+                </tbody>
+            </table>
+        }
     </div>
 </div>
 

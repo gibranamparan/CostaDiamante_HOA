@@ -4,22 +4,42 @@
 @using Sonora_HOA.Models
 @{ 
     string modalID = "mdlConfirmation" + Model.checkInListID;
-
     bool selectionMode = false;
     string ownerID = "";
+    string listID = "";
     if (ViewData["selectionMode"] != null)
     {
         selectionMode = true;
         ownerID = (string)ViewData["ownerID"];
+        listID = (string)ViewData["listID"];
     }
+
+
+    bool errorGuest = false;
+    if (ViewBag.errorGuest != null)
+    {
+        errorGuest = ViewBag.errorGuest;
+    }
+    ViewDataDictionary vddNewGuest = new ViewDataDictionary();
+    vddNewGuest.Add("errorGuestName", errorGuest);
 }
 
 @if (Model.checkInListID > 0)
 {
     <div class='@(selectionMode?"hidden":"")'>
+
+        @if (Context.User.IsInRole(ApplicationUser.RoleNames.OWNER))
+        {
+            <div class="alert alert-info">
+                A Check In List is already registered for this period. 
+                You'll be able to register a new one when the period has finished.
+                You can notify a new visit selecting a condo clicking 
+                <a href="@Url.Action("Details","Owners", new { id=Model.ownerID })">here</a>.
+            </div>
+        }
         @Html.LabelFor(model => model.period):
         @Model.period.ToString("MMMM/dd/yyyy")
-        @if (Request.IsAuthenticated && Context.User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+        @if (Context.User.IsInRole(ApplicationUser.RoleNames.ADMIN))
         {
             <button type="button" class="alert alert-danger pull-right"
                     data-toggle="modal" href='#@modalID'>
@@ -28,8 +48,8 @@
         }
     </div>
 }
-<table class='table table-hover table-striped
-       @(Model.checkInListID>0 && Model.permissions.Count()>0?"datatable":"")'>
+
+<table class='table table-hover table-striped'>
     <thead>
         <tr>
             @if (selectionMode)
@@ -39,7 +59,7 @@
                 </th>
             }
             <th>
-                @Html.DisplayNameFor(model => model.permissions.FirstOrDefault().guest.fullName)
+                @Html.DisplayNameFor(model => model.permissions.FirstOrDefault().fullName)
             </th>
         </tr>
     </thead>
@@ -52,11 +72,12 @@
                     @if (selectionMode)
                     {
                         <td>
-                            <input type="checkbox" value="@item.permissionsID" onchange="selectChange(this); enableOrDisableBtnRegister()" />
+                            <input type="checkbox" value="@item.permissionsID" 
+                                   onchange="selectChange@(listID)(this); enableOrDisableBtnRegister()" />
                         </td>
                     }
                     <td>
-                        @Html.DisplayFor(modelItem => item.guest.fullName)
+                        @Html.DisplayFor(modelItem => item.fullName)
                     </td>
                 </tr>
             }
@@ -70,8 +91,9 @@
                         @if (selectionMode) { 
                         <span>
                             Create a new one clicking
-                            <strong><a href='@Url.Action("Index","Permissions",new { id=ownerID, openCheckInList = true })'>here</a></strong>
-                            and then clicking on <strong>"New Check In List"</strong> panel.
+                            <strong>
+                                <a href='@Url.Action("Index","Permissions", new { id=ownerID, openCheckInList = true })'>here</a>
+                            </strong>.
                         </span> 
                         }
                     </div>
@@ -84,9 +106,7 @@
                 <td colspan="2">
                     <div class="alert alert-danger">
                         Current Check In List has no guests registered, 
-                        you can register guests for your account clicking 
-                        <a href='@Url.Action("Details","Owners",new { id=ownerID})'>here</a>.
-                        Else, contact administrator.
+                        this may mean a malfunction of the system. Contact administrator.
                     </div>
                 </td>
             </tr>
@@ -95,49 +115,45 @@
 </table>
 
 @*Cancel Confirmation dialog *@
-@Html.Partial("../Shared/Partial_ConfirmationModal", new VMConfirmModalAttributes
+@if (!selectionMode)
 {
-    modalID = modalID,
-    modalTitle = "Confirm cancelation",
-    primaryMessage = "You are going to <strong>cancel the selected \"Guest and Family Check in List\"</strong>. " +
-        "If you confirm, the associated <strong>\"Visit Notifications\"</strong> to this check in list will be <strong>canceled too</strong>. " +
-        "You'll need to create a new \"Check in List\" in order to schedule a new visit in this period of the year.",
-    action = "Delete",
-    controller = "CheckInList",
-    routeVals = new { id = Model.checkInListID },
-    modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
-    callType = VMConfirmModalAttributes.CallType.POSTBACK
-})
-
+    <div>
+        @Html.Partial("../Shared/Partial_ConfirmationModal", new VMConfirmModalAttributes
+        {
+            modalID = modalID,
+            modalTitle = "Confirm cancelation",
+            primaryMessage = "You are going to <strong>cancel the selected \"Guest and Family Check in List\"</strong>. " +
+                    "If you confirm, the associated <strong>\"Visit Notifications\"</strong> to this check in list will be <strong>canceled too</strong>. " +
+                    "You'll need to create a new \"Check in List\" in order to schedule a new visit in this period of the year.",
+            action = "Delete",
+            controller = "CheckInList",
+            routeVals = new { id = Model.checkInListID },
+            modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
+            callType = VMConfirmModalAttributes.CallType.POSTBACK
+        })
+    </div>
+}
 
 @if (selectionMode)
 {
     <script>
-        var checkedList = new Array();
-
+        var checkedList@(listID) = new Array();
         //Check the condo to be associated
-        function selectChange(cb) {
+        function selectChange@(listID)(cb) {
             //Item added to the selected list items
             if ($(cb).is(":checked")) {
-                if (checkedList.length<(@Visits.MAX_GUESTS_ALLOWED)){
-                    checkedList.push({
+                checkedList@(listID).push({
                     permissionsID: $(cb).val(),
                 })
-                } else {
-                    $(cb).attr('checked', false);
-                }
             }
             else {
                 //If unchecked, item is removed from the selected list items
                 var id = $(cb).val();
-                checkedList = $.grep(checkedList, function (e) {
+                checkedList@(listID) = $.grep(checkedList@(listID), function (e) {
                     return e.permissionsID != id;
                 });
             }
-
-            $("#btnRegister").prop('disabled', checkedList.length == 0);
-
-            console.log(JSON.stringify(checkedList));
+            console.log(JSON.stringify(checkedList@(listID)));
         }
     </script>
 }

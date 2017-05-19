@@ -1,6 +1,7 @@
 ﻿using Sonora_HOA.GeneralTools;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -33,19 +34,44 @@ namespace Sonora_HOA.Models
         [Display(Name = "Departure")]
         public DateTime departureDate { get; set; }
 
+        [Display(Name = "Period")]
         public TimePeriod timePeriod { get {
                 return new TimePeriod(this.arrivalDate, this.departureDate);
             } }
 
         //A visits is for one condo
+        [Display(Name = "Condo Number")]
         public int condoID { get; set; }
         public virtual Condo condo { get; set; }
 
         //A visits is for one condo
+        [Display(Name = "Owner")]
         public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
 
         //Every visits has a checkin list
         public virtual ICollection<Permissions_Visits> visitors { get; set; }
+
+        public bool isInHouseInPeriod(TimePeriod tp)
+        {
+            return tp.hasPartInside(this.timePeriod) || this.timePeriod.hasPartInside(tp);
+        }
+
+        public class VMVisitsFilter
+        {
+            private TimePeriod _timePeriod { get; set; }
+            public TimePeriod TimePeriod {
+                get {
+                    if(_timePeriod == null)
+                    {
+                        _timePeriod = new TimePeriod(DateTime.Now,DateTime.Now.AddDays(7));
+                    }
+                    return _timePeriod;
+                }
+                set { _timePeriod = value; } }
+
+            [DisplayName("Include Inhouse Visits")]
+            public bool isInHouse { get; set; }
+        }
     }
 }

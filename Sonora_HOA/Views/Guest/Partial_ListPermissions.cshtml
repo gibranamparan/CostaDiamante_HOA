@@ -1,0 +1,223 @@
+﻿@using Sonora_HOA.Models;
+@using Sonora_HOA.GeneralTools;
+@model IEnumerable<Sonora_HOA.Models.Permissions>
+
+@{
+    bool selectionMode = false;
+    string ownerID = "";
+    string listID = "";
+    string addFunctionJS = "addGuest";
+    int guestLimit = 0;
+    if (ViewData["selectionMode"] != null)
+    {
+        selectionMode = true;
+        ownerID = (string)ViewData["ownerID"];
+    }
+
+    if (selectionMode && ViewData["listID"] != null)
+    {
+        listID = (string)ViewData["listID"];
+        addFunctionJS = addFunctionJS + listID;
+    }
+
+    if (selectionMode && ViewData["guestLimit"] != null)
+    {
+        guestLimit = (int)ViewData["guestLimit"];
+    }
+
+    VMConfirmModalAttributes confirmDeleteGuestModal = new VMConfirmModalAttributes
+    {
+        modalID = "confirmDeleteModal",
+        modalTitle = "Confirm Remove Guest",
+        primaryMessage = "You are going to remove <strong id='fullName'></strong> from your guest list,"
+    + " this register will be removed from current Check In List too, you can register it again or"
+    + " correct it using the form in the top.",
+        javascriptFunction = "removeGuest",
+        modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
+        callType = VMConfirmModalAttributes.CallType.JAVASCRIPT
+    };
+}
+
+@if (selectionMode)
+{
+    Permissions newPermission = new Permissions();
+    ViewDataDictionary vdd = new ViewDataDictionary();
+    vdd.Add("addFunctionJS", addFunctionJS);
+    vdd.Add("listID", listID);
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Guest Registration</h3>
+        </div>
+        <div class="panel-body" id="pnlCreateGuest">
+            @Html.Partial("../Guest/Partial_CreateGuest", newPermission, vdd)
+        </div>
+    </div>
+}
+
+<table class="table table-hover table-striped" id="tblGuests@(listID)">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().fullName)
+            </th>
+
+            @if (!selectionMode)
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.fullName)
+                    </td>
+                    @if (!selectionMode && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                    {
+                        <td>
+                            <a guest-name="@item.fullName" guest-id="@item.permissionsID"
+                               href="#@confirmDeleteGuestModal.modalID" data-toggle="modal"
+                               onclick="prepareRemoveConfirmModal(this)">
+                                <i class="glyphicon glyphicon-remove"></i> <span>Remove</span>
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr id="noGuestRow">
+                <td colspan="2">
+                    <div class="alert alert-info">
+                        Add a new guest to this list.
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+@Html.AntiForgeryToken()
+@Html.Partial("../Shared/Partial_ConfirmationModal", confirmDeleteGuestModal)
+
+<script>
+    function prepareRemoveConfirmModal(guestRow) {
+        var fullName = $(guestRow).attr("guest-name");
+        var guestID = $(guestRow).attr("guest-id");
+        $('#@confirmDeleteGuestModal.modalID .modal-footer #btnConfirm').attr("onclick", '@confirmDeleteGuestModal.javascriptFunction' + '(' + guestID + ')')
+        $('#@confirmDeleteGuestModal.modalID .modal-body strong#fullName').html(fullName);
+    }
+
+</script>
+
+@*To be used when a checkinlist was already registered and i*@
+@if (!selectionMode && User.IsInRole(ApplicationUser.RoleNames.ADMIN)) {
+    <script>
+        function removeGuest(id) {
+            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            jQuery.postJSON("/Permissions/Delete",
+                {
+                    id: id
+                }, "JSON",
+                function (result) {
+                    if (result.regSaved > 0) {
+                        location.reload();
+                    }
+                },
+                function (request) {
+                    alert("Error: " + JSON.stringify(request));
+                }, null, antiForgeryToken)
+        }
+    </script>
+}
+else if(selectionMode)
+{
+    <script>
+        function removeGuest@(listID)(rowNo) {
+            checkedList@(listID) = $.grep(checkedList@(listID), function (e) {
+                return e.rowNo != rowNo;
+            });
+
+            var validList = checkedList@(listID).length>0;
+            if(!validList)
+                $("#btnRegister").prop('disabled',!validList);
+
+            $('#tblGuests@(listID) tr#tr'+rowNo).find('a').slideUp(200);
+            $('#tblGuests@(listID) tr#tr'+rowNo).find('span').slideUp(200);
+            setTimeout(function(){$('#tblGuests@(listID) tr#tr'+rowNo).remove()}, 200);
+            console.log('@(listID):',checkedList@(listID));
+
+            validateLimit@(listID)()
+        }
+    </script>
+}
+
+@if (selectionMode)
+{
+    <script>
+        var checkedList@(listID) = new Array();
+        var ownerID = '@ownerID';
+        var guestLimit = @guestLimit;
+
+        //Check the condo to be associated
+        function @(addFunctionJS)() {
+            var formSel = "form#newGuestForm@(listID) "
+            var name = $(formSel+"#name").val().toUpperCase().trim();
+            var lastName = $(formSel+"#lastName").val().toUpperCase().trim()
+            var rowNo = name+lastName+Math.round(Math.random()*100);//Unique identity for row
+            //Get data from guest and addit to a list
+            var newGuest = {
+                rowNo:rowNo,
+                name:name,
+                lastname:lastName,
+                guestFullName: name+" "+lastName
+            };
+
+            //Add in Guest List
+            checkedList@(listID).push(newGuest)
+
+            //Display it in Guest table
+            var trNewGuest = newGuestRow@(listID)(newGuest);
+            $('#tblGuests@(listID) tbody').append(trNewGuest);
+            trNewGuest.find('a').slideDown();
+            trNewGuest.find('span').slideDown();
+
+            //$("#btnRegister").prop('disabled', checkedList@(listID).length == 0);
+            console.log('@(listID):',checkedList@(listID));
+
+            $(formSel+"#name").val("")
+            $(formSel+"#lastName").val("")
+            $(formSel+"#name").focus()
+
+            if(checkedList@(listID).length == 0){
+                $('#noGuestRow').slideDown();
+            }else{
+                $('#noGuestRow').slideUp();
+            }
+
+            validateLimit@(listID)();
+        }
+
+        function newGuestRow@(listID)(newGuest){
+            var row = $('<tr id="tr'+newGuest.rowNo+'">')
+            var removeLink = $('<a style="display:none" onclick=removeGuest@(listID)("'+newGuest.rowNo
+                +'") class="fa fa-times">')
+            var spanFullName = $('<span  style="display:none" >').html(" "+newGuest.guestFullName)
+            var td = $('<td>').append(removeLink).append(spanFullName);
+            row.append(td);
+            return row;
+        }
+
+        function validateLimit@(listID)(){
+            if(guestLimit>0){
+                var validLimit = checkedList@(listID).length<guestLimit;
+                $('#btnRegisterGuest').fadeInOrOut(validLimit);
+            }
+        }
+    </script>
+}

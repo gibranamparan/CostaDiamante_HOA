@@ -9,12 +9,6 @@
     vdd.Add("ownerID", Model.Id);
 
     List<Sonora_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
-    Sonora_HOA.Models.Guest newGuest = new Sonora_HOA.Models.Guest();
-    newGuest.ownerID = Model.Id;
-
-    bool errorGuest = ViewBag.errorGuest;
-    ViewDataDictionary vddNewGuest = new ViewDataDictionary();
-    vddNewGuest.Add("errorGuestName", errorGuest);
 }
 
 @if (Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
@@ -27,15 +21,7 @@
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h2 class="panel-title">
-            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) {
-                <span>Owner's condominiums</span>
-            }
-            else if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
-            {
-                <span>Your condominiums</span>
-            }
-        </h2>
+        <h2 class="panel-title"></h2>
     </div>
     <div class="panel-body in" id="Partial_IndexCondo">
         @Html.Partial("../Condo/Partial_IndexCondo", Model.Condos.ToList())
@@ -56,25 +42,3 @@
         }
     </div>
 </div>
-
-    @*Form to register new guest associated to current owner, table included*@
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h2 class="panel-title" onclick="changeIcon(this)"
-                data-toggle="collapse" data-target="#Partial_ListGuest">
-                <span>Owner's guests for future visits</span>
-                <i class="pull-right fa fa-window-minimize"></i>
-            </h2>
-        </div>
-        <div id="Partial_ListGuest" class="panel-body in">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">New Guest</h3>
-                </div>
-                <div class="panel-body">
-                    @Html.Partial("../Guest/Partial_CreateGuest", newGuest, vddNewGuest)
-                </div>
-            </div>
-            @Html.Partial("../Guest/Partial_ListGuest", Model)
-        </div>
-    </div>

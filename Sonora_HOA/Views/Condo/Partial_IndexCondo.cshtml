@@ -69,9 +69,10 @@
                         <td>
                             <a href="@Url.Action("Create", "Visits", new { id = item.condoID })">
                                 <i class="fa fa-book"></i>Notify New Visit
-                            </a> | 
+                            </a> 
                             @if(Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                             {
+                                <span> | </span>
                                 <a data-toggle="modal" href='#@confirmationModalID'
                                    condo-name="@item.name" condo-id="@item.condoID"
                                    onclick="prepareConfirmationModal(this)">

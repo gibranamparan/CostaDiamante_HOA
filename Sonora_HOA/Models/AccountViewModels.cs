@@ -96,8 +96,9 @@ namespace Sonora_HOA.Models
 
         [DisplayName("Register as Administrator")]
         public bool registerAsAdmin { get; set; }
-        
+
         public string hash { get; set; }
+        public string stamp { get; set; }
         
 
         public RegisterViewModel() { }
@@ -109,6 +110,7 @@ namespace Sonora_HOA.Models
             this.lastname = owner.lastName;
             this.userID = owner.Id;
             this.hash = owner.PasswordHash;
+            this.stamp = owner.SecurityStamp;
         }
     }
 
