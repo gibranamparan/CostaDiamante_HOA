@@ -213,11 +213,14 @@ else if(selectionMode)
             return row;
         }
 
+        //Validates a guest limit for the list, a 0 limit means unlimited number.
         function validateLimit@(listID)(){
             if(guestLimit>0){
                 var validLimit = checkedList@(listID).length<guestLimit;
                 $('#btnRegisterGuest').fadeInOrOut(validLimit);
             }
+            //Enable or disable checkinlist register button when at least 1 guest was added
+            $("#btnRegister").prop('disabled',!checkedList@(listID).length>0);
         }
     </script>
 }

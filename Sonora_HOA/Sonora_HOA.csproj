@@ -497,7 +497,6 @@
     <Content Include="Views\Permissions_Visits\Index.cshtml" />
     <Content Include="Views\Owners\Partial_infoOwner.cshtml" />
     <Content Include="Views\Permissions\Partial_CreatePermission.cshtml" />
-    <Content Include="Views\Permissions\Partial_PermissionList.cshtml" />
     <Content Include="Views\Condo\Partial_IndexCondo.cshtml" />
     <Content Include="Views\Condo\Partial_CreateCondo.cshtml" />
     <Content Include="Views\Guest\Partial_CreateGuest.cshtml" />
