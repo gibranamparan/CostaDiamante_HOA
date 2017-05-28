@@ -3,31 +3,81 @@
 @using Microsoft.AspNet.Identity
 @using Sonora_HOA.Models
 @{ 
-    string modalID = "mdlConfirmation" + Model.checkInListID;
+    /*string modalID = "mdlConfirmation" + Model.checkInListID;*/
     bool selectionMode = false;
+    bool showWildCards = false;
     string ownerID = "";
     string listID = "";
+    string jsRegisterListFunction = "";
     if (ViewData["selectionMode"] != null)
     {
-        selectionMode = true;
+        selectionMode = (bool)ViewData["selectionMode"];
         ownerID = (string)ViewData["ownerID"];
+    }
+
+    if (ViewData["listID"] != null)
+    {
         listID = (string)ViewData["listID"];
     }
 
+    if (ViewData["showWildCards"] != null)
+    {
+        showWildCards = (bool)ViewData["showWildCards"];
+    }
+
+    if (ViewData["jsRegisterListFunction"] != null)
+    {
+        jsRegisterListFunction = (string)ViewData["jsRegisterListFunction"];
+    }
 
     bool errorGuest = false;
     if (ViewBag.errorGuest != null)
     {
         errorGuest = ViewBag.errorGuest;
     }
+
     ViewDataDictionary vddNewGuest = new ViewDataDictionary();
     vddNewGuest.Add("errorGuestName", errorGuest);
+
+    VMConfirmModalAttributes cancelationModalOptions = new VMConfirmModalAttributes();
+    VMConfirmModalAttributes confirmWildCardsModalOptions = new VMConfirmModalAttributes();
+    if (!selectionMode)
+    {
+        cancelationModalOptions = new VMConfirmModalAttributes
+        {
+            modalID = "mdlConfirmation" + Model.checkInListID,
+            modalTitle = "Confirm cancelation",
+            primaryMessage = "You are going to <strong>cancel the selected \"Guest and Family Check in List\"</strong>. " +
+                                "If you confirm, the associated <strong>\"Visit Notifications\"</strong> to this check in list will be <strong>canceled too</strong>. " +
+                                "You'll need to create a new \"Check in List\" in order to schedule a new visit in this period of the year.",
+            action = "Delete",
+            controller = "CheckInList",
+            routeVals = new { id = Model.checkInListID },
+            modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
+            callType = VMConfirmModalAttributes.CallType.POSTBACK
+        };
+        confirmWildCardsModalOptions = new VMConfirmModalAttributes
+        {
+            modalID = "mdlConfirmationWildCards" + Model.checkInListID,
+            modalTitle = "Confirm Unnamed Non-Paying Guests",
+            primaryMessage = "You are going to <strong>confirm new \"Unnamed Non-Paying Guests\"</strong> for this already registered " +
+            "Check In List. If you confirm, you won't be able to make any changes or add others guests to this Check In List " +
+            "until the selected period is finished.",
+            modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.WARNING),
+            callType = VMConfirmModalAttributes.CallType.JAVASCRIPT,
+            javascriptFunction = jsRegisterListFunction
+        };
+    }
+
+    string btnRegisterUnammed = "btnRegisterUnnamed" + listID;
 }
 
-@if (Model.checkInListID > 0)
+@*If CheckInList was already registered*@
+@if (Model.status != CheckInList.CheckInListStatus.NO_REGISTERED)
 {
     <div class='@(selectionMode?"hidden":"")'>
 
+        @*CheckInList already registered message*@
         @if (Context.User.IsInRole(ApplicationUser.RoleNames.OWNER))
         {
             <div class="alert alert-info">
@@ -37,18 +87,30 @@
                 <a href="@Url.Action("Details","Owners", new { id=Model.ownerID })">here</a>.
             </div>
         }
-        @Html.LabelFor(model => model.period):
-        @Model.period.ToString("MMMM/dd/yyyy")
-        @if (Context.User.IsInRole(ApplicationUser.RoleNames.ADMIN))
-        {
-            <button type="button" class="alert alert-danger pull-right"
-                    data-toggle="modal" href='#@modalID'>
-                Cancel List
-            </button>
-        }
+        @*Period information*@
+        @Html.LabelFor(model => model.period)
+        <span>@Model.period.ToString("MMMM/dd/yyyy")</span>
+        <div class="pull-right" style="margin-bottom: 1em">
+            @*Cancel CheckInList just for admin*@
+            @if (Context.User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+            {
+                <button type="button" class="btn btn-danger"
+                        data-toggle="modal" href='#@cancelationModalOptions.modalID' style="cursor:pointer">
+                    Cancel List
+                </button>
+            }
+            @*Register Unnamed Guests Button*@
+            @if(Model.status == CheckInList.CheckInListStatus.WILD_CARDS_AVAILABLE) { 
+                <button type="button" class="btn btn-success" id="@btnRegisterUnammed"
+                        data-toggle="modal" href='#@confirmWildCardsModalOptions.modalID' style="cursor:pointer" disabled>
+                    Add Unnamed Guests
+                </button>
+            }
+        </div>
     </div>
 }
 
+@*Main guests listing for this check in list*@
 <table class='table table-hover table-striped'>
     <thead>
         <tr>
@@ -64,11 +126,12 @@
         </tr>
     </thead>
     <tbody>
+        @*Check in list was already registered*@
         @if (Model.permissions != null && Model.permissions.Count() > 0)
         {
             foreach (var item in Model.permissions)
             {
-                <tr>
+                <tr class="@(item.isWildCard? "wildCardRow" : "")">
                     @if (selectionMode)
                     {
                         <td>
@@ -82,6 +145,7 @@
                 </tr>
             }
         }
+        @*Checkin list doesnt exists*@
         else if (Model.checkInListID == 0)
         {
             <tr>
@@ -100,13 +164,15 @@
                 </td>
             </tr>
         }
+        @*Unknown problem*@
         else
         {
             <tr>
                 <td colspan="2">
                     <div class="alert alert-danger">
                         Current Check In List has no guests registered, 
-                        this may mean a malfunction of the system. Contact administrator.
+                        this is probably a malfunction of the system. Refresh page and try again.
+                        If problem persists, contact administrator.
                     </div>
                 </td>
             </tr>
@@ -114,26 +180,34 @@
     </tbody>
 </table>
 
-@*Cancel Confirmation dialog *@
-@if (!selectionMode)
-{
-    <div>
-        @Html.Partial("../Shared/Partial_ConfirmationModal", new VMConfirmModalAttributes
-        {
-            modalID = modalID,
-            modalTitle = "Confirm cancelation",
-            primaryMessage = "You are going to <strong>cancel the selected \"Guest and Family Check in List\"</strong>. " +
-                    "If you confirm, the associated <strong>\"Visit Notifications\"</strong> to this check in list will be <strong>canceled too</strong>. " +
-                    "You'll need to create a new \"Check in List\" in order to schedule a new visit in this period of the year.",
-            action = "Delete",
-            controller = "CheckInList",
-            routeVals = new { id = Model.checkInListID },
-            modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
-            callType = VMConfirmModalAttributes.CallType.POSTBACK
-        })
+@*Wildcards registrations when needed and none was previously registered*@
+@if (showWildCards && Model.status == CheckInList.CheckInListStatus.WILD_CARDS_AVAILABLE) {
+    ViewDataDictionary vddWildCards = new ViewDataDictionary();
+    vddWildCards.Add("selectionMode", true);
+    vddWildCards.Add("ownerID", Model.ownerID);
+    vddWildCards.Add("listID", listID);
+    vddWildCards.Add("guestLimit", Permissions_Visits.WILD_CARDS_LIMIT);
+    vddWildCards.Add("wildCardsMode", true);
+    vddWildCards.Add("btnRegisterUnammed", btnRegisterUnammed);
+    List<Permissions> wildCards = new List<Permissions>();
+
+    <div id="pnlExtraVisitors">
+        <h3>Unnamed Non-Paying Guests</h3>
+        <div id="Partial_ListGuest">
+            <div class="alert alert-info">Only 4 unnamed guests in selected Check In List are allowed.</div>
+            @Html.Partial("../Guest/Partial_ListPermissions", wildCards, vddWildCards)
+        </div>
     </div>
 }
 
+@*Cancel Confirmation dialog *@
+@if (!selectionMode)
+{
+    @Html.Partial("../Shared/Partial_ConfirmationModal", cancelationModalOptions)
+    @Html.Partial("../Shared/Partial_ConfirmationModal", confirmWildCardsModalOptions)
+}
+
+@*Used when a visits is being registered, the guests are selected in the list*@
 @if (selectionMode)
 {
     <script>
@@ -153,7 +227,7 @@
                     return e.permissionsID != id;
                 });
             }
-            console.log(JSON.stringify(checkedList@(listID)));
+            console.log("checkedList@(listID)",JSON.stringify(checkedList@(listID)));
         }
     </script>
 }

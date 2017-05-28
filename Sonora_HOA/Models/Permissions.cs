@@ -29,6 +29,8 @@ namespace Sonora_HOA.Models
             get { return this.name + " " + this.lastName; }
         }
 
+        public bool isWildCard { get; set; }
+
         //In the checkin list are registered each permission and period of time it lasts
         [Required]
         public int checkInListID { get; set; }

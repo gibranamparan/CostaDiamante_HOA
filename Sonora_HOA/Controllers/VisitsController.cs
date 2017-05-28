@@ -142,7 +142,7 @@ namespace Sonora_HOA.Controllers
                         visit.date = DateTime.Today;
                         //In case checkin list and permissions are removed, the visitors in the visit list
                         //are keeping the full name to be printed
-                        foreach(var pv in visit.visitors.Where(vis=>!vis.isWildCard)) {//For those who are not wildcards (latest have fullname already)
+                        foreach(var pv in visit.visitors) {
                             var permission = db.Permissions.Find(pv.permissionsID);
                             pv.guestFullName = db.Permissions.Find(permission.permissionsID).fullName;
                         }

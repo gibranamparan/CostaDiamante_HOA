@@ -173,24 +173,27 @@ input[readonly='readonly']{
     border-color: #555 transparent transparent transparent;
 }
 
- /*Varios*/
- .searchPanel{
-     margin-bottom: .5em;
-     margin-top: .5em;
- }
-
- .satLogo{
-     line-height: 2.8em;
- }
-
- a[onclick]{
-     cursor: pointer;
- }
-
- .logoPrintPanel img{
-     margin: auto;
+ /***CHECKIN LIST RULES****/
+ #checkInRegisteredMessage button.pull-right{
+     white-space:normal;
+     height: 4em;
+     width: 7em;
+     margin-right: 1em;
      margin-bottom: 1em;
  }
+ 
+ tr.wildCardRow {
+    background-color: #ffebb4;
+}
+
+
+ tr.wildCardRow:hover>td,tr.wildCardRow:nth-child(odd):hover > td{
+    background-color: #ffd35b !important;
+}
+
+ tr.wildCardRow:nth-child(odd) td {
+    background-color: #fff5da !important;
+}
 
  /*Forms*/
  .form-group img{
@@ -228,9 +231,20 @@ ul.usrPanel li a {
     z-index: 5;
 }
 
-.tblWildcards{
+ /*Micellanius Rules*/
+ .searchPanel{
+     margin-bottom: .5em;
+     margin-top: .5em;
+ }
 
-}
+ a[onclick]{
+     cursor: pointer;
+ }
+
+ .logoPrintPanel img{
+     margin: auto;
+     margin-bottom: 1em;
+ }
 
 @media print{
     #main > .inner {

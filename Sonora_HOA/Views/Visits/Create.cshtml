@@ -2,14 +2,13 @@
 @using Sonora_HOA.Models
 @using Microsoft.AspNet.Identity
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Notify Visit";
     Layout = "~/Views/Shared/_Layout.cshtml";
     Condo condo = ViewBag.condo;
     CheckInList currentCheckInList = ViewBag.currentCheckInList;
     bool currentCheckInListRegistered = currentCheckInList.checkInListID > 0;
     CheckInList nextCheckInList = ViewBag.nextCheckInList;
     bool nextCheckInListRegistered = nextCheckInList.checkInListID > 0;
-    List<Permissions> wildCards = new List<Permissions>();
 
     bool showCurrent = true;
     bool showNext = !showCurrent;
@@ -27,11 +26,6 @@
     vddNext.Add("ownerID", Model.ownerID);
     vddNext.Add("listID", "next");
 
-    ViewDataDictionary vddWildCards = new ViewDataDictionary();
-    vddWildCards.Add("selectionMode", true);
-    vddWildCards.Add("ownerID", Model.ownerID);
-    vddWildCards.Add("listID", "wildcards");
-    vddWildCards.Add("guestLimit", Permissions_Visits.WILD_CARDS_LIMIT);
 }
 
 <a href="@Url.Action("Details","Owners",new { id=condo.owner.Id})">
@@ -108,13 +102,6 @@
         <div class="col-md-12" id="pnlNextCheckInList" style="display:@(showNext?"block":"none")">
             <h3>Next Check In List: @nextCheckInList.period.ToString("MMMM/dd/yyyy")</h3>
             @Html.Partial("../Permissions/Partial_ShowCheckInList", nextCheckInList, vddNext)
-        </div>
-        <div id="pnlExtraVisitors" style="display:@(currentCheckInListRegistered?"display":"none")">
-            <h3>Extra visitors</h3>
-            <div id="Partial_ListGuest">
-                <div class="alert alert-info">Only 4 extra visitors unnamed in selected checkin list will be allowed for this visit.</div>
-                @Html.Partial("../Guest/Partial_ListPermissions", wildCards, vddWildCards)
-            </div>
         </div>
     </div>
 </div>
@@ -206,20 +193,13 @@
             var checkedList = getSelectedCheckedList();
             console.log(JSON.stringify(checkedList.visitors));
 
-            //Registered guests using wildcards in this visit
-            checkedListwildcards.forEach(function(item, index){
-                item.isWildCard = true;
-            })
-
-            var totalGuestInvited = checkedList.visitors.concat(checkedListwildcards);
-
             var visit = {
                 arrivalDate: $('#arrivalDate').val(),
                 departureDate: $('#departureDate').val(),
                 date: $('#date').val(),
                 condoID: $('#condoID').val(),
                 ownerID: $('#ownerID').val(),
-                visitors: totalGuestInvited,
+                visitors: checkedList.visitors,
             }
 
             jQuery.postJSON("/Visits/Create",

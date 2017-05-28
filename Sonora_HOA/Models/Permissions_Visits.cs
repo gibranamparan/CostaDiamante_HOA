@@ -20,7 +20,6 @@ namespace Sonora_HOA.Models
         public virtual Permissions permissions { get; set; }
 
         public string guestFullName { get; set; }
-        public bool isWildCard { get; set; }
 
         //The visits are a group of guests with an active permission
         [Required]

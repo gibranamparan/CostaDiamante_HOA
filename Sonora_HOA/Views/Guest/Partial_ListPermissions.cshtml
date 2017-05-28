@@ -4,6 +4,7 @@
 
 @{
     bool selectionMode = false;
+    bool wildCardsMode = false;
     string ownerID = "";
     string listID = "";
     string addFunctionJS = "addGuest";
@@ -14,24 +15,36 @@
         ownerID = (string)ViewData["ownerID"];
     }
 
+    if (ViewData["wildCardsMode"] != null)
+    {
+        wildCardsMode = (bool)ViewData["wildCardsMode"];
+        guestLimit = (int)ViewData["guestLimit"];
+    }
+
     if (selectionMode && ViewData["listID"] != null)
     {
         listID = (string)ViewData["listID"];
-        addFunctionJS = addFunctionJS + listID;
     }
 
-    if (selectionMode && ViewData["guestLimit"] != null)
+    string btnRegisterUnammed = "";
+    if (ViewData["btnRegisterUnammed"] != null)
     {
-        guestLimit = (int)ViewData["guestLimit"];
+        btnRegisterUnammed = (string)ViewData["btnRegisterUnammed"];
     }
+
+    if (wildCardsMode) {
+        listID += "WildCards";
+    }
+
+    addFunctionJS = addFunctionJS + listID;
 
     VMConfirmModalAttributes confirmDeleteGuestModal = new VMConfirmModalAttributes
     {
         modalID = "confirmDeleteModal",
         modalTitle = "Confirm Remove Guest",
         primaryMessage = "You are going to remove <strong id='fullName'></strong> from your guest list,"
-    + " this register will be removed from current Check In List too, you can register it again or"
-    + " correct it using the form in the top.",
++ " this register will be removed from current Check In List too, you can register it again or"
++ " correct it using the form in the top.",
         javascriptFunction = "removeGuest",
         modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
         callType = VMConfirmModalAttributes.CallType.JAVASCRIPT
@@ -44,14 +57,7 @@
     ViewDataDictionary vdd = new ViewDataDictionary();
     vdd.Add("addFunctionJS", addFunctionJS);
     vdd.Add("listID", listID);
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">Guest Registration</h3>
-        </div>
-        <div class="panel-body" id="pnlCreateGuest">
-            @Html.Partial("../Guest/Partial_CreateGuest", newPermission, vdd)
-        </div>
-    </div>
+    @Html.Partial("../Guest/Partial_CreateGuest", newPermission, vdd)
 }
 
 <table class="table table-hover table-striped" id="tblGuests@(listID)">
@@ -72,7 +78,7 @@
         {
             foreach (var item in Model)
             {
-                <tr>
+                <tr class="@(item.isWildCard? "wildCardRow" : "")">
                     <td>
                         @Html.DisplayFor(modelItem => item.fullName)
                     </td>
@@ -162,7 +168,7 @@ else if(selectionMode)
     <script>
         var checkedList@(listID) = new Array();
         var ownerID = '@ownerID';
-        var guestLimit = @guestLimit;
+        var guestLimit@(listID) = @guestLimit;
 
         //Check the condo to be associated
         function @(addFunctionJS)() {
@@ -170,43 +176,41 @@ else if(selectionMode)
             var name = $(formSel+"#name").val().toUpperCase().trim();
             var lastName = $(formSel+"#lastName").val().toUpperCase().trim()
             var rowNo = name+lastName+Math.round(Math.random()*100);//Unique identity for row
+
             //Get data from guest and addit to a list
             var newGuest = {
                 rowNo:rowNo,
                 name:name,
                 lastname:lastName,
-                guestFullName: name+" "+lastName
+                guestFullName: name+" "+lastName,
+                isWildCard: boolParse('@wildCardsMode'),
             };
 
             //Add in Guest List
             checkedList@(listID).push(newGuest)
 
             //Display it in Guest table
+            var tableSelector = "#tblGuests@(listID) ";
             var trNewGuest = newGuestRow@(listID)(newGuest);
-            $('#tblGuests@(listID) tbody').append(trNewGuest);
+            $(tableSelector+'tbody').append(trNewGuest);
             trNewGuest.find('a').slideDown();
             trNewGuest.find('span').slideDown();
 
             //$("#btnRegister").prop('disabled', checkedList@(listID).length == 0);
             console.log('@(listID):',checkedList@(listID));
 
+            //Reset Guest Form
             $(formSel+"#name").val("")
             $(formSel+"#lastName").val("")
             $(formSel+"#name").focus()
-
-            if(checkedList@(listID).length == 0){
-                $('#noGuestRow').slideDown();
-            }else{
-                $('#noGuestRow').slideUp();
-            }
+            $(formSel+" button#btnRegisterGuest").prop("disabled",true);
 
             validateLimit@(listID)();
         }
 
         function newGuestRow@(listID)(newGuest){
-            var row = $('<tr id="tr'+newGuest.rowNo+'">')
-            var removeLink = $('<a style="display:none" onclick=removeGuest@(listID)("'+newGuest.rowNo
-                +'") class="fa fa-times">')
+            var row = $('<tr id="tr'+newGuest.rowNo+'" class="@(wildCardsMode?"wildCardRow":"")">')
+            var removeLink = $('<a style="display:none" onclick=removeGuest@(listID)("'+newGuest.rowNo +'") class="fa fa-times">')
             var spanFullName = $('<span  style="display:none" >').html(" "+newGuest.guestFullName)
             var td = $('<td>').append(removeLink).append(spanFullName);
             row.append(td);
@@ -215,12 +219,25 @@ else if(selectionMode)
 
         //Validates a guest limit for the list, a 0 limit means unlimited number.
         function validateLimit@(listID)(){
-            if(guestLimit>0){
-                var validLimit = checkedList@(listID).length<guestLimit;
-                $('#btnRegisterGuest').fadeInOrOut(validLimit);
+            var formSel = "form#newGuestForm@(listID) "
+            if(guestLimit@(listID)>0){
+                var validLimit = checkedList@(listID).length<guestLimit@(listID);
+                $(formSel+'#btnRegisterGuest').fadeInOrOut(validLimit);
+                $(formSel+"#name").prop("disabled",!validLimit);
+                $(formSel+"#lastName").prop("disabled",!validLimit);
             }
             //Enable or disable checkinlist register button when at least 1 guest was added
             $("#btnRegister").prop('disabled',!checkedList@(listID).length>0);
+            if('@btnRegisterUnammed'){
+                $('#@btnRegisterUnammed').prop('disabled',!checkedList@(listID).length>0);
+            }
+
+            var tableSelector = "#tblGuests@(listID) ";
+            if(checkedList@(listID).length == 0){
+                $(tableSelector+'#noGuestRow div').slideDown();                
+            }else{
+                $(tableSelector+'#noGuestRow div').slideUp();
+            }
         }
     </script>
 }

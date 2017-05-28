@@ -24,11 +24,52 @@ namespace Sonora_HOA.Models
         [Display(Name = "Owner")]
         public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
-        
+
+
         [Display(Name ="Period")]
         public virtual TimePeriodPermissions period {
             get {
                 return new TimePeriodPermissions(this);
+            }
+        }
+
+        //Checkin List Status
+        public CheckInListStatus status
+        {
+            get
+            {
+                if (this.checkInListID == 0)
+                    return CheckInListStatus.NO_REGISTERED;
+                else if (this.NumberOfUnnamedGuests == 0)
+                    return CheckInListStatus.WILD_CARDS_AVAILABLE;
+                else if (this.period.hasInside(DateTime.Now))
+                    return CheckInListStatus.CLOSED;
+                else
+                    return CheckInListStatus.FINISHED;
+            }
+        }
+
+        public int NumberOfRegularGuests
+        {
+            get
+            {
+                List<Permissions> res = new List<Permissions>();
+                if (this.permissions != null && this.permissions.Count() > 0)
+                    res = this.permissions.Where(per => !per.isWildCard).ToList();
+
+                return res.Count();
+            }
+        }
+
+        public int NumberOfUnnamedGuests
+        {
+            get
+            {
+                List<Permissions> res = new List<Permissions>();
+                if (this.permissions != null && this.permissions.Count() > 0)
+                    res = this.permissions.Where(per => per.isWildCard).ToList();
+
+                return res.Count();
             }
         }
 
@@ -114,6 +155,11 @@ namespace Sonora_HOA.Models
             return cil;
         }
 
+        public enum CheckInListStatus
+        {
+            NO_REGISTERED, WILD_CARDS_AVAILABLE, CLOSED, FINISHED
+        }
+
         /// <summary>
         /// Represents a period of the year where guest are registered to be allowed to visits
         /// a owner's condo.
@@ -175,6 +221,11 @@ namespace Sonora_HOA.Models
                 {
                     this.startDate = TimePeriodPermissions.DT_START1.AddYears(year - TimePeriodPermissions.DT_START1.Year);
                     this.endDate = TimePeriodPermissions.DT_END1.AddYears(year - TimePeriodPermissions.DT_END1.Year);
+                    
+                    //Temporal Exception TODO: Delete when this period is finished
+                    if (year == 2017)
+                        this.startDate = new DateTime(2017, 02, 25);
+
                 }
                 else if (period == YearPeriod.Second)
                 {

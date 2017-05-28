@@ -2,7 +2,7 @@
 @model Sonora_HOA.Models.Visits
 
 @{
-    ViewBag.Title = "Visit - Guests List";
+    ViewBag.Title = "Guests List for Visit";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -98,7 +98,7 @@
             <tbody>
                 @{
                     int num = 1;
-                    foreach (var item in Model.visitors.Where(vis => !vis.isWildCard)
+                    foreach (var item in Model.visitors.Where(vis => !vis.permissions.isWildCard)
                             .OrderBy(vis => vis.guestFullName))
                     {
                         <tr>
@@ -120,8 +120,8 @@
                 }
             </tbody>
         </table>
-        @if(Model.visitors.Where(vis => vis.isWildCard).Count() > 0) { 
-            <strong>Extra visitors</strong>
+        @if(Model.visitors.Where(vis => vis.permissions.isWildCard).Count() > 0) { 
+            <strong>Unnamed Non-Paying Guests</strong>
             <table class="tblWildcards">
                 <thead>
                     <tr>
@@ -137,7 +137,7 @@
                 </thead>
                 <tbody>
                     @{
-                        foreach (var item in Model.visitors.Where(vis=>vis.isWildCard)
+                        foreach (var item in Model.visitors.Where(vis=>vis.permissions.isWildCard)
                                 .OrderBy(vis => vis.guestFullName))
                         {
                             <tr>

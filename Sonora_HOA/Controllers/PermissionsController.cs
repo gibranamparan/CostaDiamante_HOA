@@ -66,80 +66,70 @@ namespace Sonora_HOA.Controllers
         }
 
         // GET: Permissions/Create
+        /// <summary>
+        /// Check in list creation.
+        /// </summary>
+        /// <param name="checkedList">Created guests for this list</param>
+        /// <param name="period">A new empty list with a period of the year already selected</param>
+        /// <param name="ownerID">Owner of the condo where the guests will go</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
         public JsonResult Create(List<Permissions> checkedList,CheckInList period,string ownerID)
         {
             int numRegChanged = 0;
-            CheckInList checkInList = period;
-            //Associating condos in the array to owner
-            checkInList.permissions = checkedList;
-            checkInList.ownerID = ownerID;
-            if(checkedList.Count()>0 && !String.IsNullOrEmpty(ownerID) && period!=null)
-            { 
-                db.CheckInLists.Add(checkInList);
-                numRegChanged = db.SaveChanges();
+
+            if (period != null) {
+                //If its a new list
+                if (period.checkInListID == 0) { 
+                    //If model state is valid, data is saved
+                    if(checkedList!=null && checkedList.Count()>0 && !String.IsNullOrEmpty(ownerID))
+                    {
+                        //The new checkin list is filled
+                        CheckInList checkInList = period;
+                        checkInList.permissions = checkedList;
+                        checkInList.ownerID = ownerID;
+
+                        //List saved
+                        db.CheckInLists.Add(checkInList);
+                        numRegChanged = db.SaveChanges();
+                    }
+                }
+                else //If the list already exists
+                {
+                    //Check for wildcards
+                    checkedList.Take(4).ToList().ForEach(per => per.checkInListID = period.checkInListID);
+                    db.Permissions.AddRange(checkedList);
+                    numRegChanged = db.SaveChanges();
+                }
             }
 
-            return Json(numRegChanged);
+            //Generating message error if nothing was not saved
+            string errorMsg = string.Empty;
+            if (numRegChanged == 0)
+                errorMsg = generateErrorMessage(checkedList, ownerID, period);
+
+            return Json(new { numReg = numRegChanged, error = errorMsg });
         }
 
-        /*
-        // GET: Permissions/Edit/5
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
-        public ActionResult Edit(int? id)
+        /// <summary>
+        /// Generate error message based on the validation arguments
+        /// </summary>
+        /// <param name="checkedList"></param>
+        /// <param name="ownerID"></param>
+        /// <param name="period"></param>
+        /// <returns></returns>
+        private string generateErrorMessage(List<Permissions> checkedList, string ownerID, CheckInList period)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Permissions permissions = db.Permissions.Find(id);
-            if (permissions == null)
-            {
-                return HttpNotFound();
-            }
+            string error = "";
+            error += (checkedList == null|| checkedList.Count() > 0) ? "No guest was registered. " : "";
+            error += String.IsNullOrEmpty(ownerID) ? "Owner is unknown. " : "";
+            error += period == null ? "Period was not determined. " : "";
 
-            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
-            return View(permissions);
+            return error;
         }
-        // POST: Permissions/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "permissionsID,startDate,condoID,guestID")] Permissions permissions)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(permissions).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.guestID = new SelectList(db.Guests.ToList(), "guestID", "fullName", permissions.guestID);
-            return View(permissions);
-        }
-
-        // GET: Permissions/Delete/5
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
-        public ActionResult Delete(int? id, string ownerID)
-        {
-            var Permissions = db.Permissions.Where(p => p.guest.ownerID == ownerID).ToList();
-
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Permissions permissions = db.Permissions.Find(id);
-            if (permissions == null)
-            {
-                return HttpNotFound();
-            }
-            return View(permissions);
-        }*/
-
+        
         // POST: Permissions/Delete/5
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         [HttpPost, ActionName("Delete")]
@@ -151,44 +141,6 @@ namespace Sonora_HOA.Controllers
             db.SaveChanges();
             return RedirectToAction("Create","Visits", new { id = ownerID });
         }
-
-
-        /*
-        [Authorize]
-        [HttpPost]
-        [ValidateHeaderAntiForgeryToken]
-        public JsonResult Delete(int id = 0)
-        {
-            Guest guest = db.Guests.Find(id);
-            string ownerID = guest.ownerID;
-            CheckInList currentCil = CheckInList.getCurrentCheckInList(ownerID, db);
-
-            if (guest == null) 
-                return Json(new { regSaved = 0 });
-            else
-            {
-                //Find All the permission related to this guest
-                List<Permissions_Visits> guestPermissions = db.Permissions_Visits
-                    .Where(per => per.permissions.guestID == id).ToList();
-                foreach(var pv in guestPermissions)
-                {
-                    //To remove permissions, the link to the visitors lists have to be removed
-                    pv.permissionsID = null;
-                    db.Entry(pv).State = EntityState.Modified;
-                }
-
-                db.Guests.Remove(guest);
-                int regSaved = db.SaveChanges();
-
-                if (currentCil.permissions.Count() == 0)
-                {
-                    db.CheckInLists.Remove(currentCil);
-                    db.SaveChanges();
-                }
-
-                return Json(new { regSaved = regSaved });
-            }
-        }*/
 
         protected override void Dispose(bool disposing)
         {

@@ -87,13 +87,13 @@
 				$sidebar_inner = $sidebar.children('.inner');
 
 			// Inactive by default on <= large.
-				skel
+				/*skel
 					.on('+large', function() {
 						$sidebar.addClass('inactive');
 					})
 					.on('-large !large', function() {
 						$sidebar.removeClass('inactive');
-					});
+					});*/
 
 			// Hack: Workaround for Chrome/Android scrollbar position bug.
 				if (skel.vars.os == 'android'
@@ -119,7 +119,8 @@
 
 				}
 
-			// Events.
+	    // Events.
+	    /*
 
 				// Link clicks.
 					$sidebar.on('click', 'a', function(event) {
@@ -255,7 +256,6 @@
 						.trigger('resize.sidebar-lock');
 
 					});
-
 		// Menu.
 			var $menu = $('#menu'),
 				$menu_openers = $menu.children('ul').find('.opener');
@@ -279,7 +279,7 @@
 
 					});
 
-				});
+				});*/
 
 	});
 

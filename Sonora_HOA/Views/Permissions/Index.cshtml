@@ -4,7 +4,7 @@
 @using Microsoft.AspNet.Identity;
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Check In List Format";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     Permissions permission = new Permissions();
@@ -20,19 +20,33 @@
     bool hidePartialGuestListInCurrent = currentCheckInList.checkInListID > 0;
     bool hidePartialGuestListInNext =  nextCheckInList.checkInListID > 0;
 
-    //Confirmation modal ID
-    string confirmationModalID = "confirmationModal";
+    //Confirmation modal options
+    VMConfirmModalAttributes confirmRegistrationModalOptions = new VMConfirmModalAttributes
+    {
+        modalID = "confirmationModal",
+        modalTitle = "Confirm Check In List Registration",
+        primaryMessage = "You are going to confirm a Check In List with the selected guest and family list. " +
+        "If you confirm, you wont be able cancel it until the period of 6 months " +
+        "<strong id='spanPeriod'>" + timePeriods.ElementAt(0) + "</strong> is finished.",
+        javascriptFunction = "registerList",
+        modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.INFO),
+        callType = VMConfirmModalAttributes.CallType.JAVASCRIPT
+    };
 
     //
     ViewDataDictionary vddCurrent = new ViewDataDictionary();
-    vddCurrent.Add("selectionMode", true);
+    vddCurrent.Add("selectionMode", !hidePartialGuestListInCurrent);
     vddCurrent.Add("ownerID", owner.Id);
     vddCurrent.Add("listID", "current");
+    vddCurrent.Add("jsRegisterListFunction", 
+        confirmRegistrationModalOptions.javascriptFunction);
 
     ViewDataDictionary vddNext = new ViewDataDictionary();
-    vddNext.Add("selectionMode", true);
+    vddNext.Add("selectionMode", !hidePartialGuestListInNext);
     vddNext.Add("ownerID", owner.Id);
     vddNext.Add("listID", "next");
+    vddNext.Add("jsRegisterListFunction", 
+        confirmRegistrationModalOptions.javascriptFunction);
 }
 <a href="@Url.Action("Details","Owners",new { id = owner.Id})">
     <i class="glyphicon glyphicon-arrow-left"></i>Back to Owner's Details
@@ -62,8 +76,8 @@
     <div class='panel-body' id='pnlNewCheckInList'>
         <div class="form-inline">
             <div class="row">
+                @*Dropdown to show the current and next 6 months periods*@
                 <div class="form-group col-md-10">
-                    @*Dropdown to show the current and next 6 months periods*@
                     @Html.LabelFor(model => currentCheckInList.period)
                     <select id="period" name="period" onchange="periodChanged(this)">
                         <option value="current" start-date="@timePeriods[0].StartDate.ToString("yyyy-MM-dd")"
@@ -77,13 +91,25 @@
                         </option>
                     </select>
                 </div>
-                @*Open modal to confirm checkin list registration*@
 
+                @*Open modal to confirm checkin list registration*@
                 <button type="button" class="btn btn-success" id="btnRegister"
-                        data-toggle="modal" href='#@confirmationModalID' disabled 
+                        data-toggle="modal" href='#@confirmRegistrationModalOptions.modalID' disabled 
                         style="display:@(hidePartialGuestListInCurrent?"none":"inline-block")">
                     Register
                 </button>
+
+                @*Show error details when checkinlist registration fails*@
+                <div class="field-validation-error" style="display:none" id="pnlErrorMsg">
+                    An unexpected error happend when, refresh page and try again.
+                    If problem persists, contact administrator.
+                    <i class="fa fa-question-circle" style="cursor: pointer" 
+                       onclick="$(this).next().slideToggle()"></i>
+                    <div class="alert alert-danger" style="display:none">
+                        <strong>Error Details: </strong>
+                        <span></span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -96,7 +122,8 @@
             </div>
             @*Else, Blocks selection and shows message*@
             <div id="checkInRegisteredMessage" style="display:@(!hidePartialGuestListInCurrent?"none":"block")">
-                @Html.Partial("Partial_ShowCheckInList", currentCheckInList)
+                @{ vddCurrent.Add("showWildCards", true);}
+                @Html.Partial("Partial_ShowCheckInList", currentCheckInList, vddCurrent)
             </div>
         </div>
     
@@ -109,23 +136,14 @@
             </div>
             @*Else, Blocks selection and shows message*@
             <div id="checkInRegisteredMessage" style="display:@(!hidePartialGuestListInNext?"none":"block")">
-                @Html.Partial("Partial_ShowCheckInList", nextCheckInList)
+                @{ vddNext.Add("showWildCards", true);}
+                @Html.Partial("Partial_ShowCheckInList", nextCheckInList, vddNext)
             </div>
         </div>
     </div>
 </div>
 
-@Html.Partial("../Shared/Partial_ConfirmationModal", new VMConfirmModalAttributes
-{
-    modalID = confirmationModalID,
-    modalTitle = "Confirm Check In List Registration",
-    primaryMessage = "You are going to confirm a Check In List with the selected guest and family list. " +
-        "If you confirm, you wont be able cancel it until the period of 6 months "+
-        "<strong id='spanPeriod'>"+ timePeriods.ElementAt(0) + "</strong> is finished.",
-    javascriptFunction= "registerList",
-    modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.INFO),
-    callType = VMConfirmModalAttributes.CallType.JAVASCRIPT
-})
+@Html.Partial("../Shared/Partial_ConfirmationModal", confirmRegistrationModalOptions)
 
 @section Scripts{
     <script>
@@ -174,11 +192,11 @@
                 startDate: selectedPeriod.attr("start-date"),
                 endDate: selectedPeriod.attr("end-date")
             }
-            var checkedList
-            if(val=="current")
-                checkedList = checkedListcurrent;
-            if(val=="next")
-                checkedList = checkedListnext;
+
+            var selectedCheckedList = getSelectedCheckedList();
+            var checkedList = selectedCheckedList.visitors;
+            if(selectedCheckedList.checkInListID)
+                period.checkInListID = selectedCheckedList.checkInListID
 
             jQuery.postJSON("/Permissions/Create",
                 {
@@ -187,12 +205,20 @@
                     ownerID: '@owner.Id'
                 },"JSON",
                 function (result) {
-                    if (result > 0) {
+                    if (result.numReg > 0) {
                         location.reload();
+                    }else{
+                        var errorMsg = result.error;
+                        $("#@(confirmRegistrationModalOptions.modalID)").modal('toggle');
+                        $("#pnlErrorMsg").slideDown();
+                        $("#pnlErrorMsg span")
+                            .html("No data was saved. "+errorMsg)
                     }
                 },
                 function (request) {
-                    alert("Error: " + JSON.stringify(request));
+                    $("#pnlErrorMsg").slideDown();
+                    $("#pnlErrorMsg span")
+                        .html(JSON.stringify(request))
                 }, null, antiForgeryToken)
         }
 
@@ -205,10 +231,22 @@
         function getSelectedCheckedList() {
             //The checkedList in this scope takes the value of the selected period list
             var selPeriodName = $("#period").val();
-            if (selPeriodName == "current")
-                return { visitors:checkedListcurrent, checkInListID : @currentCheckInList.checkInListID };
-            else if (selPeriodName == "next")
-                return { visitors:checkedListnext, checkInListID : @nextCheckInList.checkInListID };
+            if (selPeriodName == "current"){
+                var checkInListID = Number('@currentCheckInList.checkInListID');
+                var status = '@currentCheckInList.status';
+                if(checkInListID==0)
+                    return { visitors:checkedListcurrent, checkInListID : checkInListID };
+                else
+                    return { visitors:checkedListcurrent@("WildCards"), checkInListID : @currentCheckInList.checkInListID };
+            }
+            else if (selPeriodName == "next"){
+                var checkInListID = @nextCheckInList.checkInListID;
+                var status = '@nextCheckInList.status';
+                if(checkInListID==0)
+                    return { visitors:checkedListnext, checkInListID : checkInListID };
+                else
+                    return { visitors:checkedListnext@("WildCards"), checkInListID : @nextCheckInList.checkInListID };
+            }
         }
     </script>    
 }
