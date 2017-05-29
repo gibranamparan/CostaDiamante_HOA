@@ -23,7 +23,8 @@
 <div class="panel panel-info">
     <div class="panel-heading">
         <h2 class="panel-title">
-            <strong>@Html.DisplayNameFor(model=>model.visitsID):</strong> @Model.visitsID | <strong>Period of time: </strong>@Model.timePeriod
+            @*<strong>@Html.DisplayNameFor(model=>model.visitsID):</strong> @Model.visitsID | <strong>Period of time: </strong>@Model.timePeriod*@
+            <strong>@Html.DisplayNameFor(model=>model.visitsID):</strong> @Model.visitsID @*| <strong>Period of time: </strong>@Model.timePeriod*@
         </h2>
     </div>
     <div class="panel-body">
@@ -78,7 +79,7 @@
 <div class="panel panel-info">
     <div class="panel-heading">
         <h2 class="panel-title">
-            Visitors
+            Guests
         </h2>
     </div>
     <div class="panel-body">
@@ -90,9 +91,12 @@
                     </th>
                     <th>
                     </th>
-                    <th class="hidden-print">
 
-                    </th>
+                    @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                    {
+                        @*Function Column*@
+                        <th class="hidden-print">  </th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -102,25 +106,25 @@
                             .OrderBy(vis => vis.guestFullName))
                     {
                         <tr>
-                            <td>
-                                @num
-                            </td>
-                            <td>
-                                @Html.DisplayFor(model => item.guestFullName)
-                            </td>
-                            <td class="hidden-print">
-                                <a href='@Url.Action("Delete","Permissions_Visits",
-                                  new { id = item.permissions_visitsID })'>
-                                    <i class="glyphicon glyphicon-remove"></i> Remove
-                                </a>
-                            </td>
+                            <td> @num </td>
+                            <td> @Html.DisplayFor(model => item.guestFullName) </td>
+
+                            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                            {
+                                <td class="hidden-print">
+                                    <a href='@Url.Action("Delete","Permissions_Visits",
+                                      new { id = item.permissions_visitsID })'>
+                                        <i class="glyphicon glyphicon-remove"></i> Remove
+                                    </a>
+                                </td>
+                            }
                         </tr>
                         num++;
                     }
                 }
             </tbody>
         </table>
-        @if(Model.visitors.Where(vis => vis.permissions.isWildCard).Count() > 0) { 
+        @if(Model.visitors.Where(vis => vis.permissions.isWildCard).Count() > 0) {
             <strong>Unnamed Non-Paying Guests</strong>
             <table class="tblWildcards">
                 <thead>
@@ -128,34 +132,36 @@
                         <th>
                             #
                         </th>
+
                         <th>
                         </th>
-                        <th class="hidden-print">
-
-                        </th>
+                        @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) {
+                            @*Function Column*@
+                            <th class="hidden-print"></th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
                     @{
-                        foreach (var item in Model.visitors.Where(vis=>vis.permissions.isWildCard)
+                    foreach (var item in Model.visitors.Where(vis=>vis.permissions.isWildCard)
                                 .OrderBy(vis => vis.guestFullName))
-                        {
-                            <tr>
-                                <td>
-                                    @num
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(model => item.guestFullName)
-                                </td>
+                    {
+                        <tr>
+                            <td> @num </td>
+                            <td> @Html.DisplayFor(model => item.guestFullName) </td>
+                            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                            {
+                                @*Function Column*@
                                 <td class="hidden-print">
-                                    <a href='@Url.Action("Delete","Permissions_Visits",
-                                      new { id = item.permissions_visitsID })'>
+                                    <a href='@Url.Action("Delete", "Permissions_Visits",
+                                            new { id = item.permissions_visitsID })'>
                                         <i class="glyphicon glyphicon-remove"></i> Remove
                                     </a>
                                 </td>
-                            </tr>
-                            num++;
-                        }
+                            }
+                        </tr>
+                        num++;
+                    }
                     }
                 </tbody>
             </table>

@@ -95,6 +95,7 @@
                 </tr>
             }
         }
+        @*
         else
         {
             <tr id="noGuestRow">
@@ -104,7 +105,7 @@
                     </div>
                 </td>
             </tr>
-        }
+        }*@
     </tbody>
 
 </table>
@@ -232,12 +233,13 @@ else if(selectionMode)
                 $('#@btnRegisterUnammed').prop('disabled',!checkedList@(listID).length>0);
             }
 
-            var tableSelector = "#tblGuests@(listID) ";
+            @*ELIMINADO POR SUGERENCIA DE CLIENTE*@
+            @*var tableSelector = "#tblGuests@(listID) ";
             if(checkedList@(listID).length == 0){
-                $(tableSelector+'#noGuestRow div').slideDown();                
+                $(tableSelector+'#noGuestRow div').slideDown();
             }else{
                 $(tableSelector+'#noGuestRow div').slideUp();
-            }
+            }*@
         }
     </script>
 }

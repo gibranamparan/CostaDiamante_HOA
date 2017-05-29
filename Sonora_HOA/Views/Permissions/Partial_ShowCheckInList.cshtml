@@ -48,8 +48,9 @@
             modalID = "mdlConfirmation" + Model.checkInListID,
             modalTitle = "Confirm cancelation",
             primaryMessage = "You are going to <strong>cancel the selected \"Guest and Family Check in List\"</strong>. " +
-                                "If you confirm, the associated <strong>\"Visit Notifications\"</strong> to this check in list will be <strong>canceled too</strong>. " +
-                                "You'll need to create a new \"Check in List\" in order to schedule a new visit in this period of the year.",
+            "If you confirm, the associated <strong>\"Visit Notifications\"</strong> to this check in list will be "+
+            "<strong>canceled too</strong>. You'll need to create a new \"Check in List\" in order to schedule a new visit "+
+            "in this period of the year.",
             action = "Delete",
             controller = "CheckInList",
             routeVals = new { id = Model.checkInListID },
@@ -61,8 +62,10 @@
             modalID = "mdlConfirmationWildCards" + Model.checkInListID,
             modalTitle = "Confirm Unnamed Non-Paying Guests",
             primaryMessage = "You are going to <strong>confirm new \"Unnamed Non-Paying Guests\"</strong> for this already registered " +
-            "Check In List. If you confirm, you won't be able to make any changes or add others guests to this Check In List " +
-            "until the selected period is finished.",
+            "Check In List."
+            //Eliminado por peticion de cliente
+            /*+"If you confirm, you won't be able to make any changes or add others guests to this Check In List " +
+            "until the selected period is finished."*/,
             modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.WARNING),
             callType = VMConfirmModalAttributes.CallType.JAVASCRIPT,
             javascriptFunction = jsRegisterListFunction
@@ -81,10 +84,11 @@
         @if (Context.User.IsInRole(ApplicationUser.RoleNames.OWNER))
         {
             <div class="alert alert-info">
-                A Check In List is already registered for this period. 
-                You'll be able to register a new one when the period has finished.
-                You can notify a new visit selecting a condo clicking 
-                <a href="@Url.Action("Details","Owners", new { id=Model.ownerID })">here</a>.
+                A Check In List is already registered for this period.
+                @*ELIMINADO POR SUGERENCIA DE CLIENTE*@
+                @*You'll be able to register a new one when the period has finished.
+                You can notify a new visit selecting a condo clicking
+                <a href="@Url.Action("Details","Owners", new { id=Model.ownerID })">here</a>.*@
             </div>
         }
         @*Period information*@

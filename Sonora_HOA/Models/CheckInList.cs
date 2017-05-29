@@ -26,7 +26,7 @@ namespace Sonora_HOA.Models
         public virtual Owner owner { get; set; }
 
 
-        [Display(Name ="Period")]
+        [Display(Name ="Check in List Period")]
         public virtual TimePeriodPermissions period {
             get {
                 return new TimePeriodPermissions(this);
