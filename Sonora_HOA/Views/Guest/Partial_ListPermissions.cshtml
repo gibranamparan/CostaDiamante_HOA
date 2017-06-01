@@ -233,7 +233,8 @@ else if(selectionMode)
                 $('#@btnRegisterUnammed').prop('disabled',!checkedList@(listID).length>0);
             }
 
-            @*ELIMINADO POR SUGERENCIA DE CLIENTE*@
+            @*ELIMINADO POR SUGERENCIA DE CLIENTE:
+                Renglon que aparece cuando no se ha registro ningun Guest*@
             @*var tableSelector = "#tblGuests@(listID) ";
             if(checkedList@(listID).length == 0){
                 $(tableSelector+'#noGuestRow div').slideDown();

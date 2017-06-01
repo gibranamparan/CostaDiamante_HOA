@@ -40,7 +40,7 @@ namespace Sonora_HOA.Models
             {
                 if (this.checkInListID == 0)
                     return CheckInListStatus.NO_REGISTERED;
-                else if (this.NumberOfUnnamedGuests == 0)
+                else if (this.NumberOfUnnamedGuests < 4)
                     return CheckInListStatus.WILD_CARDS_AVAILABLE;
                 else if (this.period.hasInside(DateTime.Now))
                     return CheckInListStatus.CLOSED;

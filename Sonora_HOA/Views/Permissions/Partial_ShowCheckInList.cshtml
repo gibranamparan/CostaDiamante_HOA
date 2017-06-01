@@ -190,7 +190,8 @@
     vddWildCards.Add("selectionMode", true);
     vddWildCards.Add("ownerID", Model.ownerID);
     vddWildCards.Add("listID", listID);
-    vddWildCards.Add("guestLimit", Permissions_Visits.WILD_CARDS_LIMIT);
+    //The permitted Unnamed Guest are the remaining of 4 in total
+    vddWildCards.Add("guestLimit", Permissions_Visits.WILD_CARDS_LIMIT-Model.NumberOfUnnamedGuests);
     vddWildCards.Add("wildCardsMode", true);
     vddWildCards.Add("btnRegisterUnammed", btnRegisterUnammed);
     List<Permissions> wildCards = new List<Permissions>();
