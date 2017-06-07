@@ -281,24 +281,38 @@ namespace Sonora_HOA.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(string id, string roleName)
         {
-            Owner owners = db.Owners.Find(id);
-            var condos = owners.Condos.ToList();
-            var cils = owners.checkInListHistory.ToList();
-            var visits = owners.visitsHistory.ToList();
-            foreach (var condo in condos)
-            {
-                condo.ownerID = null;
-                db.Entry(condo).State = EntityState.Modified;
-            }
-            foreach (var cil in cils)
-                db.CheckInLists.Remove(cil);
-            foreach (var visit in visits)
-                db.Visits.Remove(visit);
+            int numReg = 0;
+            if (roleName == ApplicationUser.RoleNames.OWNER) {
+                Owner owner = db.Owners.Find(id);
+                var condos = owner.Condos.ToList();
+                var cils = owner.checkInListHistory.ToList();
+                var visits = owner.visitsHistory.ToList();
+                foreach (var condo in condos)
+                {
+                    condo.ownerID = null;
+                    db.Entry(condo).State = EntityState.Modified;
+                }
+                foreach (var visit in visits)
+                    db.Visits.Remove(visit);
 
-            db.Owners.Remove(owners);
-            db.SaveChanges();
+                numReg = db.SaveChanges();
+
+                if (numReg > 0) { 
+                    foreach (var cil in cils)
+                        db.CheckInLists.Remove(cil);
+
+                    db.Owners.Remove(owner);
+                    numReg = 0;
+                }
+            } else if (roleName == ApplicationUser.RoleNames.ADMIN)
+            {
+                ApplicationUser admin = db.Users.Find(id);
+                db.Users.Remove(admin);
+            }
+            numReg = db.SaveChanges();
+
             return RedirectToAction("Index", "Owners");
         }
 

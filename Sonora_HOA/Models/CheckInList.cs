@@ -89,23 +89,27 @@ namespace Sonora_HOA.Models
         public static List<TimePeriodPermissions> generatePermissionPeriods()
         {
             List<TimePeriodPermissions> objs = new List<TimePeriodPermissions>();
+            DateTime today = DateTime.Today;
+
+            //Temporal para arrnacar
+            if (today <= new DateTime(2017, 07, 1))
+                today = new DateTime(2017, 07, 1);
+
             //First semester of the year
             TimePeriodPermissions tp1 = new
-                TimePeriodPermissions(DateTime.Today.Year,
+                TimePeriodPermissions(today.Year,
                 TimePeriodPermissions.YearPeriod.First);
             //Second semester of the year
             TimePeriodPermissions tp2 = new
-                TimePeriodPermissions(DateTime.Today.Year,
+                TimePeriodPermissions(today.Year,
                 TimePeriodPermissions.YearPeriod.Second);
             //If Today is later than the first semester
-            if (!tp1.hasInside(DateTime.Today) && DateTime.Today > tp1.StartDate)
+            if (!tp1.hasInside(today) && today > tp1.endDate)
             {
                 TimePeriodPermissions tpm = new TimePeriodPermissions(tp2);
                 //Second semester becomes the first one of the next year
-                tp2 = tp1;
-                tp2.setYear(DateTime.Today.Year + 1);
-                //First semester of this year becomes the second semester of this one
-                tp1 = tpm;
+                tp1 = tp2;
+                tp2 = tp2.getNextTimePeriod();
             }
 
             objs.Add(tp1);
@@ -125,13 +129,19 @@ namespace Sonora_HOA.Models
             Owner owner = db.Owners.Find(ownerID);
             var cils = owner.checkInListHistory
                 .OrderByDescending(list => list.startDate);
+
+            DateTime today = DateTime.Today;
+            //Temporal para arrnacar
+            if (today <= new DateTime(2017, 07, 1))
+                today = new DateTime(2017, 07, 1);
+
             var cil = cils.Take(2).ToList()
-                .FirstOrDefault(list => list.period.hasInside(DateTime.Today));
+                .FirstOrDefault(list => list.period.hasInside(today));
             if (cil == null) { 
                 cil = new CheckInList();
                 //Sets current period
-                cil.setPeriod(new TimePeriodPermissions(DateTime.Today.Year,
-                    TimePeriodPermissions.yearPeriodOfDate(DateTime.Today)));
+                cil.setPeriod(new TimePeriodPermissions(today.Year,
+                    TimePeriodPermissions.yearPeriodOfDate(today)));
                 //Associate new permissions list
                 cil.permissions = new List<Permissions>();
             }
@@ -193,10 +203,25 @@ namespace Sonora_HOA.Models
                 }
             }
 
+            public TimePeriodPermissions getNextTimePeriod()
+            {
+                YearPeriod yp;
+                if(this.yearPeriod == YearPeriod.First)
+                {
+                    return new CheckInList.TimePeriodPermissions(this.startDate.Year, YearPeriod.Second);
+                }
+
+                if (this.yearPeriod == YearPeriod.Second)
+                {
+                    return new CheckInList.TimePeriodPermissions(this.startDate.Year+1, YearPeriod.First);
+                }
+                return new TimePeriodPermissions(this);
+            }
+
             /// <summary>
             /// By default, an instance with current year and period will be generated
             /// </summary>
-            public TimePeriodPermissions(){  }
+            public TimePeriodPermissions() { }
 
             public static YearPeriod yearPeriodOfDate(DateTime dt)
             {
@@ -221,7 +246,7 @@ namespace Sonora_HOA.Models
                 {
                     this.startDate = TimePeriodPermissions.DT_START1.AddYears(year - TimePeriodPermissions.DT_START1.Year);
                     this.endDate = TimePeriodPermissions.DT_END1.AddYears(year - TimePeriodPermissions.DT_END1.Year);
-                    
+
                     //Temporal Exception TODO: Delete when this period is finished
                     if (year == 2017)
                         this.startDate = new DateTime(2017, 02, 25);
@@ -233,6 +258,30 @@ namespace Sonora_HOA.Models
                     this.endDate = TimePeriodPermissions.DT_END2.AddYears(year - TimePeriodPermissions.DT_END2.Year);
                 }
             }
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="year">Year where is the six months period.</param>
+            /// <param name="period">Period enumeration (first or second).</param>
+            public TimePeriodPermissions(DateTime dt)
+            {
+                YearPeriod period = yearPeriodOfDate(dt);
+                if (period == YearPeriod.First)
+                {
+                    this.startDate = TimePeriodPermissions.DT_START1.AddYears(dt.Year - TimePeriodPermissions.DT_START1.Year);
+                    this.endDate = TimePeriodPermissions.DT_END1.AddYears(dt.Year - TimePeriodPermissions.DT_END1.Year);
+
+                    //Temporal Exception TODO: Delete when this period is finished
+                    if (dt.Year == 2017)
+                        this.startDate = new DateTime(2017, 02, 25);
+
+                }
+                else if (period == YearPeriod.Second)
+                {
+                    this.startDate = TimePeriodPermissions.DT_START2.AddYears(dt.Year - TimePeriodPermissions.DT_START2.Year);
+                    this.endDate = TimePeriodPermissions.DT_END2.AddYears(dt.Year - TimePeriodPermissions.DT_END2.Year);
+                }
+            }
 
             /// <summary>
             /// 
@@ -240,7 +289,12 @@ namespace Sonora_HOA.Models
             /// <param name="tp2">An already instanced period.</param>
             public TimePeriodPermissions(TimePeriodPermissions tp2)
             {
-                this.startDate = tp2.StartDate;
+                //Temporal
+                if(tp2.startDate.Day==25 && tp2.startDate.Month == 2 && tp2.startDate.Year == 2017)
+                    this.startDate = new DateTime(startDate.Year, 01, 01);
+                else
+                    this.startDate = tp2.StartDate;
+
                 this.endDate = tp2.EndDate;
             }
 

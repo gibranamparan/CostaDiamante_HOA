@@ -209,9 +209,12 @@
                 function (result) {
                     if (result.savedRegs > 0) {
                         $("#errorMessage").fadeOut(500)
-                        window.location.replace('/Visits/Index/?' +
-                            'periodReported.startDate=' + $('#arrivalDate').val() +
-                            '&periodReported.endDate=' + $('#departureDate').val())
+                        /* window.location.replace('/Visits/Index/?' +
+                             'periodReported.startDate=' + $('#arrivalDate').val() +
+                             '&periodReported.endDate=' + $('#departureDate').val())*/
+                         window.location.replace('/Visits/Index/?' +
+                             'visitsFilter.TimePeriod.startDate=' + $('#arrivalDate').val() +
+                             '&visitsFilter.TimePeriod.endDate=' + $('#departureDate').val())
                     } else {
                         var error = result.error;
                         $("#errorMessage").html(error).fadeIn(500)

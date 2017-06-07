@@ -99,8 +99,14 @@ namespace Sonora_HOA.Controllers
             ViewBag.checkInList = CheckInList.getCurrentCheckInList(condo.ownerID, db);
 
             Visits visit = new Visits();
-            visit.date = DateTime.Today;
-            visit.arrivalDate = DateTime.Today.AddDays(1);
+            DateTime today = DateTime.Today;
+
+            //Temporal para arrnacar
+            if (today <= new DateTime(2017, 07, 1))
+                today = (new DateTime(2017, 07, 1)).AddDays(-1);
+
+            visit.date = today;
+            visit.arrivalDate = today.AddDays(1);
             visit.departureDate = visit.arrivalDate.AddDays(7);
             visit.condoID = condo.condoID;
             visit.ownerID = condo.ownerID;

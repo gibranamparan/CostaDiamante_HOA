@@ -11,7 +11,7 @@
 <a href="@Url.Action("Index","Owners")">
     <i class="glyphicon glyphicon-arrow-left"></i> Back to Owners / Users list
 </a>
-<h3>Are you sure you want to delete this @roleName account?</h3>
+<h3>Are you sure you want to delete this <STRONG>@roleName</STRONG> account?</h3>
 <div class="alert alert-warning">
     If you delete this owner, all his associated guests, visits and check in lists will be removed.
     Associated condos will not be removed, just left to be associated to another Owner.
@@ -21,7 +21,7 @@
 
     @using (Html.BeginForm()) {
         @Html.AntiForgeryToken()
-
+        @Html.Hidden("roleName",roleName)
         <div class="form-actions no-color">
             <button class="btn btn-danger" >Delete</button> 
         </div>
