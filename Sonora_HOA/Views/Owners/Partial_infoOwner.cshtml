@@ -47,11 +47,13 @@
         <div class="col-md-12">
             <a href="@Url.Action("Edit", "Account", new { id = Model.Id })">
                 <i class="fa fa-pencil"></i>Edit
-            </a> |
-            @if(roleName == ApplicationUser.RoleNames.OWNER) { 
+            </a> 
+            @if(roleName == ApplicationUser.RoleNames.OWNER) {
+                <span> | </span>
                 <a href="@Url.Action("Details","Owners", new { id = Model.Id })">
                     <i class="fa fa-list-alt"></i> Details
-                </a> @(" |")
+                </a>
+                <span> | </span>
                 <a href="@Url.Action("Index", "Permissions", new { id = Model.Id })">
                     <i class="fa fa-check-square-o"></i>Check in List
                 </a>
