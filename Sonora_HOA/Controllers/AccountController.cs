@@ -299,7 +299,8 @@ namespace Sonora_HOA.Controllers
 
                 numReg = db.SaveChanges();
 
-                if (numReg > 0) { 
+                if (condos.Count() + visits.Count() > 0 && numReg > 0
+                    || condos.Count() + visits.Count() == 0) { 
                     foreach (var cil in cils)
                         db.CheckInLists.Remove(cil);
 
