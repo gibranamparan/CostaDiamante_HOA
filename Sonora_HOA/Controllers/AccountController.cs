@@ -299,6 +299,8 @@ namespace Sonora_HOA.Controllers
 
                 numReg = db.SaveChanges();
 
+                //If condoes or visits were registered and then removed successfully
+                //or there were already none of this register for the owner
                 if (condos.Count() + visits.Count() > 0 && numReg > 0
                     || condos.Count() + visits.Count() == 0) { 
                     foreach (var cil in cils)
