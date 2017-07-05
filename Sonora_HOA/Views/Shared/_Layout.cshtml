@@ -73,9 +73,7 @@
                             <li><a href="@Url.Action("Details","Owners",new { id = User.Identity.GetUserId() })">Notify New Visit</a></li>
                             <li><a href="~/Visits">Your Visits History</a></li>
                         }
-                        @if (User.Identity.IsAuthenticated) { 
-                            <li><a href="@Url.Action("UserManual","Home")">Owner User Manual</a></li>
-                        }
+                        <li><a href="@Url.Action("UserManual","Home")">Owner User Manual</a></li>
                     </ul>
                 </nav>
             </div>

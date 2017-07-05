@@ -3772,7 +3772,7 @@ Css pesonalizado
 					}
 
 				body.is-loading #sidebar {
-					display: none;
+					/*display: none;*/
 				}
 
 		}
