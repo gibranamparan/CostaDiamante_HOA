@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "UserManual";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>User Manual</h2>
+
+<div id="imgGallery" class="row">
+    <img src="~/images/UserManual/0-Portada.jpg" />
+    <img src="~/images/UserManual/1-Log In.jpg" />
+    <img src="~/images/UserManual/2-Change password.jpg" />
+    <img src="~/images/UserManual/3-Check in list.jpg" />
+    <img src="~/images/UserManual/4-Notify new visits.jpg" />
+    <img src="~/images/UserManual/5-Unnamed Non-Paying Guests.jpg" />
+    <img src="~/images/UserManual/6-Visits and report printing.jpg" />
+</div>
+
+<style>
+    #imgGallery{
+        text-align: center;
+    }
+    #imgGallery img{
+        margin-bottom: 1em;
+    }
+</style>
+
+@section Scripts{
+<script>
+    $('#imgGallery img').addClass('col-xs-10').addClass('col-sm-offset-1')
+</script>
+}

@@ -369,6 +369,13 @@
     <Content Include="images\sort_both.png" />
     <Content Include="images\sort_desc.png" />
     <Content Include="images\sort_desc_disabled.png" />
+    <Content Include="images\UserManual\0-Portada.jpg" />
+    <Content Include="images\UserManual\1-Log In.jpg" />
+    <Content Include="images\UserManual\2-Change password.jpg" />
+    <Content Include="images\UserManual\3-Check in list.jpg" />
+    <Content Include="images\UserManual\4-Notify new visits.jpg" />
+    <Content Include="images\UserManual\5-Unnamed Non-Paying Guests.jpg" />
+    <Content Include="images\UserManual\6-Visits and report printing.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -509,6 +516,7 @@
     <Content Include="Views\Shared\Partial_ConfirmationModal.cshtml" />
     <Content Include="Views\Account\Partial_UserForm.cshtml" />
     <Content Include="Views\Guest\Partial_ListPermissions.cshtml" />
+    <Content Include="Views\Home\UserManual.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

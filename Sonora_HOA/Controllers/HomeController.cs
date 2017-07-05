@@ -8,11 +8,10 @@ namespace Sonora_HOA.Controllers
 {
     public class HomeController : Controller
     {
-        /*
-        public ActionResult Index()
+        public ActionResult UserManual()
         {
             return View();
-        }*/
+        }
 
         public ActionResult About()
         {
