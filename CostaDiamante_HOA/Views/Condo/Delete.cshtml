@@ -1,0 +1,52 @@
+﻿@model CostaDiamante_HOA.Models.Condo
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<a href="@Url.Action("Index","Condo")">
+    <i class="glyphicon glyphicon-arrow-left"></i> Back to Condominiums List
+</a>
+<h3>Are you sure you want to delete this register?</h3>
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <span class="panel-title">Deleting Condo</span>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt> 
+                @Html.DisplayNameFor(model => model.owner.fullName)
+            </dt>
+
+            <dd>
+                @if (Model.owner == null)
+            {
+                    <span>Not Associated</span>
+                }
+                else
+                {
+                    @Html.DisplayFor(model => model.owner.fullName)
+                }
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.name)
+            </dd>
+
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <button class="btn btn-danger">Delete</button>
+            </div>
+        }
+    </div>
+</div>

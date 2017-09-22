@@ -1,0 +1,191 @@
+﻿@using Sonora_HOA.Models;
+@using Sonora_HOA.GeneralTools;
+@model Sonora_HOA.Models.Owner
+
+@{
+    var Guests = Model.Guests.Where(o => o.ownerID == Model.Id).ToList();
+
+    bool selectionMode = false;
+    string ownerID = "";
+    if (ViewData["selectionMode"] != null)
+    {
+        selectionMode = true;
+        ownerID = (string)ViewData["ownerID"];
+    }
+
+    VMConfirmModalAttributes confirmDeleteGuestModal = new VMConfirmModalAttributes
+    {
+        modalID = "confirmDeleteModal",
+        modalTitle = "Confirm Remove Guest",
+        primaryMessage = "You are going to remove <strong id='fullName'></strong> from your guest list, this register" +
+        " will be removed from current Check In List too, you can register it again or correct it using the form in the top.",
+        javascriptFunction = "removeGuest",
+        modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
+        callType = VMConfirmModalAttributes.CallType.JAVASCRIPT
+    };
+}
+
+@if (Model.Guests.Count() > 0)
+{
+    if (selectionMode) {
+        <div class="alert alert-info">
+            Fill the Check in List for the selected period by selecting the guests in the list below.
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-warning">
+        No guest are registered to
+        @if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
+        {
+            <span> your "Guests List". </span>
+        }
+        else
+        {
+            <span> this owner's account. </span>
+        }
+        @if (selectionMode)
+        {
+            <span>
+                Click <strong><a href="@Url.Action("Details","Owners",new { id=Model.Id })">here</a></strong>
+                an add a register in <strong>"Guests for Future Visits"</strong> list.
+            </span>
+        }else
+        {
+            <span>Add one filling the form.</span>
+        }
+    </div>
+}
+<table class="table table-hover table-striped datatable">
+    <thead>
+        <tr>
+            @if (selectionMode)
+            {
+                <th width="2em">
+                    Select Guest
+                </th>
+            }
+            <th>
+                @Html.DisplayNameFor(model => model.Guests.FirstOrDefault().fullName)
+            </th>
+            @if (!selectionMode)
+            {
+                <th></th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Guests.Count() > 0)
+        {
+            foreach (var item in Guests)
+            {
+                <tr>
+                    @if (selectionMode)
+                    {
+                        <td>
+                            <input type="checkbox" value="@item.guestID" onchange="selectChange(this)" />
+                        </td>
+                    }
+                    <td>
+                        @Html.DisplayFor(modelItem => item.fullName)
+                    </td>
+                    @if (!selectionMode)
+                    {
+                        <td>
+                            <a guest-name="@item.fullName" guest-id="@item.guestID"
+                               href="#@confirmDeleteGuestModal.modalID" data-toggle="modal"
+                               onclick="prepareRemoveConfirmModal(this)">
+                                <i class="glyphicon glyphicon-remove"></i> Remove
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>
+@Html.AntiForgeryToken()
+@Html.Partial("../Shared/Partial_ConfirmationModal", confirmDeleteGuestModal)
+
+<script>
+    function prepareRemoveConfirmModal(guestRow) {
+        var fullName = $(guestRow).attr("guest-name");
+        var guestID = $(guestRow).attr("guest-id");
+        $('#@confirmDeleteGuestModal.modalID .modal-footer #btnConfirm').attr("onclick", '@confirmDeleteGuestModal.javascriptFunction' + '(' + guestID + ')')
+        $('#@confirmDeleteGuestModal.modalID .modal-body strong#fullName').html(fullName);
+    }
+
+    function removeGuest(id) {
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        jQuery.postJSON("/Guest/Delete",
+            {
+                id: id
+            }, "JSON",
+            function (result) {
+                if (result.regSaved > 0) {
+                    location.reload();
+                }
+            },
+            function (request) {
+                alert("Error: " + JSON.stringify(request));
+            }, null, antiForgeryToken)
+
+    }
+</script>
+
+@if (selectionMode)
+{
+    <script>
+        var checkedList = new Array();
+        var ownerID = '@ownerID';
+
+        //Check the condo to be associated
+        function selectChange(cb) {
+            //Item added to the selected list items
+            if ($(cb).is(":checked")){
+                checkedList.push({
+                    guestID: $(cb).val(),
+                })
+            }
+            else {
+                //If unchecked, item is removed from the selected list items
+                var id = $(cb).val();
+                checkedList = $.grep(checkedList, function (e) {
+                    return e.guestID != id;
+                });
+            }
+
+            $("#btnRegister").prop('disabled', checkedList.length == 0);
+
+            console.log(JSON.stringify(checkedList));
+        }
+
+        //Send all checked condos to server to be associated to current owner.
+        function registerList() {
+            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+            var selectedPeriod = $("#period").find(":selected");
+            var ownerID = '@ownerID';
+            var period = {
+                startDate: selectedPeriod.attr("start-date"),
+                endDate: selectedPeriod.attr("end-date")
+            }
+            jQuery.postJSON("/Permissions/Create",
+                {
+                    checkedList: checkedList,
+                    period: period,
+                    ownerID: ownerID
+                },"JSON",
+                function (result) {
+                    if (result > 0) {
+                        location.reload();
+                    }
+                },
+                function (request) {
+                    alert("Error: " + JSON.stringify(request));
+                }, null, antiForgeryToken)
+        }
+
+    </script>
+}
