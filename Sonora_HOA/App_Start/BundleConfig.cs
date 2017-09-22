@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace Sonora_HOA
+namespace CostaDiamante_HOA
 {
     public class BundleConfig
     {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(Sonora_HOA.Startup))]
-namespace Sonora_HOA
+[assembly: OwinStartupAttribute(typeof(CostaDiamante_HOA.Startup))]
+namespace CostaDiamante_HOA
 {
     public partial class Startup
     {

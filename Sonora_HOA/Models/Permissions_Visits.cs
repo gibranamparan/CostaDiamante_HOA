@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
-namespace Sonora_HOA.Models
+namespace CostaDiamante_HOA.Models
 {
     //The permissions 
     public class Permissions_Visits

@@ -6,9 +6,9 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using Sonora_HOA.Models;
+using CostaDiamante_HOA.Models;
 
-namespace Sonora_HOA.Controllers
+namespace CostaDiamante_HOA.Controllers
 {
     [Authorize]
     public class ManageController : Controller

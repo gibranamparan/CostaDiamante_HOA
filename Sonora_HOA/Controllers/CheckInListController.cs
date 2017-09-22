@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Sonora_HOA.Models;
+using CostaDiamante_HOA.Models;
 using System.Net;
 
-namespace Sonora_HOA.Controllers
+namespace CostaDiamante_HOA.Controllers
 {
     [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
     public class CheckInListController : Controller

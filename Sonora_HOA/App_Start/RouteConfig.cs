@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Sonora_HOA
+namespace CostaDiamante_HOA
 {
     public class RouteConfig
     {

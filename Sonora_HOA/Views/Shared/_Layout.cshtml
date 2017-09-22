@@ -1,12 +1,12 @@
 ﻿@using Microsoft.AspNet.Identity
-@using Sonora_HOA.Models
+@using CostaDiamante_HOA.Models
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Notifications System - Sonoran Spa Resort</title>
+    <title>@ViewBag.Title - HOA Office - Costa Diamante Resorts</title>
     @Styles.Render("~/Content/template")
     @Styles.Render("~/Content/icons")
     @Styles.Render("~/Content/jqueryui")
@@ -30,9 +30,9 @@
                         @RenderBody()
                     </div>
                 </section>
-                <hr class="hidden-print"/>
+                <br />
                 <footer class="hidden-print">
-                    <p>&copy; @DateTime.Now.Year - Sonoran Spa Resort Notification System</p>
+                    <p>&copy; @DateTime.Now.Year - Costa Diamante Resort HOA System</p>
                     <p style="font-size: .8em">Developed by 
                         <a target="_blank" href="http://www.netcodesolutions.net/">
                             <span class="icon-netcode"><span class="path1"></span><span class="path2"></span></span> Netcode
@@ -57,7 +57,9 @@
                             }
                         }
                         <a href='@urlHome'>
-                            <img src="~/images/logo.png" alt="Sonoran HOA" class="img-responsive">
+                            <!--<img src="~/images/logo.png" alt="Costa Diamante HOA" class="img-responsive">-->
+                            <h1>Costa Diamante</h1>
+                            <strong>HOA System</strong>
                         </a>
                     </header>
                     <ul>
@@ -73,7 +75,9 @@
                             <li><a href="@Url.Action("Details","Owners",new { id = User.Identity.GetUserId() })">Notify New Visit</a></li>
                             <li><a href="~/Visits">Your Visits History</a></li>
                         }
-                        <li><a href="@Url.Action("UserManual","Home")">Owner User Manual</a></li>
+                        @*if (User.Identity.IsAuthenticated) {
+                            <li><a href="@Url.Action("UserManual","Home")">Owner User Manual</a></li>
+                        }*@
                     </ul>
                 </nav>
             </div>

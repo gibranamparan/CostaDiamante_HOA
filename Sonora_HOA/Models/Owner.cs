@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace Sonora_HOA.Models
+namespace CostaDiamante_HOA.Models
 {
     public class Owner:ApplicationUser
     {

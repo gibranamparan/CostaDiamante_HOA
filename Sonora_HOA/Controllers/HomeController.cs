@@ -4,10 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Sonora_HOA.Controllers
+namespace CostaDiamante_HOA.Controllers
 {
     public class HomeController : Controller
     {
+        [Authorize]
         public ActionResult UserManual()
         {
             return View();

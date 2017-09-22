@@ -6,9 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Sonora_HOA.Models;
+using CostaDiamante_HOA.Models;
 
-namespace Sonora_HOA.Controllers
+namespace CostaDiamante_HOA.Controllers
 {
     [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
     public class Permissions_VisitsController : Controller

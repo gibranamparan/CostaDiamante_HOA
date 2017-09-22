@@ -1,6 +1,6 @@
-﻿@model Sonora_HOA.Models.Owner
+﻿@model CostaDiamante_HOA.Models.Owner
 @using Microsoft.AspNet.Identity
-@using Sonora_HOA.Models
+@using CostaDiamante_HOA.Models
 @{
     ViewBag.Title = "Owner's Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,7 +8,7 @@
     vdd.Add("selectionMode", true);
     vdd.Add("ownerID", Model.Id);
 
-    List<Sonora_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
+    List<CostaDiamante_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
 }
 
 @if (Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))

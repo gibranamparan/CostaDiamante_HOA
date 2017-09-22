@@ -7,13 +7,13 @@ namespace Sonora_HOA.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class cascadeDelete_Owner_Guest : IMigrationMetadata
+    public sealed partial class initial_migration : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(cascadeDelete_Owner_Guest));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initial_migration));
         
         string IMigrationMetadata.Id
         {
-            get { return "201705100317415_cascadeDelete_Owner_Guest"; }
+            get { return "201709212046423_initial_migration"; }
         }
         
         string IMigrationMetadata.Source

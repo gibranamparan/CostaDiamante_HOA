@@ -5,7 +5,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel;
 
-namespace Sonora_HOA.Models
+namespace CostaDiamante_HOA.Models
 {
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
@@ -58,6 +58,7 @@ namespace Sonora_HOA.Models
         {
             public const string OWNER = "Owner";
             public const string ADMIN = "Admin";
+            public static string[] ROLES_ARRAY = new string[] { OWNER, ADMIN };
         }
 
     }
@@ -75,16 +76,16 @@ namespace Sonora_HOA.Models
         }
         
 
-        public System.Data.Entity.DbSet<Sonora_HOA.Models.Owner> Owners { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Owner> Owners { get; set; }
         
-        public System.Data.Entity.DbSet<Sonora_HOA.Models.Condo> Condoes { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Condo> Condoes { get; set; }
 
-        public System.Data.Entity.DbSet<Sonora_HOA.Models.Permissions> Permissions { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Permissions> Permissions { get; set; }
 
-        public System.Data.Entity.DbSet<Sonora_HOA.Models.Visits> Visits { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Visits> Visits { get; set; }
 
-        public System.Data.Entity.DbSet<Sonora_HOA.Models.CheckInList> CheckInLists { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.CheckInList> CheckInLists { get; set; }
 
-        public System.Data.Entity.DbSet<Sonora_HOA.Models.Permissions_Visits> Permissions_Visits { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Permissions_Visits> Permissions_Visits { get; set; }
     }
 }

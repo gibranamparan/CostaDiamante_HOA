@@ -7,7 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Sonora_HOA.Models
+namespace CostaDiamante_HOA.Models
 {
     public class Permissions
     {

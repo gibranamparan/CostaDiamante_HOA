@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sonora_HOA.Models
+namespace CostaDiamante_HOA.Models
 {
     public class ExternalLoginConfirmationViewModel
     {

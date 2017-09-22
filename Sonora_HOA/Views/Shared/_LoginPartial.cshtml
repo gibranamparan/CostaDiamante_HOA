@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNet.Identity
-@using Sonora_HOA.Models
+@using CostaDiamante_HOA.Models
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
@@ -21,6 +21,7 @@
 else
 {
     <ul class="nav navbar-nav navbar-right usrPanel">
-        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, 
+           htmlAttributes: new { id = "loginLink" })</li>
     </ul>
 }

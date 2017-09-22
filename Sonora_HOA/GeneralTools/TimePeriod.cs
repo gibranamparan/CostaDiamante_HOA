@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sonora_HOA.GeneralTools
+namespace CostaDiamante_HOA.GeneralTools
 {
     public class TimePeriod
     {

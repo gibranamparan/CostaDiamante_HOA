@@ -5,9 +5,9 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
-using Sonora_HOA.Models;
+using CostaDiamante_HOA.Models;
 
-namespace Sonora_HOA
+namespace CostaDiamante_HOA
 {
     public partial class Startup
     {

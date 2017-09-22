@@ -6,10 +6,10 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Sonora_HOA.Models;
-using static Sonora_HOA.GeneralTools.FiltrosDeSolicitudes;
+using CostaDiamante_HOA.Models;
+using static CostaDiamante_HOA.GeneralTools.FiltrosDeSolicitudes;
 
-namespace Sonora_HOA.Controllers
+namespace CostaDiamante_HOA.Controllers
 {
     [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
     public class CondoController : Controller

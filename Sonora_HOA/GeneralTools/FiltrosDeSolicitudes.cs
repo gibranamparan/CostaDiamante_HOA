@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
 
-namespace Sonora_HOA.GeneralTools
+namespace CostaDiamante_HOA.GeneralTools
 {
     public class FiltrosDeSolicitudes
     {

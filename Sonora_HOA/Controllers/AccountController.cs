@@ -8,13 +8,13 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using Sonora_HOA.Models;
+using CostaDiamante_HOA.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Security.Principal;
 using System.Net;
 using System.Data.Entity;
 
-namespace Sonora_HOA.Controllers
+namespace CostaDiamante_HOA.Controllers
 {
     [Authorize]
     public class AccountController : Controller
@@ -175,8 +175,8 @@ namespace Sonora_HOA.Controllers
                 if (result.Succeeded)
                 {
                     string rolName = model.registerAsAdmin ? 
-                        Sonora_HOA.Models.ApplicationUser.RoleNames.ADMIN:
-                         Sonora_HOA.Models.ApplicationUser.RoleNames.OWNER;
+                        CostaDiamante_HOA.Models.ApplicationUser.RoleNames.ADMIN:
+                         CostaDiamante_HOA.Models.ApplicationUser.RoleNames.OWNER;
                     UserManager.AddToRole(user.Id, rolName);
                     //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 

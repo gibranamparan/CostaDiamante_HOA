@@ -2288,7 +2288,7 @@ Css pesonalizado
 	}
 
 	header.major > :last-child {
-		border-bottom: solid 3px #e57e32;
+		border-bottom: solid 3px #BADA55;
 		display: inline-block;
 		margin: 0 0 2em 0;
 		padding: 0 0.75em 0.5em 0;
@@ -3601,7 +3601,7 @@ Css pesonalizado
 		-webkit-transition: margin-left 0.5s ease, box-shadow 0.5s ease;
 		-ms-transition: margin-left 0.5s ease, box-shadow 0.5s ease;
 		transition: margin-left 0.5s ease, box-shadow 0.5s ease;
-		background-color: #009979;/* sidebar*/
+		background-color: #2b2b2b;/* sidebar*/
 		font-size: 0.9em;
 		position: relative;
 		/*width: 26em;*/
@@ -3664,7 +3664,7 @@ Css pesonalizado
 			width: 6em;
 			z-index: 10000;
             /*color: #5e460b;*/
-            color: #e57e32;
+            color: #BADA55;
 		}
 
 			#sidebar .toggle:before {
@@ -3812,7 +3812,7 @@ Css pesonalizado
 		display: -webkit-flex;
 		display: -ms-flex;
 		display: flex;
-		border-bottom: solid 5px #e57e32;
+		border-bottom: solid 5px #BADA55;
 		padding: 6em 0 1em 0;
 		position: relative;
 	}
@@ -4060,7 +4060,7 @@ Css pesonalizado
 				}
 
 	#menu > ul > li {
-		border-top: solid 1px #e57e32;
+		border-top: solid 1px #BADA55;
 		margin: 0.5em 0 0 0;
 		padding: 0.5em 0 0 0;
 	}

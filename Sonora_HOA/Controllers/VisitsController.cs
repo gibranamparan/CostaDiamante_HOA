@@ -6,13 +6,13 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Sonora_HOA.GeneralTools;
-using Sonora_HOA.Models;
-using static Sonora_HOA.GeneralTools.FiltrosDeSolicitudes;
+using CostaDiamante_HOA.GeneralTools;
+using CostaDiamante_HOA.Models;
+using static CostaDiamante_HOA.GeneralTools.FiltrosDeSolicitudes;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
 
-namespace Sonora_HOA.Controllers
+namespace CostaDiamante_HOA.Controllers
 {
     [Authorize]
     public class VisitsController : Controller
