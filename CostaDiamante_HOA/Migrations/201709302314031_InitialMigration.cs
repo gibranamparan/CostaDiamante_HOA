@@ -1,22 +1,21 @@
-namespace Sonora_HOA.Migrations
+namespace CostaDiamante_HOA
 {
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class initial_migration : DbMigration
+    public partial class InitialMigration : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                "dbo.CheckInLists",
+                "dbo.Condoes",
                 c => new
                     {
-                        checkInListID = c.Int(nullable: false, identity: true),
-                        startDate = c.DateTime(nullable: false),
-                        endDate = c.DateTime(nullable: false),
+                        condoID = c.Int(nullable: false, identity: true),
+                        name = c.String(),
                         ownerID = c.String(maxLength: 128),
                     })
-                .PrimaryKey(t => t.checkInListID)
+                .PrimaryKey(t => t.condoID)
                 .ForeignKey("dbo.AspNetUsers", t => t.ownerID)
                 .Index(t => t.ownerID);
             
@@ -57,16 +56,43 @@ namespace Sonora_HOA.Migrations
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.Condoes",
+                "dbo.AspNetUserLogins",
                 c => new
                     {
-                        condoID = c.Int(nullable: false, identity: true),
-                        name = c.String(),
+                        LoginProvider = c.String(nullable: false, maxLength: 128),
+                        ProviderKey = c.String(nullable: false, maxLength: 128),
+                        UserId = c.String(nullable: false, maxLength: 128),
+                    })
+                .PrimaryKey(t => new { t.LoginProvider, t.ProviderKey, t.UserId })
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .Index(t => t.UserId);
+            
+            CreateTable(
+                "dbo.Payments",
+                c => new
+                    {
+                        paymentsID = c.Int(nullable: false, identity: true),
+                        amount = c.Double(nullable: false),
+                        date = c.DateTime(nullable: false),
+                        typeOfPayment = c.Int(nullable: false),
                         ownerID = c.String(maxLength: 128),
                     })
-                .PrimaryKey(t => t.condoID)
+                .PrimaryKey(t => t.paymentsID)
                 .ForeignKey("dbo.AspNetUsers", t => t.ownerID)
                 .Index(t => t.ownerID);
+            
+            CreateTable(
+                "dbo.AspNetUserRoles",
+                c => new
+                    {
+                        UserId = c.String(nullable: false, maxLength: 128),
+                        RoleId = c.String(nullable: false, maxLength: 128),
+                    })
+                .PrimaryKey(t => new { t.UserId, t.RoleId })
+                .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .Index(t => t.UserId)
+                .Index(t => t.RoleId);
             
             CreateTable(
                 "dbo.Visits",
@@ -86,58 +112,19 @@ namespace Sonora_HOA.Migrations
                 .Index(t => t.ownerID);
             
             CreateTable(
-                "dbo.Permissions_Visits",
+                "dbo.Visitors",
                 c => new
                     {
-                        permissions_visitsID = c.Int(nullable: false, identity: true),
-                        permissionsID = c.Int(),
-                        guestFullName = c.String(),
-                        visitsID = c.Int(nullable: false),
+                        visitorID = c.Int(nullable: false, identity: true),
+                        name = c.String(),
+                        lastName = c.String(),
+                        isYounger = c.Boolean(nullable: false),
+                        visitsID = c.String(),
+                        visit_visitsID = c.Int(),
                     })
-                .PrimaryKey(t => t.permissions_visitsID)
-                .ForeignKey("dbo.Permissions", t => t.permissionsID)
-                .ForeignKey("dbo.Visits", t => t.visitsID, cascadeDelete: true)
-                .Index(t => t.permissionsID)
-                .Index(t => t.visitsID);
-            
-            CreateTable(
-                "dbo.Permissions",
-                c => new
-                    {
-                        permissionsID = c.Int(nullable: false, identity: true),
-                        name = c.String(nullable: false),
-                        lastName = c.String(nullable: false),
-                        isWildCard = c.Boolean(nullable: false),
-                        checkInListID = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => t.permissionsID)
-                .ForeignKey("dbo.CheckInLists", t => t.checkInListID, cascadeDelete: true)
-                .Index(t => t.checkInListID);
-            
-            CreateTable(
-                "dbo.AspNetUserLogins",
-                c => new
-                    {
-                        LoginProvider = c.String(nullable: false, maxLength: 128),
-                        ProviderKey = c.String(nullable: false, maxLength: 128),
-                        UserId = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => new { t.LoginProvider, t.ProviderKey, t.UserId })
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId);
-            
-            CreateTable(
-                "dbo.AspNetUserRoles",
-                c => new
-                    {
-                        UserId = c.String(nullable: false, maxLength: 128),
-                        RoleId = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => new { t.UserId, t.RoleId })
-                .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId)
-                .Index(t => t.RoleId);
+                .PrimaryKey(t => t.visitorID)
+                .ForeignKey("dbo.Visits", t => t.visit_visitsID)
+                .Index(t => t.visit_visitsID);
             
             CreateTable(
                 "dbo.AspNetRoles",
@@ -157,36 +144,31 @@ namespace Sonora_HOA.Migrations
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropForeignKey("dbo.CheckInLists", "ownerID", "dbo.AspNetUsers");
-            DropForeignKey("dbo.Permissions_Visits", "visitsID", "dbo.Visits");
-            DropForeignKey("dbo.Permissions_Visits", "permissionsID", "dbo.Permissions");
-            DropForeignKey("dbo.Permissions", "checkInListID", "dbo.CheckInLists");
+            DropForeignKey("dbo.Condoes", "ownerID", "dbo.AspNetUsers");
+            DropForeignKey("dbo.Visitors", "visit_visitsID", "dbo.Visits");
             DropForeignKey("dbo.Visits", "ownerID", "dbo.AspNetUsers");
             DropForeignKey("dbo.Visits", "condoID", "dbo.Condoes");
-            DropForeignKey("dbo.Condoes", "ownerID", "dbo.AspNetUsers");
+            DropForeignKey("dbo.Payments", "ownerID", "dbo.AspNetUsers");
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
-            DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
-            DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
-            DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
-            DropIndex("dbo.Permissions", new[] { "checkInListID" });
-            DropIndex("dbo.Permissions_Visits", new[] { "visitsID" });
-            DropIndex("dbo.Permissions_Visits", new[] { "permissionsID" });
+            DropIndex("dbo.Visitors", new[] { "visit_visitsID" });
             DropIndex("dbo.Visits", new[] { "ownerID" });
             DropIndex("dbo.Visits", new[] { "condoID" });
-            DropIndex("dbo.Condoes", new[] { "ownerID" });
+            DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
+            DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
+            DropIndex("dbo.Payments", new[] { "ownerID" });
+            DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
-            DropIndex("dbo.CheckInLists", new[] { "ownerID" });
+            DropIndex("dbo.Condoes", new[] { "ownerID" });
             DropTable("dbo.AspNetRoles");
-            DropTable("dbo.AspNetUserRoles");
-            DropTable("dbo.AspNetUserLogins");
-            DropTable("dbo.Permissions");
-            DropTable("dbo.Permissions_Visits");
+            DropTable("dbo.Visitors");
             DropTable("dbo.Visits");
-            DropTable("dbo.Condoes");
+            DropTable("dbo.AspNetUserRoles");
+            DropTable("dbo.Payments");
+            DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
-            DropTable("dbo.CheckInLists");
+            DropTable("dbo.Condoes");
         }
     }
 }

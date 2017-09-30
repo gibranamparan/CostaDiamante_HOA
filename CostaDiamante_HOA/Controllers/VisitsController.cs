@@ -96,7 +96,7 @@ namespace CostaDiamante_HOA.Controllers
         private Visits prepareView(Condo condo)
         {
             ViewBag.condo = condo;
-            ViewBag.checkInList = CheckInList.getCurrentCheckInList(condo.ownerID, db);
+        //    ViewBag.checkInList = CheckInList.getCurrentCheckInList(condo.ownerID, db);
 
             Visits visit = new Visits();
             DateTime today = DateTime.Today;
@@ -112,16 +112,16 @@ namespace CostaDiamante_HOA.Controllers
             visit.ownerID = condo.ownerID;
 
             //Time periods list to populate dropdown selection
-            List<CheckInList.TimePeriodPermissions> timePeriods = CheckInList.generatePermissionPeriods();
-            ViewBag.timePeriods = timePeriods;
+        //    List<CheckInList.TimePeriodPermissions> timePeriods = CheckInList.generatePermissionPeriods();
+        //    ViewBag.timePeriods = timePeriods;
 
-            CheckInList currentCheckInList = CheckInList.getCurrentCheckInList(condo.ownerID, db);
-            ViewBag.currentCheckInList = currentCheckInList;
+        //    CheckInList currentCheckInList = CheckInList.getCurrentCheckInList(condo.ownerID, db);
+        //    ViewBag.currentCheckInList = currentCheckInList;
 
-            CheckInList nextCheckInList = CheckInList.findCheckInListByPeriod(condo.ownerID, timePeriods.ElementAt(1), db);
-            if (nextCheckInList.checkInListID == 0)
-                nextCheckInList.setPeriod(new CheckInList.TimePeriodPermissions(timePeriods.ElementAt(1)));
-            ViewBag.nextCheckInList = nextCheckInList;
+        //    CheckInList nextCheckInList = CheckInList.findCheckInListByPeriod(condo.ownerID, timePeriods.ElementAt(1), db);
+        //    if (nextCheckInList.checkInListID == 0)
+        //       nextCheckInList.setPeriod(new CheckInList.TimePeriodPermissions(timePeriods.ElementAt(1)));
+        //    ViewBag.nextCheckInList = nextCheckInList;
 
             return visit;
         }
@@ -135,32 +135,32 @@ namespace CostaDiamante_HOA.Controllers
             "visitors,ownerID,checkInListID,wildcards")]
             Visits visit, int checkInListID)
         {
-            if (ModelState.IsValid)
-            {
-                //Invalid range
-                if (visit.arrivalDate > visit.departureDate) 
-                    return Json(new { savedRegs = 0, error = "Introduced time range is not valid. " });
-                else {
-                    //Checking if visit time is inside current checkinlist
-                    CheckInList cil = db.CheckInLists.Find(checkInListID);
-                    if (cil.period.hasInside(visit.timePeriod))
-                    {
-                        visit.date = DateTime.Today;
-                        //In case checkin list and permissions are removed, the visitors in the visit list
-                        //are keeping the full name to be printed
-                        foreach(var pv in visit.visitors) {
-                            var permission = db.Permissions.Find(pv.permissionsID);
-                            pv.guestFullName = db.Permissions.Find(permission.permissionsID).fullName;
-                        }
+    //        //if (ModelState.IsValid)
+    //        //{
+            //    //Invalid range
+            //    if (visit.arrivalDate > visit.departureDate) 
+            //        return Json(new { savedRegs = 0, error = "Introduced time range is not valid. " });
+            //    else {
+            //        //Checking if visit time is inside current checkinlist
+            //        CheckInList cil = db.CheckInLists.Find(checkInListID);
+            //        if (cil.period.hasInside(visit.timePeriod))
+            //        {
+            //            visit.date = DateTime.Today;
+            //            //In case checkin list and permissions are removed, the visitors in the visit list
+            //            //are keeping the full name to be printed
+            //            foreach(var pv in visit.visitors) {
+            //                var permission = db.Permissions.Find(pv.permissionsID);
+            //                pv.guestFullName = db.Permissions.Find(permission.permissionsID).fullName;
+            //            }
 
-                        db.Visits.Add(visit);
-                        int savedRegs = db.SaveChanges();
-                        return Json(new { savedRegs = savedRegs, error = "" });
-                    }
-                    else
-                        return Json(new { savedRegs = 0, error = "Selected dates are out of current Check In List year period. " });
-                }
-            }
+            //            db.Visits.Add(visit);
+            //            int savedRegs = db.SaveChanges();
+            //            return Json(new { savedRegs = savedRegs, error = "" });
+            //        }
+            //        else
+            //            return Json(new { savedRegs = 0, error = "Selected dates are out of current Check In List year period. " });
+            //    }
+            //}
 
             Condo condo = db.Condoes.Find(visit.condoID);
             visit = prepareView(condo);

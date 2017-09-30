@@ -1,4 +1,4 @@
-namespace Sonora_HOA.Migrations
+namespace CostaDiamante_HOA
 {
     using CostaDiamante_HOA.Models;
     using Microsoft.AspNet.Identity;
@@ -32,7 +32,8 @@ namespace Sonora_HOA.Migrations
 
             //Se crean los roles que se manejaran en el sistema inicialmente
             string[] roles = ApplicationUser.RoleNames.ROLES_ARRAY;
-            foreach(string rol in roles) { 
+            foreach (string rol in roles)
+            {
                 if (!context.Roles.Any(r => r.Name == rol))
                 {
                     var store = new RoleStore<IdentityRole>(context);

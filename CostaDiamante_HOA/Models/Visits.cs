@@ -49,8 +49,8 @@ namespace CostaDiamante_HOA.Models
         public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
 
-        //Every visits has a checkin list
-        public virtual ICollection<Permissions_Visits> visitors { get; set; }
+        //Every visits has a list
+        public virtual ICollection<Visitor> visitors { get; set; }
 
         public bool isInHouseInPeriod(TimePeriod tp)
         {

@@ -25,6 +25,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <ApplicationInsightsResourceId>/subscriptions/39a6c464-fe8c-4c46-a06d-7905844ce7ac/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Sonora_HOA</ApplicationInsightsResourceId>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -192,13 +193,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\CheckInListController.cs" />
     <Compile Include="Controllers\CondoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\OwnersController.cs" />
-    <Compile Include="Controllers\PermissionsController.cs" />
-    <Compile Include="Controllers\Permissions_VisitsController.cs" />
+    <Compile Include="Controllers\PaymentsController.cs" />
+    <Compile Include="Controllers\VisitorsController.cs" />
     <Compile Include="Controllers\VisitsController.cs" />
     <Compile Include="GeneralTools\FiltrosDeSolicitudes.cs" />
     <Compile Include="GeneralTools\TimePeriod.cs" />
@@ -206,19 +206,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201709212046423_initial_migration.cs" />
-    <Compile Include="Migrations\201709212046423_initial_migration.Designer.cs">
-      <DependentUpon>201709212046423_initial_migration.cs</DependentUpon>
+    <Compile Include="Migrations\201709302314031_InitialMigration.cs" />
+    <Compile Include="Migrations\201709302314031_InitialMigration.Designer.cs">
+      <DependentUpon>201709302314031_InitialMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CheckInList.cs" />
     <Compile Include="Models\Condo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Owner.cs" />
-    <Compile Include="Models\Permissions.cs" />
-    <Compile Include="Models\Permissions_Visits.cs" />
+    <Compile Include="Models\Payments.cs" />
+    <Compile Include="Models\Visitor.cs" />
     <Compile Include="Models\Visits.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -411,32 +410,30 @@
     <Content Include="Views\Condo\Delete.cshtml" />
     <Content Include="Views\Condo\Edit.cshtml" />
     <Content Include="Views\Condo\Index.cshtml" />
-    <Content Include="Views\Permissions\Create.cshtml" />
-    <Content Include="Views\Permissions\Delete.cshtml" />
-    <Content Include="Views\Permissions\Details.cshtml" />
-    <Content Include="Views\Permissions\Edit.cshtml" />
-    <Content Include="Views\Permissions\Index.cshtml" />
     <Content Include="Views\Visits\Create.cshtml" />
     <Content Include="Views\Visits\Delete.cshtml" />
     <Content Include="Views\Visits\Details.cshtml" />
     <Content Include="Views\Visits\Edit.cshtml" />
     <Content Include="Views\Visits\Index.cshtml" />
-    <Content Include="Views\Permissions_Visits\Create.cshtml" />
-    <Content Include="Views\Permissions_Visits\Delete.cshtml" />
-    <Content Include="Views\Permissions_Visits\Details.cshtml" />
-    <Content Include="Views\Permissions_Visits\Edit.cshtml" />
-    <Content Include="Views\Permissions_Visits\Index.cshtml" />
     <Content Include="Views\Owners\Partial_infoOwner.cshtml" />
-    <Content Include="Views\Permissions\Partial_CreatePermission.cshtml" />
     <Content Include="Views\Condo\Partial_IndexCondo.cshtml" />
     <Content Include="Views\Condo\Partial_CreateCondo.cshtml" />
     <Content Include="Views\Guest\Partial_CreateGuest.cshtml" />
     <Content Include="Views\Visits\Partial_ListVisits.cshtml" />
-    <Content Include="Views\Permissions\Partial_ShowCheckInList.cshtml" />
     <Content Include="Views\Shared\Partial_ConfirmationModal.cshtml" />
     <Content Include="Views\Account\Partial_UserForm.cshtml" />
     <Content Include="Views\Guest\Partial_ListPermissions.cshtml" />
     <Content Include="Views\Home\UserManual.cshtml" />
+    <Content Include="Views\Visitors\Create.cshtml" />
+    <Content Include="Views\Visitors\Delete.cshtml" />
+    <Content Include="Views\Visitors\Details.cshtml" />
+    <Content Include="Views\Visitors\Edit.cshtml" />
+    <Content Include="Views\Visitors\Index.cshtml" />
+    <Content Include="Views\Payments\Create.cshtml" />
+    <Content Include="Views\Payments\Delete.cshtml" />
+    <Content Include="Views\Payments\Details.cshtml" />
+    <Content Include="Views\Payments\Edit.cshtml" />
+    <Content Include="Views\Payments\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -452,8 +449,8 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201709212046423_initial_migration.resx">
-      <DependentUpon>201709212046423_initial_migration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201709302314031_InitialMigration.resx">
+      <DependentUpon>201709302314031_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

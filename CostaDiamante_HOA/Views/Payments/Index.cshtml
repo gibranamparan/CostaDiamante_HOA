@@ -1,0 +1,51 @@
+﻿@model IEnumerable<CostaDiamante_HOA.Models.Payments>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.owner.name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.amount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.typeOfPayment)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.owner.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.typeOfPayment)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.paymentsID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.paymentsID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.paymentsID })
+        </td>
+    </tr>
+}
+
+</table>
