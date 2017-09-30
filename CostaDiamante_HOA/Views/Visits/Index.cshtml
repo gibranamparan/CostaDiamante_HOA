@@ -18,6 +18,22 @@
     };
 }
 
+<div id="app">
+    {{ message }}
+</div>
+
+
+@Scripts.Render("~/node_modules/vue/dist/vue.min.js")
+
+<script>
+    const v = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue.js!'
+        }
+    })
+</script>
+
 <h2>Visits</h2>
 
 @using (Html.BeginForm("Index","Visits",FormMethod.Get,null))

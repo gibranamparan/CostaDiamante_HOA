@@ -1,0 +1,9 @@
+{
+  "version": "1.0.0",
+  "Name": "CostaDiamante_HOA",
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+    "vue": "^2.3.3"
+  }
+}
