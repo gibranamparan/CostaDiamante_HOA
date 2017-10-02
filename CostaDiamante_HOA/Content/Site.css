@@ -252,6 +252,15 @@ ul.usrPanel li a {
      margin-bottom: 1em;
  }
 
+ /* visit/create */
+.removeLabel {
+    color: #428bca;
+}
+
+.removeLabel:hover {
+    color: #8a9835;
+}
+
 @media print{
     #main > .inner {
         padding: 0;

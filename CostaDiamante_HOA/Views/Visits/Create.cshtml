@@ -1,229 +1,149 @@
 ﻿@model CostaDiamante_HOA.Models.Visits
-@using CostaDiamante_HOA.Models
-@using Microsoft.AspNet.Identity
+
 @{
-    ViewBag.Title = "Notify Visit";
+    ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    Condo condo = ViewBag.condo;
-    CheckInList currentCheckInList = ViewBag.currentCheckInList;
-    bool currentCheckInListRegistered = currentCheckInList.checkInListID > 0;
-    CheckInList nextCheckInList = ViewBag.nextCheckInList;
-    bool nextCheckInListRegistered = nextCheckInList.checkInListID > 0;
-
-    bool showCurrent = true;
-    bool showNext = !showCurrent;
-
-    //Time periods for selection list
-    List<CheckInList.TimePeriodPermissions> timePeriods = ViewBag.timePeriods;
-
-    ViewDataDictionary vddCurrent = new ViewDataDictionary();
-    vddCurrent.Add("selectionMode", true);
-    vddCurrent.Add("ownerID", Model.ownerID);
-    vddCurrent.Add("listID", "current");
-
-    ViewDataDictionary vddNext = new ViewDataDictionary();
-    vddNext.Add("selectionMode", true);
-    vddNext.Add("ownerID", Model.ownerID);
-    vddNext.Add("listID", "next");
-
 }
 
-<a href="@Url.Action("Details","Owners",new { id=condo.owner.Id})">
-    <i class="glyphicon glyphicon-arrow-left"></i>Back to Owner's details
-</a>
+<div id="app">
+    <h2>{{ title }}</h2>
 
-@if (Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
-{
-    @Html.Partial("../Owners/Partial_infoOwner", condo.owner)
-}
 
-<div class="panel panel-info">
-    <div class="panel-heading">
-        @*<h2 class="panel-title">Visit Notification Form</h2>*@
-        <span class="panel-title">Owner's Authorization of Condominium Usage by a Third Party</span>
-    </div>
-    <div class="panel-body">
-        <div class="form-inline">
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(model => model.date)
-            @Html.HiddenFor(model => model.condoID)
-            @Html.HiddenFor(model => model.ownerID)
-            <div class="col-md-12">
-                @Html.LabelFor(model => condo.name)
-                <span>@condo.name</span>
+    @using (Html.BeginForm()) 
+    {
+        @Html.AntiForgeryToken()
+    
+        <div class="form-horizontal">
+            <h4>Visits</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.date, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
+                </div>
             </div>
-            <div class="row">
-                <div class="form-group col-md-3">
-                    @Html.LabelFor(model => model.arrivalDate)
-                    @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control",
-                   min = timePeriods[0].StartDate.ToString("yyyy-MM-dd"),
-                   max = timePeriods[0].EndDate.ToString("yyyy-MM-dd")} })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.arrivalDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(model => model.arrivalDate, "", new { @class = "text-danger" })
                 </div>
-
-                <div class="form-group col-md-3">
-                    @Html.LabelFor(model => model.departureDate)
-                    @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control",
-                   min = timePeriods[0].StartDate.ToString("yyyy-MM-dd"),
-                   max = timePeriods[0].EndDate.ToString("yyyy-MM-dd")} })
-                    @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
-                </div>
-
-                @*Dropdown to show the current and next 6 months periods*@
-                <div class="form-group col-md-3">
-                    <label for="period">Period</label>
-                    <select id="period" name="period" onchange="periodChanged(this); enableOrDisableBtnRegister()">
-                        <option value="current" start-date="@timePeriods[0].StartDate.ToString("yyyy-MM-dd")"
-                                end-date="@timePeriods[0].EndDate.ToString("yyyy-MM-dd")">
-                            @timePeriods[0]
-                        </option>
-
-                        <option value="next" start-date="@timePeriods[1].StartDate.ToString("yyyy-MM-dd")"
-                                end-date="@timePeriods[1].EndDate.ToString("yyyy-MM-dd")">
-                            @timePeriods[1]
-                        </option>
-                    </select>
-                </div>
-                <button id="btnRegister" name="createVisit" class="btn btn-success"
-                        onclick="registerList()" disabled>
-                    Notify Visit
-                </button>
             </div>
 
-            <div id="errorMessage" class="text-danger" hidden></div>
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.departureDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.condoID, "condoID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("condoID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.condoID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ownerID, "ownerID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("ownerID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ownerID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
         </div>
-        
-         @*Shows current year period checkin lists*@
-        <div class="col-md-12" id="pnlCurrentCheckInList" style="display:@(showCurrent?"block":"none")">
-            <h3>Current Check In List: @currentCheckInList.period.ToString("MMMM/dd/yyyy")</h3>
-            @Html.Partial("../Permissions/Partial_ShowCheckInList", currentCheckInList, vddCurrent)
-        </div>        
-        @*Shows next year period checkin lists*@
-        <div class="col-md-12" id="pnlNextCheckInList" style="display:@(showNext?"block":"none")">
-            <h3>Next Check In List: @nextCheckInList.period.ToString("MMMM/dd/yyyy")</h3>
-            @Html.Partial("../Permissions/Partial_ShowCheckInList", nextCheckInList, vddNext)
+    }
+
+    <div id="">
+        <div class="form-group">
+            <div class="col-md-4" style="padding-left: 0;">
+                <label for="visitorName">Name:</label>
+                <input v-model="nameVisitor" type="text" class="form-control" id="visitorName">
+            </div>
         </div>
+        <div class="form-group">
+            <div class="col-md-4">
+                <label for="visitorLastName">Last name:</label>
+                <input v-model="lastNameVisitor" type="text" class="form-control" id="visitorLastName">
+            </div>
+        </div>
+            
+        <div class="form-group"> 
+            <div class="col-md-4" style="padding-right: 0">
+                <label for="visitorLastName">Is smaller:</label>
+                <select id="isYounger" v-model="IsYoungerVisitor" class="form-control valid">
+                    <option value="Yes">Yes</option> 
+                    <option value="No">No</option> 
+                </select>
+            </div>
+        </div>
+            
+        <div class="col-md-offset-10 col-md-2" style="padding-right: 0;">
+            <input type="submit" v-on:click="addVisitorToTable" v-bind:disabled="(nameVisitor === '' && lastNameVisitor === '')" value="Add" class="btn btn-default" style="float: right; margin-bottom: 10px;">
+        </div>
+
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Is Smaller</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(visitor, i) in visitors">
+                    <td>{{ visitor.nameVisitor }}</td>
+                    <td>{{ visitor.lastNameVisitor }}</td>
+                    <td>{{ visitor.IsYoungerVisitor }}</td>
+                    <td><label v-on:click="removeVisitorToTable(i)" class="removeLabel"><i class="glyphicon glyphicon-remove"></i> <span class="">Remove</span></label></td>
+                </tr>
+            </tbody>
+        </table>
+
+    <div class="col-md-10">
+        @Html.ActionLink("Back to List", "Index")
     </div>
+
 </div>
 
+@Scripts.Render("~/node_modules/vue/dist/vue.min.js")
+
+<script>
+    const v = new Vue({
+        el: '#app',
+        data: {
+            title: 'Create',
+            nameVisitor: '',
+            lastNameVisitor: '',
+            IsYoungerVisitor: 'No',
+            visitors: []
+        },
+        methods: {
+            addVisitorToTable: function() {
+                this.visitors.push({ nameVisitor: this.nameVisitor, lastNameVisitor: this.lastNameVisitor, IsYoungerVisitor: this.IsYoungerVisitor }) // what to push unto the rows array
+                this.nameVisitor = ''
+                this.lastNameVisitor = ''
+                this.IsYoungerVisitor = 'No'
+                console.log(this.visitors)
+            },
+            removeVisitorToTable: function (index) {
+                this.visitors.splice(index, 1)
+            }
+        }
+    })
+</script>
 
 @section Scripts {
-    <script>
-        var showCurrent = boolParse('@showCurrent');
-        var showNext = boolParse('@showNext');
-        var currentCheckInListRegistered = boolParse('@(currentCheckInListRegistered)');
-        var nextCheckInListRegistered = boolParse('@(nextCheckInListRegistered)');
-        var cilStartDate = Date.parse('@currentCheckInList.period.startDate.ToString("yyyy-MM-dd")')
-        var cilEndDate = Date.parse('@currentCheckInList.period.endDate.ToString("yyyy-MM-dd")')
-
-        function changeIcon(boton) {
-            $(boton).toggleClass("fa-window-minimize fa-window-maximize")
-        }
-
-        function periodChanged(ddl){
-            var val = $(ddl).val();
-            showCurrent = val == "current";
-            showNext = !showCurrent;
-            $("#pnlCurrentCheckInList").slideDownOrUp(showCurrent);
-            $("#pnlNextCheckInList").slideDownOrUp(showNext);
-            if(showCurrent)
-                $('#pnlExtraVisitors').slideDownOrUp(currentCheckInListRegistered);
-            else if(showNext)
-                $('#pnlExtraVisitors').slideDownOrUp(nextCheckInListRegistered);
-
-            //Get min and max dates for selected period
-            var selPeriod = $("#period").children(":selected");
-            cilStartDate = new Date(selPeriod.attr("start-date"));
-            cilEndDate = new Date(selPeriod.attr("end-date"));
-
-            $("#arrivalDate").attr("min", cilStartDate.dateISOFormat()).attr("max", cilEndDate.dateISOFormat())
-            $("#departureDate").attr("min", cilStartDate.dateISOFormat()).attr("max", cilEndDate.dateISOFormat())
-
-            enableOrDisableBtnRegister();
-        }
-
-        //Date picker validation, and button block
-        $("#arrivalDate, #departureDate").on('input',function () {
-            enableOrDisableBtnRegister();
-        });
-
-        function getSelectedCheckedList() {
-            //The checkedList in this scope takes the value of the selected period list
-            var selPeriodName = $("#period").val();
-            if (selPeriodName == "current")
-                return { visitors:checkedListcurrent, checkInListID : @currentCheckInList.checkInListID };
-            else if (selPeriodName == "next")
-                return { visitors:checkedListnext, checkInListID : @nextCheckInList.checkInListID };
-        }
-
-        function enableOrDisableBtnRegister() {
-            var checkedList = getSelectedCheckedList();
-
-            //Get arrival and departure date for validation
-            var arrival = Date.parse($("#arrivalDate").val());
-            var departure = Date.parse($("#departureDate").val());
-
-            //Three diferentes requierements are validated
-            var valCheckList = checkedList.visitors.length>0; //At least one guest selected
-            var valRange = arrival <= departure; //Arrival before departure
-            var valCheckInRange = arrival >= cilStartDate && arrival <= cilEndDate
-                && departure >= cilStartDate && departure <= cilEndDate; //Visit start and end inside period range
-
-            //A total validations and error message is composed.
-            var enable = valCheckList && valRange && valCheckInRange;
-            var errorMsg = (!valCheckList ? "No guest has been selected. " : "")
-                + (!valRange ? "Be sure arrival date is before departure date. " : "")
-                + (!valCheckInRange ? "Selected dates are out of the selected period. " : "");
-
-            //Result of total validation is shown in button and error message.
-            $("#btnRegister").attr('disabled', !enable);
-            if (!enable)
-                $("#errorMessage").html(errorMsg).fadeIn(500)
-            else
-                $("#errorMessage").fadeOut(500)
-        }
-
-        //Send all checked condos to server to be associated to current owner.
-        function registerList() {
-
-            var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
-            var ownerID = '@condo.ownerID';
-
-            //Checked guests for this visit
-            var checkedList = getSelectedCheckedList();
-            console.log(JSON.stringify(checkedList.visitors));
-
-            var visit = {
-                arrivalDate: $('#arrivalDate').val(),
-                departureDate: $('#departureDate').val(),
-                date: $('#date').val(),
-                condoID: $('#condoID').val(),
-                ownerID: $('#ownerID').val(),
-                visitors: checkedList.visitors,
-            }
-
-            jQuery.postJSON("/Visits/Create",
-                { visit: visit, checkInListID : checkedList.checkInListID },
-                "JSON",
-                function (result) {
-                    if (result.savedRegs > 0) {
-                        $("#errorMessage").fadeOut(500)
-                        /* window.location.replace('/Visits/Index/?' +
-                             'periodReported.startDate=' + $('#arrivalDate').val() +
-                             '&periodReported.endDate=' + $('#departureDate').val())*/
-                         window.location.replace('/Visits/Index/?' +
-                             'visitsFilter.TimePeriod.startDate=' + $('#arrivalDate').val() +
-                             '&visitsFilter.TimePeriod.endDate=' + $('#departureDate').val())
-                    } else {
-                        var error = result.error;
-                        $("#errorMessage").html(error).fadeIn(500)
-                    }
-                },
-                function (request) {
-                    alert("Error: " + JSON.stringify(request));
-                }, null, antiForgeryToken)
-        }
-    </script>
     @Scripts.Render("~/bundles/jqueryval")
 }
