@@ -58,7 +58,7 @@
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
+                    <input v-click="setDataToServer" v-bind:disabled="Object.keys(visitors).length === 0" type="submit" value="Create" class="btn btn-default" />
                 </div>
             </div>
         </div>
@@ -89,7 +89,7 @@
         </div>
             
         <div class="col-md-offset-10 col-md-2" style="padding-right: 0;">
-            <input type="submit" v-on:click="addVisitorToTable" v-bind:disabled="(nameVisitor === '' && lastNameVisitor === '')" value="Add" class="btn btn-default" style="float: right; margin-bottom: 10px;">
+            <input type="submit" v-on:click="addVisitorToTable" v-bind:disabled="(nameVisitor === '' && lastNameVisitor === '')" value="Add" class="btn btn-default" style="float: right; margin-bottom: 10px;" />
         </div>
 
         <table class="table table-hover table-striped">
@@ -103,9 +103,9 @@
             </thead>
             <tbody>
                 <tr v-for="(visitor, i) in visitors">
-                    <td>{{ visitor.nameVisitor }}</td>
-                    <td>{{ visitor.lastNameVisitor }}</td>
-                    <td>{{ visitor.IsYoungerVisitor }}</td>
+                    <td>{{ visitor.name }}</td>
+                    <td>{{ visitor.lastName }}</td>
+                    <td>{{ visitor.isYounger }}</td>
                     <td><label v-on:click="removeVisitorToTable(i)" class="removeLabel"><i class="glyphicon glyphicon-remove"></i> <span class="">Remove</span></label></td>
                 </tr>
             </tbody>
@@ -116,9 +116,9 @@
     </div>
 
 </div>
-
+</div>
 @Scripts.Render("~/node_modules/vue/dist/vue.min.js")
-
+@Scripts.Render("~/node_modules/vue/dist/vue-resource.min.js")
 <script>
     const v = new Vue({
         el: '#app',
@@ -130,8 +130,14 @@
             visitors: []
         },
         methods: {
-            addVisitorToTable: function() {
-                this.visitors.push({ nameVisitor: this.nameVisitor, lastNameVisitor: this.lastNameVisitor, IsYoungerVisitor: this.IsYoungerVisitor }) // what to push unto the rows array
+            addVisitorToTable: function () {
+                if (this.isYounger == 'yes') {
+                    this.isYounger = true
+                } else {
+                    this.isYounger = false
+                }
+
+                this.visitors.push({ name: this.nameVisitor, lastName: this.lastNameVisitor, isYounger: this.IsYoungerVisitor }) // what to push unto the rows array
                 this.nameVisitor = ''
                 this.lastNameVisitor = ''
                 this.IsYoungerVisitor = 'No'
@@ -139,6 +145,13 @@
             },
             removeVisitorToTable: function (index) {
                 this.visitors.splice(index, 1)
+            },
+            setDataToServer: function () {
+                this.$http.post('/Visits/Create', { visitors: this.visitors }).then(function (response) {
+                    this.visitors = response.body
+                    this.visitors = []
+                    console.log('post')
+                });
             }
         }
     })
