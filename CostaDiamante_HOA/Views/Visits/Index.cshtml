@@ -1,4 +1,4 @@
-﻿@model CostaDiamante_HOA.Models.Visits.VMVisitsFilter
+@model CostaDiamante_HOA.Models.Visits.VMVisitsFilter
 @using CostaDiamante_HOA.Models
 @using CostaDiamante_HOA.GeneralTools
 
@@ -18,7 +18,23 @@
     };
 }
 
-<h2>Visits</h2>
+<div id="app">
+    <h2>{{ title }}</h2>
+    <a :href="createNewVisit_link"><i class="fa fa-plus-circle"></i> Register New Visit</a>
+</div>
+
+
+@Scripts.Render("~/node_modules/vue/dist/vue.min.js")
+
+<script>
+    const v = new Vue({
+        el: '#app',
+        data: {
+            title: 'Visit',
+            createNewVisit_link: '/Visits/create/'
+        }
+    })
+</script>
 
 @using (Html.BeginForm("Index","Visits",FormMethod.Get,null))
 {

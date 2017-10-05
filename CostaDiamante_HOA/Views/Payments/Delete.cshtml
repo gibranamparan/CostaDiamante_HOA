@@ -1,31 +1,30 @@
-﻿@model CostaDiamante_HOA.Models.Visits
+﻿@model CostaDiamante_HOA.Models.Payments
 
 @{
     ViewBag.Title = "Delete";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Delete</h2>
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Visits</h4>
+    <h4>Payments</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.condo.name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.condo.name)
-        </dd>
-
         <dt>
             @Html.DisplayNameFor(model => model.owner.name)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.owner.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.amount)
         </dd>
 
         <dt>
@@ -37,19 +36,11 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.arrivalDate)
+            @Html.DisplayNameFor(model => model.typeOfPayment)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.arrivalDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.departureDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.departureDate)
+            @Html.DisplayFor(model => model.typeOfPayment)
         </dd>
 
     </dl>

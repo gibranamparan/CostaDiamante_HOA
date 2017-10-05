@@ -287,7 +287,8 @@ namespace CostaDiamante_HOA.Controllers
             if (roleName == ApplicationUser.RoleNames.OWNER) {
                 Owner owner = db.Owners.Find(id);
                 var condos = owner.Condos.ToList();
-                var cils = owner.checkInListHistory.ToList();
+                //var cils = owner.checkInListHistory.ToList();
+                var cils = owner.payments.ToList(); // <-- add by ilmar - check
                 var visits = owner.visitsHistory.ToList();
                 foreach (var condo in condos)
                 {
@@ -304,7 +305,8 @@ namespace CostaDiamante_HOA.Controllers
                 if (condos.Count() + visits.Count() > 0 && numReg > 0
                     || condos.Count() + visits.Count() == 0) { 
                     foreach (var cil in cils)
-                        db.CheckInLists.Remove(cil);
+                       // db.CheckInLists.Remove(cil);   ----                        check
+                    
 
                     db.Owners.Remove(owner);
                     numReg = 0;
