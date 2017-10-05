@@ -37,7 +37,8 @@ namespace CostaDiamante_HOA.Models
         [Display(Name = "Period")]
         public TimePeriod timePeriod { get {
                 return new TimePeriod(this.arrivalDate, this.departureDate);
-            } }
+            }
+        }
 
         //A visits is for one condo
         [Display(Name = "Condo Number")]

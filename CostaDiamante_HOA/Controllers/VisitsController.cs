@@ -83,7 +83,7 @@ namespace CostaDiamante_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Visits visits, List<Visitor> visitors)
+        public ActionResult Create(Visits visits)
         {
             if (ModelState.IsValid)
             {

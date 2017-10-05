@@ -433,7 +433,6 @@
     <Content Include="Views\Visits\Details.cshtml" />
     <Content Include="Views\Visits\Edit.cshtml" />
     <Content Include="Views\Visits\Index.cshtml" />
-    <Content Include="Views\Visitors\Partial_tableRegisterOfVisitors.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -7,10 +7,11 @@
 
 <div id="app">
     <h2>{{ title }}</h2>
+    <h1>{{ nameVisitor }}</h1>
 
 
-    @using (Html.BeginForm()) 
-    {
+    <form v-on:submit.prevent="setDataToServer()"> 
+    
         @Html.AntiForgeryToken()
     
         <div class="form-horizontal">
@@ -62,7 +63,7 @@
                 </div>
             </div>
         </div>
-    }
+    </form>
 
     <div id="">
         <div class="form-group">
@@ -118,16 +119,23 @@
 </div>
 </div>
 @Scripts.Render("~/node_modules/vue/dist/vue.min.js")
-@Scripts.Render("~/node_modules/vue/dist/vue-resource.min.js")
+@Scripts.Render("~/node_modules/axios/dist/axios.min.js")
 <script>
     const v = new Vue({
         el: '#app',
         data: {
             title: 'Create',
+            visitors: [
+                visitors []
+            ],
+            date: '',
+            arrivalDate: '',
+            departureDate: '',
+            condo: '',
+            owner: '',
             nameVisitor: '',
             lastNameVisitor: '',
-            IsYoungerVisitor: 'No',
-            visitors: []
+            IsYoungerVisitor: 'No'
         },
         methods: {
             addVisitorToTable: function () {
@@ -147,11 +155,7 @@
                 this.visitors.splice(index, 1)
             },
             setDataToServer: function () {
-                this.$http.post('/Visits/Create', { visitors: this.visitors }).then(function (response) {
-                    this.visitors = response.body
-                    this.visitors = []
-                    console.log('post')
-                });
+                
             }
         }
     })
