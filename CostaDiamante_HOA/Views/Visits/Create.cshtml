@@ -133,7 +133,8 @@
             ownerID: '',
             name: '',
             lastName: '',
-            isYounger: 'No'
+            isYounger: 'No',
+            errors: []
         },
         methods: {
             addVisitorToTable: function () {
@@ -152,9 +153,17 @@
                 this.visitors.splice(index, 1)
             },
             setDataToServer: function () {
+
                 this.visits.push({ date: this.date, arrivalDate: this.arrivalDate, departureDate: this.departureDate, condoID: this.condoID, ownerID: this.ownerID, visitors: this.visitors }) // what to push unto the rows array
                 console.log(this.visits)
 
+                axios.post(`http://visits/create`, {
+                    body: this.visits
+                }).then(response => { }).catch(e => {
+                    this.errors.push(e)
+                    console.log(this.errors)
+                })
+                
             }
         }
     })
