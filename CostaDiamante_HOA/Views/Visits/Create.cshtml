@@ -9,8 +9,7 @@
     <h2>{{ title }}</h2>
 
 
-    <form v-on:submit.prevent="setDataToServer()"> 
-    
+   <form v-on:submit.prevent="setDataToServer()"> 
         @Html.AntiForgeryToken()
     
         <div class="form-horizontal">
@@ -157,7 +156,7 @@
                 this.visits.push({ date: this.date, arrivalDate: this.arrivalDate, departureDate: this.departureDate, condoID: this.condoID, ownerID: this.ownerID, visitors: this.visitors }) // what to push unto the rows array
                 console.log(this.visits)
 
-                axios.post(`http://visits/create`, {
+                axios.post(`http://localhost:56158/Visits/create/`, {
                     body: this.visits
                 }).then(response => { }).catch(e => {
                     this.errors.push(e)
