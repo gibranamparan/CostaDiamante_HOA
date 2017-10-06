@@ -7,7 +7,6 @@
 
 <div id="app">
     <h2>{{ title }}</h2>
-    <h1>{{ nameVisitor }}</h1>
 
 
     <form v-on:submit.prevent="setDataToServer()"> 
@@ -29,7 +28,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.arrivalDate, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control", v_model = "" } })
+                    @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control", v_model = "arrivalDate" } })
                     @Html.ValidationMessageFor(model => model.arrivalDate, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -37,7 +36,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.departureDate, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control", v_model = "" } })
+                    @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control", v_model = "departureDate" } })
                     @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -45,7 +44,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.condoID, "condoID", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.DropDownList("condoID", null, htmlAttributes: new { @class = "form-control", v_model = "" })
+                    @Html.DropDownList("condoID", null, htmlAttributes: new { @class = "form-control", v_model = "condoID" })
                     @Html.ValidationMessageFor(model => model.condoID, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -53,7 +52,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.ownerID, "ownerID", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.DropDownList("ownerID", null, htmlAttributes: new { @class = "form-control", v_model = "" })
+                    @Html.DropDownList("ownerID", null, htmlAttributes: new { @class = "form-control", v_model = "ownerID" })
                     @Html.ValidationMessageFor(model => model.ownerID, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -68,21 +67,21 @@
     <div id="">
         <div class="form-group">
             <div class="col-md-4" style="padding-left: 0;">
-                <label for="visitorName">Name:</label>
-                <input v-model="nameVisitor" type="text" class="form-control" id="visitorName">
+                <label for="name">Name:</label>
+                <input v-model="name" type="text" class="form-control" id="name">
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-4">
-                <label for="visitorLastName">Last name:</label>
-                <input v-model="lastNameVisitor" type="text" class="form-control" id="visitorLastName">
+                <label for="lastName">Last name:</label>
+                <input v-model="lastName" type="text" class="form-control" id="lastName">
             </div>
         </div>
             
         <div class="form-group"> 
             <div class="col-md-4" style="padding-right: 0">
-                <label for="visitorLastName">Is smaller:</label>
-                <select id="isYounger" v-model="IsYoungerVisitor" class="form-control valid">
+                <label for="">Is smaller:</label>
+                <select id="isYounger" v-model="isYounger" class="form-control valid">
                     <option value="Yes">Yes</option> 
                     <option value="No">No</option> 
                 </select>
@@ -90,7 +89,7 @@
         </div>
             
         <div class="col-md-offset-10 col-md-2" style="padding-right: 0;">
-            <input type="submit" v-on:click="addVisitorToTable" v-bind:disabled="(nameVisitor === '' && lastNameVisitor === '')" value="Add" class="btn btn-default" style="float: right; margin-bottom: 10px;" />
+            <input type="submit" v-on:click="addVisitorToTable" v-bind:disabled="(name === '' && lastName === '')" value="Add" class="btn btn-default" style="float: right; margin-bottom: 10px;" />
         </div>
 
         <table class="table table-hover table-striped">
@@ -125,17 +124,16 @@
         el: '#app',
         data: {
             title: 'Create',
-            visitors: [
-                visitors []
-            ],
+            visitors: [],
+            visits: [],
             date: '',
             arrivalDate: '',
             departureDate: '',
-            condo: '',
-            owner: '',
-            nameVisitor: '',
-            lastNameVisitor: '',
-            IsYoungerVisitor: 'No'
+            condoID: '',
+            ownerID: '',
+            name: '',
+            lastName: '',
+            isYounger: 'No'
         },
         methods: {
             addVisitorToTable: function () {
@@ -144,18 +142,19 @@
                 } else {
                     this.isYounger = false
                 }
-
-                this.visitors.push({ name: this.nameVisitor, lastName: this.lastNameVisitor, isYounger: this.IsYoungerVisitor }) // what to push unto the rows array
-                this.nameVisitor = ''
-                this.lastNameVisitor = ''
-                this.IsYoungerVisitor = 'No'
+                this.visitors.push({ name: this.name, lastName: this.lastName, isYounger: this.isYounger })
+                this.name = ''
+                this.lastName = ''
+                this.IsYounger = 'No'
                 console.log(this.visitors)
             },
             removeVisitorToTable: function (index) {
                 this.visitors.splice(index, 1)
             },
             setDataToServer: function () {
-                
+                this.visits.push({ date: this.date, arrivalDate: this.arrivalDate, departureDate: this.departureDate, condoID: this.condoID, ownerID: this.ownerID, visitors: this.visitors }) // what to push unto the rows array
+                console.log(this.visits)
+
             }
         }
     })
