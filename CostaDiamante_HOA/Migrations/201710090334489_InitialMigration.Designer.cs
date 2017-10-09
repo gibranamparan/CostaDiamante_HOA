@@ -13,7 +13,7 @@ namespace CostaDiamante_HOA
         
         string IMigrationMetadata.Id
         {
-            get { return "201709302314031_InitialMigration"; }
+            get { return "201710090334489_InitialMigration"; }
         }
         
         string IMigrationMetadata.Source

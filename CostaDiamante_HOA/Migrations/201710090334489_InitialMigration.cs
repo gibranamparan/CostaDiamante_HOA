@@ -119,7 +119,6 @@ namespace CostaDiamante_HOA
                         name = c.String(),
                         lastName = c.String(),
                         isYounger = c.Boolean(nullable: false),
-                        visitsID = c.String(),
                         visit_visitsID = c.Int(),
                     })
                 .PrimaryKey(t => t.visitorID)
