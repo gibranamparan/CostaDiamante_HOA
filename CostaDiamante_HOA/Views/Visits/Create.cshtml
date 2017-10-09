@@ -175,10 +175,9 @@
 
                 //axios.defaults.headers.common['__RequestVerificationToken'] = $('input[name=__RequestVerificationToken]').val()
                 console.log('*================================================================================================*')
-                console.log(this.object[0].Visits)
+                console.log(this.object[0])
                 axios.post(`/Visits/create`, {
-                    //body: this.object[0].Visits
-                    body: this.date
+                    body: this.object[0]
                 }).then(response => { }).catch(e => {
                     this.errors.push(e)
                     console.log(this.errors)

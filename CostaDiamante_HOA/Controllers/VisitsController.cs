@@ -10,6 +10,7 @@ using CostaDiamante_HOA.Models;
 using CostaDiamante_HOA.GeneralTools;
 using static CostaDiamante_HOA.GeneralTools.FiltrosDeSolicitudes;
 using Microsoft.AspNet.Identity;
+using System.Web.Script.Serialization;
 
 namespace CostaDiamante_HOA.Controllers
 {
@@ -84,6 +85,7 @@ namespace CostaDiamante_HOA.Controllers
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public ActionResult Create(Visits visits)
+
         {
             if (ModelState.IsValid)
             {
