@@ -1,11 +1,11 @@
-@model CostaDiamante_HOA.Models.Visits.VMVisitsFilter
+@model CostaDiamante_HOA.Models.Visit.VMVisitsFilter
 @using CostaDiamante_HOA.Models
 @using CostaDiamante_HOA.GeneralTools
 
 @{
     ViewBag.Title = "Visits Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    List<Visits> result = ViewBag.result;
+    List<Visit> result = ViewBag.result;
     VMConfirmModalAttributes modalOptions = new VMConfirmModalAttributes
     {
         modalID = "cancelVisitConfirmation",

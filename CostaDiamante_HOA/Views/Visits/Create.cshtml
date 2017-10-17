@@ -1,194 +1,180 @@
-﻿@model CostaDiamante_HOA.Models.Visits
+﻿@using CostaDiamante_HOA.Models
+@model CostaDiamante_HOA.Models.Visit
 
 @{
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    Model.arrivalDate = DateTime.Today.AddDays(1);
+    Model.departureDate = DateTime.Today.AddDays(3);
 }
 
-<div id="app">
-    <h2>{{ title }}</h2>
+<nav>
+    <a href="@Url.Action("Owners","Details",new { id = Model.ownerID })">
+        <i class="glyphicon glyphicon-arrow-left"></i> <span>Back to Owner Details</span>
+    </a>
+</nav>
 
+@Html.Partial("../Owners/Partial_infoOwner", Model.owner)
 
-    <form v-on:submit.prevent="setDataToServer()">
-        @Html.AntiForgeryToken()
+<h2>New Visit</h2>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Panel title</h3>
+    </div>
+    <div class="panel-body">
+        <div id="app">
+            <form v-on:submit.prevent="sendDataToServer()">
+                @Html.AntiForgeryToken()
 
-        <div class="form-horizontal">
-            <h4>Visits</h4>
-            <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <div class="form-group">
-                @Html.LabelFor(model => model.date, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control", v_model = "date" } })
-                    @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
-                </div>
-            </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.arrivalDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control", v_model = "arrivalDate" } })
+                <div class="form-group col-md-5">
+                    @Html.LabelFor(model => model.arrivalDate)
+                    @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control", v_model = "visit.arrivalDate" } })
                     @Html.ValidationMessageFor(model => model.arrivalDate, "", new { @class = "text-danger" })
                 </div>
-            </div>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.departureDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control", v_model = "departureDate" } })
+                <div class="form-group col-md-5">
+                    @Html.LabelFor(model => model.departureDate)
+                    @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control", v_model = "visit.departureDate" } })
                     @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
                 </div>
-            </div>
-
-            <div class="form-group">
-                @Html.LabelFor(model => model.condoID, "condoID", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("condoID", null, htmlAttributes: new { @class = "form-control", v_model = "condoID" })
-                    @Html.ValidationMessageFor(model => model.condoID, "", new { @class = "text-danger" })
+                <div class="form-group col-md-2">
+                    <br />
+                    <button v-bind:disabled="visit.visitors.length === 0" 
+                            type="submit" class="btn btn-primary pull-right btn-block" >
+                            Register
+                    </button>
+                    <button />
                 </div>
-            </div>
+            </form>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.ownerID, "ownerID", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("ownerID", null, htmlAttributes: new { @class = "form-control", v_model = "ownerID" })
-                    @Html.ValidationMessageFor(model => model.ownerID, "", new { @class = "text-danger" })
+            <div>
+                @{ 
+                    Visitor visitor = new Visitor();
+                }
+                <div>
+                    <div class="form-group col-md-4">
+                        @Html.LabelFor(model => visitor.name)
+                        @Html.EditorFor(model => visitor.name, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.name" } })
+                    </div>
+                    <div class="form-group col-md-4">
+                        @Html.LabelFor(model => visitor.lastName)
+                        @Html.EditorFor(model => visitor.lastName, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.lastName" } })
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        @Html.LabelFor(model => visitor.isYounger)
+                        @Html.EditorFor(model => visitor.isYounger, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.isYounger" } })
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <br />
+                        <button type="button" value="Add" class="btn btn-success btn-block pull-right" v-on:click="addVisitorToTable" 
+                                v-bind:disabled="(newVisitor.name === '' && newVisitor.lastName === '')"> Add </button>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input v-click="setDataToServer" v-bind:disabled="Object.keys(object[0].Visits.visitors).length === 0" type="submit" value="Create" class="btn btn-default" />
-                </div>
-            </div>
-        </div>
-    </form>
-
-    <div id="">
-        <div class="form-group">
-            <div class="col-md-4" style="padding-left: 0;">
-                <label for="name">Name:</label>
-                <input v-model="name" type="text" class="form-control" id="name">
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-4">
-                <label for="lastName">Last name:</label>
-                <input v-model="lastName" type="text" class="form-control" id="lastName">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-4" style="padding-right: 0">
-                <label for="">Is smaller:</label>
-                <select id="isYounger" v-model="isYounger" class="form-control valid">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
+                <!-- Visitors table -->
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => visitor.name)</th>
+                            <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
+                            <th>@Html.DisplayNameFor(model => visitor.isYounger)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(visitor, i) in visit.visitors">
+                            <td>{{ visitor.name }}</td>
+                            <td>{{ visitor.lastName }}</td>
+                            <td>{{ visitor.isYounger }}</td>
+                            <td>
+                                <label v-on:click="removeVisitorToTable(i)" class="removeLabel">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                    <span class="">Remove</span>
+                                </label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-
-        <div class="col-md-offset-10 col-md-2" style="padding-right: 0;">
-            <input type="submit" v-on:click="addVisitorToTable" v-bind:disabled="(name === '' && lastName === '')" value="Add" class="btn btn-default" style="float: right; margin-bottom: 10px;" />
-        </div>
-        <table class="table table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Is Smaller</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(visitor, i) in object[0].Visits.visitors">
-                    <td>{{ visitor.name }}</td>
-                    <td>{{ visitor.lastName }}</td>
-                    <td>{{ visitor.isYounger }}</td>
-                    <td><label v-on:click="removeVisitorToTable(i)" class="removeLabel"><i class="glyphicon glyphicon-remove"></i> <span class="">Remove</span></label></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="col-md-10">
-            @Html.ActionLink("Back to List", "Index")
-        </div>
-
     </div>
 </div>
-@Scripts.Render("~/node_modules/vue/dist/vue.min.js")
-@Scripts.Render("~/node_modules/axios/dist/axios.min.js")
-<script>
-    const v = new Vue({
-        el: '#app',
-        data: {
-            title: 'Create',
-            object: [{
-                Visits: {
-                    visitsID: 0,
-                    date: '',
-                    arrivalDate: '',
-                    departureDate: '',
-                    condoID: '',
-                    ownerID: '',
-                    visitors: []
-                }
-            }],
-            date: '',
-            arrivalDate: '',
-            departureDate: '',
-            condoID: '',
-            ownerID: '',
-            visitorID: 0,
-            name: '',
-            lastName: '',
-            isYounger: 'No',
-            errors: []
-        },
-        methods: {
-            addVisitorToTable: function () {
-                if (this.isYounger == 'yes') {
-                    this.isYounger = true
-                } else {
-                    this.isYounger = false
-                }
-                this.object[0].Visits.visitors.push({ visitorID: 0, name: this.name, lastName: this.lastName, isYounger: this.isYounger })
-                this.name = ''
-                this.lastName = ''
-                this.IsYounger = 'Yes'
-                console.log(this.object[0].Visits.visitors)
-            },
-            removeVisitorToTable: function (index) {
-                this.object[0].Visits.visitors.splice(index, 1)
-            },
-            setDataToServer: function () {
-
-
-                this.object[0].Visits.visitsID = 0
-                this.object[0].Visits.date = this.date
-                this.object[0].Visits.arrivalDate = this.arrivalDate
-                this.object[0].Visits.departureDate = this.departureDate
-                this.object[0].Visits.condoID = this.condoID
-                this.object[0].Visits.ownerID = this.ownerID
-                this.object[0].__RequestVerificationToken = $('input[name=__RequestVerificationToken]').val()
-                console.log('*================================__RequestVerificationToken=====================================*')
-                console.log(this.object[0].__RequestVerificationToken)
-
-                //axios.defaults.headers.common['__RequestVerificationToken'] = $('input[name=__RequestVerificationToken]').val()
-                console.log('*================================================================================================*')
-                console.log(this.object[0])
-                axios.post(`/Visits/create`, {
-                    body: this.object[0]
-                }).then(response => { }).catch(e => {
-                    this.errors.push(e)
-                    console.log(this.errors)
-                })
-
-
-            }
-        }
-    })
-</script>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/node_modules/vue/dist/vue.min.js")
+    @Scripts.Render("~/node_modules/axios/dist/axios.min.js")
+    <script>
+    var token = $('input[name=__RequestVerificationToken]').val()
+    var api = axios.create({
+        baseURL: "/Visits",
+        timeout: 100000,
+        headers: {
+            Authorization: token
+        }
+    });
+    const v = new Vue({
+        el: '#app',
+        data: {
+            visit: { //Main model to save what is going to be submited to the server
+                visitsID: 0,
+                /*arrivalDate: '',
+                departureDate: '',*/
+                arrivalDate: '@Model.arrivalDate.ToString("yyyy/MM/dd")',
+                departureDate: '@Model.departureDate.ToString("yyyy/MM/dd")',
+                condoID: @Model.condoID,
+                ownerID: '@Model.ownerID',
+                visitors: []
+            },
+            newVisitor:{ //Model to save a new visitor
+                name:'',
+                lastName:'',
+                isYounger:false,
+                clone: function (){
+                    return {name : this.name,lastName : this.lastName, isYounger : this.isYounger}
+                },
+                clear: function(){
+                    this.name = ''; this.lastName= ''; this.isYounger = false;
+                }
+            }
+        },
+        methods: {
+            addVisitorToTable: function () {
+                this.visit.visitors.push(this.newVisitor.clone()) //The model is clone a pushed into the list of visitors in the visit
+                this.newVisitor.clear() //The model for a new visitor is clared to enter a new one
+                $("#visitor_name").focus()
+            },
+            removeVisitorToTable: function (index) { //Removing a selected visitor
+                this.visit.visitors.splice(index, 1)
+            },
+            redirectToOwnerDetails: function(){
+                setTimeout(function(){window.location.replace("/Visits/")}, 2000)
+                swal("Done!","Your visit was scheduled succesfully","success")
+            },
+            sendDataToServer: function () { //Async call to save the new visit in DB
+                var self = this
+                axios.post("create",{
+                    visit : self.visit
+                })
+                .then(response => {
+                    var response = response.data
+                    if(response.numReg){
+                        self.redirectToOwnerDetails()
+                    }else if(response.errorMsg){
+                        swal("Oops!","An error ocurred, plase try again. If error persists, plase send this to the system administrator: "+response.errorMsg,"error")
+                    }else{ //Unknown error
+                        console.log(response)
+                    }
+                })
+                .catch(e => {
+                    debugger
+                    console.log(e)
+                })
+            }
+        }
+    })
+    </script>
 }

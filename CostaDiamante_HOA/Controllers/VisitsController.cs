@@ -20,12 +20,12 @@ namespace CostaDiamante_HOA.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Visits
-        public ActionResult Index(Visits.VMVisitsFilter visitsFilter)
+        public ActionResult Index(Visit.VMVisitsFilter visitsFilter)
         {
             TimePeriod periodReported = visitsFilter.TimePeriod;
             bool isInHouse = visitsFilter.isInHouse;
 
-            List<Visits> visits = new List<Visits>();
+            List<Visit> visits = new List<Visit>();
             //If user is admin, shows every visit in database
             if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                 visits = db.Visits.ToList();
@@ -63,7 +63,7 @@ namespace CostaDiamante_HOA.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Visits visits = db.Visits.Find(id);
+            Visit visits = db.Visits.Find(id);
             if (visits == null)
             {
                 return HttpNotFound();
@@ -72,11 +72,20 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         // GET: Visits/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
-            ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name");
-            ViewBag.ownerID = new SelectList(db.Users, "Id", "name");
-            return View();
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            Condo condo = db.Condoes.Find(id);
+            if (condo == null)
+                return HttpNotFound();
+
+            Visit visit = new Visit();
+            visit.condoID = id.Value;
+            visit.ownerID = condo.owner.Id;
+            visit.owner = condo.owner;
+            return View(visit);
         }
 
         // POST: Visits/Create
@@ -84,19 +93,24 @@ namespace CostaDiamante_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult Create(Visits visits)
-
+        public JsonResult Create(Visit visit)
         {
-            if (ModelState.IsValid)
+            int numReg = 0;
+            string errorMsg = string.Empty;
+            visit.date = DateTime.Now;
+            try { 
+                if (ModelState.IsValid)
+                {
+                    db.Visits.Add(visit);
+                    numReg = db.SaveChanges();
+                    return Json(new { numReg = numReg });
+                }
+            }catch(Exception e)
             {
-                db.Visits.Add(visits);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                errorMsg = String.Format("{0}. Details: {1}",e.Message,e.InnerException.Message);
             }
 
-            ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name", visits.condoID);
-            ViewBag.ownerID = new SelectList(db.Users, "Id", "name", visits.ownerID);
-            return View(visits);
+            return Json(new { numReg = numReg, errorMsg = errorMsg });
         }
 
         // GET: Visits/Edit/5
@@ -106,7 +120,7 @@ namespace CostaDiamante_HOA.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Visits visits = db.Visits.Find(id);
+            Visit visits = db.Visits.Find(id);
             if (visits == null)
             {
                 return HttpNotFound();
@@ -121,7 +135,7 @@ namespace CostaDiamante_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "visitsID,date,arrivalDate,departureDate,condoID,ownerID")] Visits visits)
+        public ActionResult Edit([Bind(Include = "visitsID,date,arrivalDate,departureDate,condoID,ownerID")] Visit visits)
         {
             if (ModelState.IsValid)
             {
@@ -141,7 +155,7 @@ namespace CostaDiamante_HOA.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Visits visits = db.Visits.Find(id);
+            Visit visits = db.Visits.Find(id);
             if (visits == null)
             {
                 return HttpNotFound();
@@ -154,7 +168,7 @@ namespace CostaDiamante_HOA.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Visits visits = db.Visits.Find(id);
+            Visit visits = db.Visits.Find(id);
             db.Visits.Remove(visits);
             db.SaveChanges();
             return RedirectToAction("Index");

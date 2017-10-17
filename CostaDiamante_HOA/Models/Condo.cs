@@ -27,6 +27,6 @@ namespace CostaDiamante_HOA.Models
         }
 
         //A condo can be visited with many permissions
-        public virtual ICollection<Visits> visitsHistory { get; set; }
+        public virtual ICollection<Visit> visitsHistory { get; set; }
     }
 }

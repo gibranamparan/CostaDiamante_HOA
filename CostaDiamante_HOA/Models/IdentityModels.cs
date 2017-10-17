@@ -84,7 +84,7 @@ namespace CostaDiamante_HOA.Models
 
         //public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Permissions> Permissions { get; set; }
 
-        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Visits> Visits { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Visit> Visits { get; set; }
 
         public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Visitor> Visitor { get; set; }
 

@@ -20,6 +20,7 @@ namespace CostaDiamante_HOA
                         "~/Scripts/jquery.mask.js",
                         "~/Scripts/jquery.dataTables.min.js",
                         "~/Scripts/numeral.min.js",
+                        "~/Scripts/sweetalert.min.js",
                         "~/Scripts/custom.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(

@@ -8,7 +8,7 @@ using System.Web;
 
 namespace CostaDiamante_HOA.Models
 {
-    public class Visits
+    public class Visit
     {
         public static int MAX_GUESTS_ALLOWED = 8;
 

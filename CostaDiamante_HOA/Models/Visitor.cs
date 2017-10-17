@@ -23,6 +23,6 @@ namespace CostaDiamante_HOA.Models
 
         //A visitor is for one visit
         [Display(Name = "Visit")]
-        public virtual Visits visit { get; set; }
+        public virtual Visit visit { get; set; }
     }
 }
