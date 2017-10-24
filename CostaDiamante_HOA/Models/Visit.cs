@@ -45,13 +45,16 @@ namespace CostaDiamante_HOA.Models
         public int condoID { get; set; }
         public virtual Condo condo { get; set; }
 
-        //A visits is for one condo
+        //A visits is for one owner
         [Display(Name = "Owner")]
         public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
 
-        //Every visits has a list
+        //Every visits has a list of visitors
         public virtual ICollection<Visitor> visitors { get; set; }
+
+        //Every visits has a list of payments
+        public virtual ICollection<Payment> payments { get; set;  } 
 
         public bool isInHouseInPeriod(TimePeriod tp)
         {

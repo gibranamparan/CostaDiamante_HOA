@@ -14,21 +14,21 @@ namespace Sonora_HOA.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Payments
+        // GET: Payment
         public ActionResult Index()
         {
             var payments = db.Payments.Include(p => p.owner);
             return View(payments.ToList());
         }
 
-        // GET: Payments/Details/5
+        // GET: Payment/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Payments payments = db.Payments.Find(id);
+            Payment payments = db.Payments.Find(id);
             if (payments == null)
             {
                 return HttpNotFound();
@@ -36,19 +36,19 @@ namespace Sonora_HOA.Controllers
             return View(payments);
         }
 
-        // GET: Payments/Create
+        // GET: Payment/Create
         public ActionResult Create()
         {
             ViewBag.ownerID = new SelectList(db.Users, "Id", "name");
             return View();
         }
 
-        // POST: Payments/Create
+        // POST: Payment/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "paymentsID,amount,date,typeOfPayment,ownerID")] Payments payments)
+        public ActionResult Create([Bind(Include = "paymentsID,amount,date,typeOfPayment,ownerID")] Payment payments)
         {
             if (ModelState.IsValid)
             {
@@ -61,14 +61,14 @@ namespace Sonora_HOA.Controllers
             return View(payments);
         }
 
-        // GET: Payments/Edit/5
+        // GET: Payment/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Payments payments = db.Payments.Find(id);
+            Payment payments = db.Payments.Find(id);
             if (payments == null)
             {
                 return HttpNotFound();
@@ -77,12 +77,12 @@ namespace Sonora_HOA.Controllers
             return View(payments);
         }
 
-        // POST: Payments/Edit/5
+        // POST: Payment/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "paymentsID,amount,date,typeOfPayment,ownerID")] Payments payments)
+        public ActionResult Edit([Bind(Include = "paymentsID,amount,date,typeOfPayment,ownerID")] Payment payments)
         {
             if (ModelState.IsValid)
             {
@@ -94,14 +94,14 @@ namespace Sonora_HOA.Controllers
             return View(payments);
         }
 
-        // GET: Payments/Delete/5
+        // GET: Payment/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Payments payments = db.Payments.Find(id);
+            Payment payments = db.Payments.Find(id);
             if (payments == null)
             {
                 return HttpNotFound();
@@ -109,12 +109,12 @@ namespace Sonora_HOA.Controllers
             return View(payments);
         }
 
-        // POST: Payments/Delete/5
+        // POST: Payment/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Payments payments = db.Payments.Find(id);
+            Payment payments = db.Payments.Find(id);
             db.Payments.Remove(payments);
             db.SaveChanges();
             return RedirectToAction("Index");

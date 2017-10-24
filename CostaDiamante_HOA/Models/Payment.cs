@@ -7,7 +7,7 @@ using System.Web;
 
 namespace CostaDiamante_HOA.Models
 {
-    public class Payments
+    public class Payment
     {
         [Key]
         [Display(Name = "Notification #")]
@@ -27,8 +27,13 @@ namespace CostaDiamante_HOA.Models
 
         //A payment has one owner
         [Display(Name = "Owner")]
-        public string ownerID { get; set; }
+        public int ownerID { get; set; }
         public virtual Owner owner { get; set; }
+
+        //A payment has one visit
+        [Display(Name = "Visit #")]
+        public int visitsID { get; set;  }
+        public virtual Visit visit { get; set; }
 
     }
 

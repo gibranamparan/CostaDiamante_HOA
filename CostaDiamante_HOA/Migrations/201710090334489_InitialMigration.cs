@@ -68,7 +68,7 @@ namespace CostaDiamante_HOA
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.Payments",
+                "dbo.Payment",
                 c => new
                     {
                         paymentsID = c.Int(nullable: false, identity: true),
@@ -147,14 +147,14 @@ namespace CostaDiamante_HOA
             DropForeignKey("dbo.Visitors", "visit_visitsID", "dbo.Visits");
             DropForeignKey("dbo.Visits", "ownerID", "dbo.AspNetUsers");
             DropForeignKey("dbo.Visits", "condoID", "dbo.Condoes");
-            DropForeignKey("dbo.Payments", "ownerID", "dbo.AspNetUsers");
+            DropForeignKey("dbo.Payment", "ownerID", "dbo.AspNetUsers");
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.Visitors", new[] { "visit_visitsID" });
             DropIndex("dbo.Visits", new[] { "ownerID" });
             DropIndex("dbo.Visits", new[] { "condoID" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
-            DropIndex("dbo.Payments", new[] { "ownerID" });
+            DropIndex("dbo.Payment", new[] { "ownerID" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
@@ -163,7 +163,7 @@ namespace CostaDiamante_HOA
             DropTable("dbo.Visitors");
             DropTable("dbo.Visits");
             DropTable("dbo.AspNetUserRoles");
-            DropTable("dbo.Payments");
+            DropTable("dbo.Payment");
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");

@@ -212,13 +212,17 @@
     <Compile Include="Migrations\201710090334489_InitialMigration.Designer.cs">
       <DependentUpon>201710090334489_InitialMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710240410365_setPaymentsToVisit.cs" />
+    <Compile Include="Migrations\201710240410365_setPaymentsToVisit.Designer.cs">
+      <DependentUpon>201710240410365_setPaymentsToVisit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Owner.cs" />
-    <Compile Include="Models\Payments.cs" />
+    <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\Visitor.cs" />
     <Compile Include="Models\Visit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -704,9 +708,9 @@
     <Content Include="Views\Payments\Index.cshtml" />
     <Content Include="Views\Visits\Create.cshtml" />
     <Content Include="Views\Visits\Delete.cshtml" />
-    <Content Include="Views\Visits\Details.cshtml" />
     <Content Include="Views\Visits\Edit.cshtml" />
     <Content Include="Views\Visits\Index.cshtml" />
+    <Content Include="Views\Visits\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -724,6 +728,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201710090334489_InitialMigration.resx">
       <DependentUpon>201710090334489_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710240410365_setPaymentsToVisit.resx">
+      <DependentUpon>201710240410365_setPaymentsToVisit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
