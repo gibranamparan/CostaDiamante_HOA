@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -26,6 +27,7 @@
     </NuGetPackageImportStamp>
     <ApplicationInsightsResourceId>/subscriptions/39a6c464-fe8c-4c46-a06d-7905844ce7ac/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Sonora_HOA</ApplicationInsightsResourceId>
     <Use64BitIISExpress />
+    <TypeScriptToolsVersion>2.3</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -295,6 +297,233 @@
     <Content Include="images\UserManual\4-Notify new visits.jpg" />
     <Content Include="images\UserManual\5-Unnamed Non-Paying Guests.jpg" />
     <Content Include="images\UserManual\6-Visits and report printing.jpg" />
+    <Content Include="node_modules\axios\dist\axios.js" />
+    <Content Include="node_modules\axios\dist\axios.min.js" />
+    <Content Include="node_modules\axios\index.js" />
+    <Content Include="node_modules\axios\lib\adapters\http.js" />
+    <Content Include="node_modules\axios\lib\adapters\xhr.js" />
+    <Content Include="node_modules\axios\lib\axios.js" />
+    <Content Include="node_modules\axios\lib\cancel\Cancel.js" />
+    <Content Include="node_modules\axios\lib\cancel\CancelToken.js" />
+    <Content Include="node_modules\axios\lib\cancel\isCancel.js" />
+    <Content Include="node_modules\axios\lib\core\Axios.js" />
+    <Content Include="node_modules\axios\lib\core\createError.js" />
+    <Content Include="node_modules\axios\lib\core\dispatchRequest.js" />
+    <Content Include="node_modules\axios\lib\core\enhanceError.js" />
+    <Content Include="node_modules\axios\lib\core\InterceptorManager.js" />
+    <Content Include="node_modules\axios\lib\core\settle.js" />
+    <Content Include="node_modules\axios\lib\core\transformData.js" />
+    <Content Include="node_modules\axios\lib\defaults.js" />
+    <Content Include="node_modules\axios\lib\helpers\bind.js" />
+    <Content Include="node_modules\axios\lib\helpers\btoa.js" />
+    <Content Include="node_modules\axios\lib\helpers\buildURL.js" />
+    <Content Include="node_modules\axios\lib\helpers\combineURLs.js" />
+    <Content Include="node_modules\axios\lib\helpers\cookies.js" />
+    <Content Include="node_modules\axios\lib\helpers\deprecatedMethod.js" />
+    <Content Include="node_modules\axios\lib\helpers\isAbsoluteURL.js" />
+    <Content Include="node_modules\axios\lib\helpers\isURLSameOrigin.js" />
+    <Content Include="node_modules\axios\lib\helpers\normalizeHeaderName.js" />
+    <Content Include="node_modules\axios\lib\helpers\parseHeaders.js" />
+    <Content Include="node_modules\axios\lib\helpers\spread.js" />
+    <Content Include="node_modules\axios\lib\utils.js" />
+    <Content Include="node_modules\debug\karma.conf.js" />
+    <Content Include="node_modules\debug\node.js" />
+    <Content Include="node_modules\debug\src\browser.js" />
+    <Content Include="node_modules\debug\src\debug.js" />
+    <Content Include="node_modules\debug\src\index.js" />
+    <Content Include="node_modules\debug\src\inspector-log.js" />
+    <Content Include="node_modules\debug\src\node.js" />
+    <Content Include="node_modules\follow-redirects\http.js" />
+    <Content Include="node_modules\follow-redirects\https.js" />
+    <Content Include="node_modules\follow-redirects\index.js" />
+    <Content Include="node_modules\is-buffer\index.js" />
+    <Content Include="node_modules\is-buffer\test\basic.js" />
+    <Content Include="node_modules\ms\index.js" />
+    <Content Include="node_modules\vue-axios\dist\vue-axios.es5.js" />
+    <Content Include="node_modules\vue-axios\dist\vue-axios.min.js" />
+    <Content Include="node_modules\vue-axios\src\index.js" />
+    <Content Include="node_modules\vue\dist\vue.common.js" />
+    <Content Include="node_modules\vue\dist\vue.esm.js" />
+    <Content Include="node_modules\vue\dist\vue.js" />
+    <Content Include="node_modules\vue\dist\vue.min.js" />
+    <Content Include="node_modules\vue\dist\vue.runtime.common.js" />
+    <Content Include="node_modules\vue\dist\vue.runtime.esm.js" />
+    <Content Include="node_modules\vue\dist\vue.runtime.js" />
+    <Content Include="node_modules\vue\dist\vue.runtime.min.js" />
+    <Content Include="node_modules\vue\src\compiler\codegen\events.js" />
+    <Content Include="node_modules\vue\src\compiler\codegen\index.js" />
+    <Content Include="node_modules\vue\src\compiler\create-compiler.js" />
+    <Content Include="node_modules\vue\src\compiler\directives\bind.js" />
+    <Content Include="node_modules\vue\src\compiler\directives\index.js" />
+    <Content Include="node_modules\vue\src\compiler\directives\model.js" />
+    <Content Include="node_modules\vue\src\compiler\directives\on.js" />
+    <Content Include="node_modules\vue\src\compiler\error-detector.js" />
+    <Content Include="node_modules\vue\src\compiler\helpers.js" />
+    <Content Include="node_modules\vue\src\compiler\index.js" />
+    <Content Include="node_modules\vue\src\compiler\optimizer.js" />
+    <Content Include="node_modules\vue\src\compiler\parser\entity-decoder.js" />
+    <Content Include="node_modules\vue\src\compiler\parser\filter-parser.js" />
+    <Content Include="node_modules\vue\src\compiler\parser\html-parser.js" />
+    <Content Include="node_modules\vue\src\compiler\parser\index.js" />
+    <Content Include="node_modules\vue\src\compiler\parser\text-parser.js" />
+    <Content Include="node_modules\vue\src\compiler\to-function.js" />
+    <Content Include="node_modules\vue\src\core\components\index.js" />
+    <Content Include="node_modules\vue\src\core\components\keep-alive.js" />
+    <Content Include="node_modules\vue\src\core\config.js" />
+    <Content Include="node_modules\vue\src\core\global-api\assets.js" />
+    <Content Include="node_modules\vue\src\core\global-api\extend.js" />
+    <Content Include="node_modules\vue\src\core\global-api\index.js" />
+    <Content Include="node_modules\vue\src\core\global-api\mixin.js" />
+    <Content Include="node_modules\vue\src\core\global-api\use.js" />
+    <Content Include="node_modules\vue\src\core\index.js" />
+    <Content Include="node_modules\vue\src\core\instance\events.js" />
+    <Content Include="node_modules\vue\src\core\instance\index.js" />
+    <Content Include="node_modules\vue\src\core\instance\init.js" />
+    <Content Include="node_modules\vue\src\core\instance\inject.js" />
+    <Content Include="node_modules\vue\src\core\instance\lifecycle.js" />
+    <Content Include="node_modules\vue\src\core\instance\proxy.js" />
+    <Content Include="node_modules\vue\src\core\instance\render-helpers\bind-object-listeners.js" />
+    <Content Include="node_modules\vue\src\core\instance\render-helpers\bind-object-props.js" />
+    <Content Include="node_modules\vue\src\core\instance\render-helpers\check-keycodes.js" />
+    <Content Include="node_modules\vue\src\core\instance\render-helpers\index.js" />
+    <Content Include="node_modules\vue\src\core\instance\render-helpers\render-list.js" />
+    <Content Include="node_modules\vue\src\core\instance\render-helpers\render-slot.js" />
+    <Content Include="node_modules\vue\src\core\instance\render-helpers\render-static.js" />
+    <Content Include="node_modules\vue\src\core\instance\render-helpers\resolve-filter.js" />
+    <Content Include="node_modules\vue\src\core\instance\render-helpers\resolve-slots.js" />
+    <Content Include="node_modules\vue\src\core\instance\render.js" />
+    <Content Include="node_modules\vue\src\core\instance\state.js" />
+    <Content Include="node_modules\vue\src\core\observer\array.js" />
+    <Content Include="node_modules\vue\src\core\observer\dep.js" />
+    <Content Include="node_modules\vue\src\core\observer\index.js" />
+    <Content Include="node_modules\vue\src\core\observer\scheduler.js" />
+    <Content Include="node_modules\vue\src\core\observer\watcher.js" />
+    <Content Include="node_modules\vue\src\core\util\debug.js" />
+    <Content Include="node_modules\vue\src\core\util\env.js" />
+    <Content Include="node_modules\vue\src\core\util\error.js" />
+    <Content Include="node_modules\vue\src\core\util\index.js" />
+    <Content Include="node_modules\vue\src\core\util\lang.js" />
+    <Content Include="node_modules\vue\src\core\util\next-tick.js" />
+    <Content Include="node_modules\vue\src\core\util\options.js" />
+    <Content Include="node_modules\vue\src\core\util\perf.js" />
+    <Content Include="node_modules\vue\src\core\util\props.js" />
+    <Content Include="node_modules\vue\src\core\vdom\create-component.js" />
+    <Content Include="node_modules\vue\src\core\vdom\create-element.js" />
+    <Content Include="node_modules\vue\src\core\vdom\create-functional-component.js" />
+    <Content Include="node_modules\vue\src\core\vdom\helpers\extract-props.js" />
+    <Content Include="node_modules\vue\src\core\vdom\helpers\get-first-component-child.js" />
+    <Content Include="node_modules\vue\src\core\vdom\helpers\index.js" />
+    <Content Include="node_modules\vue\src\core\vdom\helpers\is-async-placeholder.js" />
+    <Content Include="node_modules\vue\src\core\vdom\helpers\merge-hook.js" />
+    <Content Include="node_modules\vue\src\core\vdom\helpers\normalize-children.js" />
+    <Content Include="node_modules\vue\src\core\vdom\helpers\resolve-async-component.js" />
+    <Content Include="node_modules\vue\src\core\vdom\helpers\update-listeners.js" />
+    <Content Include="node_modules\vue\src\core\vdom\modules\directives.js" />
+    <Content Include="node_modules\vue\src\core\vdom\modules\index.js" />
+    <Content Include="node_modules\vue\src\core\vdom\modules\ref.js" />
+    <Content Include="node_modules\vue\src\core\vdom\patch.js" />
+    <Content Include="node_modules\vue\src\core\vdom\vnode.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\directives\html.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\directives\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\directives\model.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\directives\text.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\modules\class.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\modules\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\modules\model.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\modules\style.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\options.js" />
+    <Content Include="node_modules\vue\src\platforms\web\compiler\util.js" />
+    <Content Include="node_modules\vue\src\platforms\web\entry-compiler.js" />
+    <Content Include="node_modules\vue\src\platforms\web\entry-runtime-with-compiler.js" />
+    <Content Include="node_modules\vue\src\platforms\web\entry-runtime.js" />
+    <Content Include="node_modules\vue\src\platforms\web\entry-server-basic-renderer.js" />
+    <Content Include="node_modules\vue\src\platforms\web\entry-server-renderer.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\class-util.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\components\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\components\transition-group.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\components\transition.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\directives\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\directives\model.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\directives\show.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\modules\attrs.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\modules\class.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\modules\dom-props.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\modules\events.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\modules\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\modules\style.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\modules\transition.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\node-ops.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\patch.js" />
+    <Content Include="node_modules\vue\src\platforms\web\runtime\transition-util.js" />
+    <Content Include="node_modules\vue\src\platforms\web\server\compiler.js" />
+    <Content Include="node_modules\vue\src\platforms\web\server\directives\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\server\directives\show.js" />
+    <Content Include="node_modules\vue\src\platforms\web\server\modules\attrs.js" />
+    <Content Include="node_modules\vue\src\platforms\web\server\modules\class.js" />
+    <Content Include="node_modules\vue\src\platforms\web\server\modules\dom-props.js" />
+    <Content Include="node_modules\vue\src\platforms\web\server\modules\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\server\modules\style.js" />
+    <Content Include="node_modules\vue\src\platforms\web\server\util.js" />
+    <Content Include="node_modules\vue\src\platforms\web\util\attrs.js" />
+    <Content Include="node_modules\vue\src\platforms\web\util\class.js" />
+    <Content Include="node_modules\vue\src\platforms\web\util\compat.js" />
+    <Content Include="node_modules\vue\src\platforms\web\util\element.js" />
+    <Content Include="node_modules\vue\src\platforms\web\util\index.js" />
+    <Content Include="node_modules\vue\src\platforms\web\util\style.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\compiler\directives\index.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\compiler\directives\model.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\compiler\index.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\compiler\modules\append.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\compiler\modules\class.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\compiler\modules\index.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\compiler\modules\props.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\compiler\modules\style.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\entry-compiler.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\entry-framework.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\entry-runtime-factory.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\components\index.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\components\richtext.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\components\transition-group.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\components\transition.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\directives\index.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\index.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\modules\attrs.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\modules\class.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\modules\events.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\modules\index.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\modules\style.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\modules\transition.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\node-ops.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\patch.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\runtime\text-node.js" />
+    <Content Include="node_modules\vue\src\platforms\weex\util\index.js" />
+    <Content Include="node_modules\vue\src\server\bundle-renderer\create-bundle-renderer.js" />
+    <Content Include="node_modules\vue\src\server\bundle-renderer\create-bundle-runner.js" />
+    <Content Include="node_modules\vue\src\server\bundle-renderer\source-map-support.js" />
+    <Content Include="node_modules\vue\src\server\create-basic-renderer.js" />
+    <Content Include="node_modules\vue\src\server\create-renderer.js" />
+    <Content Include="node_modules\vue\src\server\optimizing-compiler\codegen.js" />
+    <Content Include="node_modules\vue\src\server\optimizing-compiler\index.js" />
+    <Content Include="node_modules\vue\src\server\optimizing-compiler\modules.js" />
+    <Content Include="node_modules\vue\src\server\optimizing-compiler\optimizer.js" />
+    <Content Include="node_modules\vue\src\server\optimizing-compiler\runtime-helpers.js" />
+    <Content Include="node_modules\vue\src\server\render-context.js" />
+    <Content Include="node_modules\vue\src\server\render-stream.js" />
+    <Content Include="node_modules\vue\src\server\render.js" />
+    <Content Include="node_modules\vue\src\server\template-renderer\create-async-file-mapper.js" />
+    <Content Include="node_modules\vue\src\server\template-renderer\index.js" />
+    <Content Include="node_modules\vue\src\server\template-renderer\parse-template.js" />
+    <Content Include="node_modules\vue\src\server\template-renderer\template-stream.js" />
+    <Content Include="node_modules\vue\src\server\util.js" />
+    <Content Include="node_modules\vue\src\server\webpack-plugin\client.js" />
+    <Content Include="node_modules\vue\src\server\webpack-plugin\server.js" />
+    <Content Include="node_modules\vue\src\server\webpack-plugin\util.js" />
+    <Content Include="node_modules\vue\src\server\write.js" />
+    <Content Include="node_modules\vue\src\sfc\parser.js" />
+    <Content Include="node_modules\vue\src\shared\constants.js" />
+    <Content Include="node_modules\vue\src\shared\util.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -335,6 +564,48 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="node_modules\axios\CHANGELOG.md" />
+    <Content Include="node_modules\axios\dist\axios.map" />
+    <Content Include="node_modules\axios\dist\axios.min.map" />
+    <Content Include="node_modules\axios\lib\adapters\README.md" />
+    <Content Include="node_modules\axios\lib\core\README.md" />
+    <Content Include="node_modules\axios\lib\helpers\README.md" />
+    <Content Include="node_modules\axios\LICENSE" />
+    <Content Include="node_modules\axios\package.json" />
+    <Content Include="node_modules\axios\README.md" />
+    <Content Include="node_modules\axios\UPGRADE_GUIDE.md" />
+    <Content Include="node_modules\debug\.coveralls.yml" />
+    <Content Include="node_modules\debug\.eslintrc" />
+    <Content Include="node_modules\debug\.npmignore" />
+    <Content Include="node_modules\debug\.travis.yml" />
+    <Content Include="node_modules\debug\CHANGELOG.md" />
+    <Content Include="node_modules\debug\component.json" />
+    <Content Include="node_modules\debug\LICENSE" />
+    <Content Include="node_modules\debug\Makefile" />
+    <Content Include="node_modules\debug\package.json" />
+    <Content Include="node_modules\debug\README.md" />
+    <Content Include="node_modules\follow-redirects\LICENSE" />
+    <Content Include="node_modules\follow-redirects\package.json" />
+    <Content Include="node_modules\follow-redirects\README.md" />
+    <Content Include="node_modules\is-buffer\.npmignore" />
+    <Content Include="node_modules\is-buffer\LICENSE" />
+    <Content Include="node_modules\is-buffer\package.json" />
+    <Content Include="node_modules\is-buffer\README.md" />
+    <Content Include="node_modules\ms\license.md" />
+    <Content Include="node_modules\ms\package.json" />
+    <Content Include="node_modules\ms\readme.md" />
+    <Content Include="node_modules\vue-axios\LICENSE" />
+    <Content Include="node_modules\vue-axios\package.json" />
+    <Content Include="node_modules\vue-axios\README.md" />
+    <Content Include="node_modules\vue\dist\README.md" />
+    <Content Include="node_modules\vue\LICENSE" />
+    <Content Include="node_modules\vue\package.json" />
+    <Content Include="node_modules\vue\README.md" />
+    <Content Include="node_modules\vue\src\.DS_Store" />
+    <Content Include="node_modules\vue\src\compiler\.DS_Store" />
+    <Content Include="node_modules\vue\src\platforms\.DS_Store" />
+    <Content Include="node_modules\vue\src\platforms\weex\.DS_Store" />
+    <Content Include="node_modules\vue\src\platforms\weex\compiler\.DS_Store" />
     <None Include="Properties\PublishProfiles\Default Settings %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -367,7 +638,9 @@
     <Content Include="Scripts\sweetalert.min.js" />
     <Content Include="Scripts\util.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -453,11 +726,23 @@
       <DependentUpon>201710090334489_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="node_modules\axios\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\vue\types\index.d.ts" />
+    <TypeScriptCompile Include="node_modules\vue\types\options.d.ts" />
+    <TypeScriptCompile Include="node_modules\vue\types\plugin.d.ts" />
+    <TypeScriptCompile Include="node_modules\vue\types\vnode.d.ts" />
+    <TypeScriptCompile Include="node_modules\vue\types\vue.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
