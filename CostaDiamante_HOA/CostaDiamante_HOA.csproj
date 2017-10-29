@@ -709,6 +709,7 @@
     <Content Include="Views\Payments\Edit.cshtml" />
     <Content Include="Views\Payments\Index.cshtml" />
     <Content Include="Views\Payments\Partial_CreatePayment.cshtml" />
+    <Content Include="Views\Payments\Partial_ListPayments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using CostaDiamante_HOA.Models;
 
-namespace Sonora_HOA.Controllers
+namespace CostaDiamante_HOA.Controllers
 {
     public class PaymentsController : Controller
     {
@@ -18,6 +18,7 @@ namespace Sonora_HOA.Controllers
         public ActionResult Index()
         {
             var payments = db.Payments.Include(p => p.owner).Include(p => p.visit);
+            //var payments = db.Payments.Where(a => a.visitID == id).ToList();
             return View(payments.ToList());
         }
 

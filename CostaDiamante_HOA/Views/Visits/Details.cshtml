@@ -61,9 +61,25 @@
             { "visitID", Model.visitID }
     })
 </div>
+
+<div>
+    @Html.Partial("../Payments/Partial_ListPayments", Model.payments.ToList());
+</div>
+
+
+
 <p>
     @*@Html.ActionLink("Create new payment", "Create", "Payments", new { visitID = Model.visitID, ownerID = Model.ownerID }, null) |*@
     @Html.ActionLink("Edit", "Edit", new { id = Model.visitID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
 
+@section Scripts {
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/node_modules/vue/dist/vue.min.js")
+@Scripts.Render("~/node_modules/axios/dist/axios.min.js")
+
+    <script>
+
+    </script>
+}
