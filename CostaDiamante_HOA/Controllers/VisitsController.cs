@@ -135,7 +135,7 @@ namespace CostaDiamante_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "visitsID,date,arrivalDate,departureDate,condoID,ownerID")] Visit visits)
+        public ActionResult Edit([Bind(Include = "visitID,date,arrivalDate,departureDate,condoID,ownerID")] Visit visits)
         {
             if (ModelState.IsValid)
             {

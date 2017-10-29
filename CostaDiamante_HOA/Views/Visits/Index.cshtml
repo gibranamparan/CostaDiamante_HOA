@@ -84,7 +84,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => result.FirstOrDefault().visitsID)
+                @Html.DisplayNameFor(model => result.FirstOrDefault().visitID)
             </th>
             <th>
                 @Html.DisplayNameFor(model => result.FirstOrDefault().condoID)
@@ -107,7 +107,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(model => item.visitsID)
+                    @Html.DisplayFor(model => item.visitID)
                 </td>
                 <td>
                     @Html.DisplayFor(model => item.condo.name)
@@ -125,13 +125,13 @@
                     @item.departureDate.ToLongDateString()
                 </td>
                 <td>
-                    <a href="@Url.Action("Details", new { id = item.visitsID })">
+                    <a href="@Url.Action("Details", new { id = item.visitID })">
                         <i class="fa fa-address-book"></i> View Notification
                     </a>
                     @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                     {
                         @(" | ")
-                        <a onclick="prepareModal(@item.visitsID)"
+                        <a onclick="prepareModal(@item.visitID)"
                            data-toggle="modal" href='#@modalOptions.modalID'>
                             <i class="glyphicon glyphicon-remove"></i> Cancel
                         </a>

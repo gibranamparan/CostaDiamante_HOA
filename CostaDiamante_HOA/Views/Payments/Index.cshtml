@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CostaDiamante_HOA.Models.Payment>
+﻿@model IEnumerable<CostaDiamante_HOA.Models.Payments>
 
 @{
     ViewBag.Title = "Index";
@@ -13,6 +13,9 @@
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.owner.name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.visit.ownerID)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.amount)
@@ -30,6 +33,9 @@
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.owner.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.visit.ownerID)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.amount)

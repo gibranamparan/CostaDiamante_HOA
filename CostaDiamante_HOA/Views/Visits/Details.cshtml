@@ -1,6 +1,9 @@
-﻿@model CostaDiamante_HOA.Models.Visit
+﻿@using CostaDiamante_HOA.Models
+@model CostaDiamante_HOA.Models.Visit
 
 @{
+    Payments payment = new Payments();
+
     ViewBag.Title = "Details";
 }
 
@@ -52,7 +55,15 @@
 
     </dl>
 </div>
+<div>
+    @Html.Partial("../Payments/Partial_CreatePayment", payment, new ViewDataDictionary {
+            { "ownerID", Model.ownerID },
+            { "visitID", Model.visitID }
+    })
+</div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.visitsID }) |
+    @*@Html.ActionLink("Create new payment", "Create", "Payments", new { visitID = Model.visitID, ownerID = Model.ownerID }, null) |*@
+    @Html.ActionLink("Edit", "Edit", new { id = Model.visitID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+

@@ -14,7 +14,7 @@ namespace CostaDiamante_HOA.Models
 
         [Key]
         [Display(Name = "Notification #")]
-        public int visitsID { get; set; }
+        public int visitID { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
         ApplyFormatInEditMode = true)]
@@ -54,7 +54,7 @@ namespace CostaDiamante_HOA.Models
         public virtual ICollection<Visitor> visitors { get; set; }
 
         //Every visits has a list of payments
-        public virtual ICollection<Payment> payments { get; set;  } 
+        public virtual ICollection<Payments> payments { get; set;  } 
 
         public bool isInHouseInPeriod(TimePeriod tp)
         {

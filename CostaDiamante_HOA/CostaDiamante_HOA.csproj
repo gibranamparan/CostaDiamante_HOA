@@ -208,13 +208,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201710090334489_InitialMigration.cs" />
-    <Compile Include="Migrations\201710090334489_InitialMigration.Designer.cs">
-      <DependentUpon>201710090334489_InitialMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201710240410365_setPaymentsToVisit.cs" />
-    <Compile Include="Migrations\201710240410365_setPaymentsToVisit.Designer.cs">
-      <DependentUpon>201710240410365_setPaymentsToVisit.cs</DependentUpon>
+    <Compile Include="Migrations\201710250417268_InitialMigration.cs" />
+    <Compile Include="Migrations\201710250417268_InitialMigration.Designer.cs">
+      <DependentUpon>201710250417268_InitialMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -701,16 +697,18 @@
     <Content Include="Views\Visitors\Details.cshtml" />
     <Content Include="Views\Visitors\Edit.cshtml" />
     <Content Include="Views\Visitors\Index.cshtml" />
-    <Content Include="Views\Payments\Create.cshtml" />
-    <Content Include="Views\Payments\Delete.cshtml" />
-    <Content Include="Views\Payments\Details.cshtml" />
-    <Content Include="Views\Payments\Edit.cshtml" />
-    <Content Include="Views\Payments\Index.cshtml" />
     <Content Include="Views\Visits\Create.cshtml" />
     <Content Include="Views\Visits\Delete.cshtml" />
     <Content Include="Views\Visits\Edit.cshtml" />
     <Content Include="Views\Visits\Index.cshtml" />
     <Content Include="Views\Visits\Details.cshtml" />
+    <Content Include="Views\Visits\Partial_ListVisits.cshtml" />
+    <Content Include="Views\Payments\Create.cshtml" />
+    <Content Include="Views\Payments\Delete.cshtml" />
+    <Content Include="Views\Payments\Details.cshtml" />
+    <Content Include="Views\Payments\Edit.cshtml" />
+    <Content Include="Views\Payments\Index.cshtml" />
+    <Content Include="Views\Payments\Partial_CreatePayment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -726,14 +724,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201710090334489_InitialMigration.resx">
-      <DependentUpon>201710090334489_InitialMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201710240410365_setPaymentsToVisit.resx">
-      <DependentUpon>201710240410365_setPaymentsToVisit.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <TypeScriptCompile Include="node_modules\axios\index.d.ts" />
     <TypeScriptCompile Include="node_modules\vue\types\index.d.ts" />
     <TypeScriptCompile Include="node_modules\vue\types\options.d.ts" />
@@ -743,6 +733,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201710250417268_InitialMigration.resx">
+      <DependentUpon>201710250417268_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

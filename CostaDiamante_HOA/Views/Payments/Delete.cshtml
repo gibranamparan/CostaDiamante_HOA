@@ -1,4 +1,4 @@
-﻿@model CostaDiamante_HOA.Models.Payment
+﻿@model CostaDiamante_HOA.Models.Payments
 
 @{
     ViewBag.Title = "Delete";
@@ -17,6 +17,14 @@
 
         <dd>
             @Html.DisplayFor(model => model.owner.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.visit.ownerID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.visit.ownerID)
         </dd>
 
         <dt>

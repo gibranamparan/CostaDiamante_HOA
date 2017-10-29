@@ -14,21 +14,21 @@ namespace Sonora_HOA.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Payment
+        // GET: Payments
         public ActionResult Index()
         {
-            var payments = db.Payments.Include(p => p.owner);
+            var payments = db.Payments.Include(p => p.owner).Include(p => p.visit);
             return View(payments.ToList());
         }
 
-        // GET: Payment/Details/5
+        // GET: Payments/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Payment payments = db.Payments.Find(id);
+            Payments payments = db.Payments.Find(id);
             if (payments == null)
             {
                 return HttpNotFound();
@@ -36,19 +36,22 @@ namespace Sonora_HOA.Controllers
             return View(payments);
         }
 
-        // GET: Payment/Create
-        public ActionResult Create()
+        // GET: Payments/Create
+        public ActionResult Create(int visitID, string ownerID)
         {
-            ViewBag.ownerID = new SelectList(db.Users, "Id", "name");
+            //ViewBag.ownerID = new SelectList(db.Users, "Id", "name");
+            //ViewBag.visitID = new SelectList(db.Visits, "visitID", "ownerID");
+            ViewBag.ownerID = ownerID;
+            ViewBag.visitID = visitID;
             return View();
         }
 
-        // POST: Payment/Create
+        // POST: Payments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "paymentsID,amount,date,typeOfPayment,ownerID")] Payment payments)
+        public ActionResult Create(Payments payments)
         {
             if (ModelState.IsValid)
             {
@@ -58,31 +61,33 @@ namespace Sonora_HOA.Controllers
             }
 
             ViewBag.ownerID = new SelectList(db.Users, "Id", "name", payments.ownerID);
+            ViewBag.visitID = new SelectList(db.Visits, "visitID", "ownerID", payments.visitID);
             return View(payments);
         }
 
-        // GET: Payment/Edit/5
+        // GET: Payments/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Payment payments = db.Payments.Find(id);
+            Payments payments = db.Payments.Find(id);
             if (payments == null)
             {
                 return HttpNotFound();
             }
             ViewBag.ownerID = new SelectList(db.Users, "Id", "name", payments.ownerID);
+            ViewBag.visitID = new SelectList(db.Visits, "visitID", "ownerID", payments.visitID);
             return View(payments);
         }
 
-        // POST: Payment/Edit/5
+        // POST: Payments/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "paymentsID,amount,date,typeOfPayment,ownerID")] Payment payments)
+        public ActionResult Edit([Bind(Include = "paymentsID,amount,date,typeOfPayment,ownerID,visitID")] Payments payments)
         {
             if (ModelState.IsValid)
             {
@@ -91,17 +96,18 @@ namespace Sonora_HOA.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.ownerID = new SelectList(db.Users, "Id", "name", payments.ownerID);
+            ViewBag.visitID = new SelectList(db.Visits, "visitID", "ownerID", payments.visitID);
             return View(payments);
         }
 
-        // GET: Payment/Delete/5
+        // GET: Payments/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Payment payments = db.Payments.Find(id);
+            Payments payments = db.Payments.Find(id);
             if (payments == null)
             {
                 return HttpNotFound();
@@ -109,12 +115,12 @@ namespace Sonora_HOA.Controllers
             return View(payments);
         }
 
-        // POST: Payment/Delete/5
+        // POST: Payments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Payment payments = db.Payments.Find(id);
+            Payments payments = db.Payments.Find(id);
             db.Payments.Remove(payments);
             db.SaveChanges();
             return RedirectToAction("Index");

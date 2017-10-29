@@ -46,7 +46,7 @@ namespace Sonora_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "visitorID,name,lastName,isYounger,visitsID")] Visitor visitor)
+        public ActionResult Create([Bind(Include = "visitorID,name,lastName,isYounger,visitID")] Visitor visitor)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +78,7 @@ namespace Sonora_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "visitorID,name,lastName,isYounger,visitsID")] Visitor visitor)
+        public ActionResult Edit([Bind(Include = "visitorID,name,lastName,isYounger,visitID")] Visitor visitor)
         {
             if (ModelState.IsValid)
             {
