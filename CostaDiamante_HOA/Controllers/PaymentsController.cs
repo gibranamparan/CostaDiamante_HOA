@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using CostaDiamante_HOA.Models;
+using System.Web.Routing;
 
 namespace CostaDiamante_HOA.Controllers
 {
@@ -58,7 +59,8 @@ namespace CostaDiamante_HOA.Controllers
             {
                 db.Payments.Add(payments);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                //return RedirectToAction("Details", "Visits", payments.visitID);
+                return RedirectToAction("Details", new RouteValueDictionary(new { controller = "Visits", action = "Details", Id = payments.visitID }));
             }
 
             ViewBag.ownerID = new SelectList(db.Users, "Id", "name", payments.ownerID);

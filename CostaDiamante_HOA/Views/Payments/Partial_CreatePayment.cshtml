@@ -42,6 +42,7 @@
         </div>
         @Html.HiddenFor(model => model.ownerID)
         @Html.HiddenFor(model => model.visitID)
+        @*@Html.Hidden("visitID", this.Request.RawUrl)*@
         @*<div class="form-group">
             <label class="control-label col-md-2">Owner ID</label>
             <div class="col-md-10">

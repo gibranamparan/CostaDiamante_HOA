@@ -68,18 +68,24 @@
 
 
 
+
 <p>
     @*@Html.ActionLink("Create new payment", "Create", "Payments", new { visitID = Model.visitID, ownerID = Model.ownerID }, null) |*@
     @Html.ActionLink("Edit", "Edit", new { id = Model.visitID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
 
-@section Scripts {
+@*@section Scripts {
 @Scripts.Render("~/bundles/jqueryval")
 @Scripts.Render("~/node_modules/vue/dist/vue.min.js")
 @Scripts.Render("~/node_modules/axios/dist/axios.min.js")
 
     <script>
-
+        const v = new Vue({
+            el: '#app',
+            data: {
+                payments: '@Model.payments.ToArray()'
+            }
+        })
     </script>
-}
+}*@
