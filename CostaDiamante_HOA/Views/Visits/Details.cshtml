@@ -7,85 +7,133 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<div id="app">
+    <h2>Details</h2>
 
-<div>
-    <h4>Visit</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.condo.name)
-        </dt>
+    <div>
+        <h4>Visit</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.condo.name)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.condo.name)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.condo.name)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.owner.name)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.owner.name)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.owner.name)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.owner.name)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.date)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.date)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.date)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.date)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.arrivalDate)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.arrivalDate)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.arrivalDate)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.arrivalDate)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.departureDate)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.departureDate)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.departureDate)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.departureDate)
+            </dd>
 
-    </dl>
-</div>
-<div>
-    @Html.Partial("../Payments/Partial_CreatePayment", payment, new ViewDataDictionary {
+        </dl>
+    </div>
+    <hr>
+    <div>
+        @Html.Partial("../Payments/Partial_CreatePayment", payment, new ViewDataDictionary {
             { "ownerID", Model.ownerID },
             { "visitID", Model.visitID }
-    })
+        })
+    </div>
+    <hr>
+    <div>
+        <h2>List of payments</h2>
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.owner.name)</th>
+                    <th>@Html.DisplayNameFor(model => payment.amount)</th>
+                    <th>@Html.DisplayNameFor(model => payment.date)</th>
+                    <th>@Html.DisplayNameFor(model => payment.typeOfPayment)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(payment, i) in payments">
+                    <td>{{payment.OwnerName}}</td>
+                    <td>{{payment.Amount}}</td>
+                    <td>{{payment.Date}}</td>
+                    <td>{{payment.TypeOfPayment}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        @*@Html.Partial("../Payments/Partial_ListPayments", Model.payments.ToList());*@
+        @*@Html.Partial("../Payments/Partial_ListPayments", Model);*@
+    </div>
+
+
+
+
+    <p>
+        @*@Html.ActionLink("Create new payment", "Create", "Payments", new { visitID = Model.visitID, ownerID = Model.ownerID }, null) |*@
+        @Html.ActionLink("Edit", "Edit", new { id = Model.visitID }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+
+    @*<button v-on:click="getPayments" type="button">Click Me!</button>*@
 </div>
-
-<div>
-    @Html.Partial("../Payments/Partial_ListPayments", Model.payments.ToList());
-</div>
-
-
-
-
-<p>
-    @*@Html.ActionLink("Create new payment", "Create", "Payments", new { visitID = Model.visitID, ownerID = Model.ownerID }, null) |*@
-    @Html.ActionLink("Edit", "Edit", new { id = Model.visitID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
-
-@*@section Scripts {
 @Scripts.Render("~/bundles/jqueryval")
 @Scripts.Render("~/node_modules/vue/dist/vue.min.js")
 @Scripts.Render("~/node_modules/axios/dist/axios.min.js")
 
-    <script>
-        const v = new Vue({
-            el: '#app',
-            data: {
-                payments: '@Model.payments.ToArray()'
+<script>
+    const v = new Vue({
+        el: '#app',
+        data: {
+            message1: 'Hello Vuejs!',
+            message2: 'Hola',
+            payments: []
+        },
+        methods: {
+            createNewPayment: function () {
+              
+            },
+            getPayments: function () {
+                var ws = this
+                axios.post('/Payments/Index', {
+                    id: '@Model.visitID'
+                })
+                .then(function (response) {
+                    ws.payments = response.data
+                    console.log(ws.payments)
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
             }
-        })
-    </script>
-}*@
+        },
+        created: function () {
+            this.getPayments()
+        }
+    })
+</script>

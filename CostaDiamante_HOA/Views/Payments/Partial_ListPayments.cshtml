@@ -1,6 +1,7 @@
-﻿@model IEnumerable<CostaDiamante_HOA.Models.Payments>
+﻿@*@model IEnumerable<CostaDiamante_HOA.Models.Payments>*@
+@using CostaDiamante_HOA.Models
 
-<p>
+@*<p>
     @Html.ActionLink("Create New", "Create")
 </p>
 <table class="table">
@@ -48,4 +49,28 @@
     </tr>
 }
 
-</table>
+</table>*@
+
+
+<div id="app">
+    <h1>{{ message }}</h1>
+    <ul>
+        <li v-for="item in payments">{{ item }}</li>
+    </ul>
+</div>
+@Scripts.Render("~/node_modules/vue/dist/vue.min.js")
+
+<script>
+    const v = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue.js!',
+            payments: this.$data
+        }
+    })
+</script>
+
+@*@foreach (var d in Model)
+{
+    @:this.payments.push("@d");
+}*@

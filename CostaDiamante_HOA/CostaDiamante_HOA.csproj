@@ -700,16 +700,15 @@
     <Content Include="Views\Visits\Create.cshtml" />
     <Content Include="Views\Visits\Delete.cshtml" />
     <Content Include="Views\Visits\Edit.cshtml" />
-    <Content Include="Views\Visits\Index.cshtml" />
     <Content Include="Views\Visits\Details.cshtml" />
     <Content Include="Views\Visits\Partial_ListVisits.cshtml" />
-    <Content Include="Views\Payments\Create.cshtml" />
     <Content Include="Views\Payments\Delete.cshtml" />
     <Content Include="Views\Payments\Details.cshtml" />
     <Content Include="Views\Payments\Edit.cshtml" />
     <Content Include="Views\Payments\Index.cshtml" />
     <Content Include="Views\Payments\Partial_CreatePayment.cshtml" />
     <Content Include="Views\Payments\Partial_ListPayments.cshtml" />
+    <Content Include="Views\Visits\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

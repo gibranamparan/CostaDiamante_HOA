@@ -16,11 +16,21 @@ namespace CostaDiamante_HOA.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Payments
-        public ActionResult Index()
+        [HttpPost]
+        public JsonResult Index(int id)
         {
-            var payments = db.Payments.Include(p => p.owner).Include(p => p.visit);
-            //var payments = db.Payments.Where(a => a.visitID == id).ToList();
-            return View(payments.ToList());
+            //var payments = db.Payments.Include(p => p.owner).Include(p => p.visit);
+            var payments = db.Payments.Where(a => a.visitID == id)
+            .Select(a => new
+            {
+                OwnerName = a.owner.name,
+                Amount = a.amount,
+                Date = a.date.ToString(),
+                TypeOfPayment = a.typeOfPayment
+            });
+           
+            return Json(payments);
+            //return Json(payments, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Payments/Details/5
@@ -59,13 +69,18 @@ namespace CostaDiamante_HOA.Controllers
             {
                 db.Payments.Add(payments);
                 db.SaveChanges();
+
+                Visit visits = db.Visits.Find(payments.visitID);
                 //return RedirectToAction("Details", "Visits", payments.visitID);
-                return RedirectToAction("Details", new RouteValueDictionary(new { controller = "Visits", action = "Details", Id = payments.visitID }));
+                //return RedirectToAction("Details", new RouteValueDictionary(new { controller = "Visits", action = "Details", Id = payments.visitID }));
+                //return Json(visits);
+                return PartialView("../Payments/Partial_CreatePayment", payments);
             }
 
             ViewBag.ownerID = new SelectList(db.Users, "Id", "name", payments.ownerID);
             ViewBag.visitID = new SelectList(db.Visits, "visitID", "ownerID", payments.visitID);
-            return View(payments);
+            //return View(payments);
+            return PartialView("../Payments/Partial_CreatePayment", payments);
         }
 
         // GET: Payments/Edit/5
