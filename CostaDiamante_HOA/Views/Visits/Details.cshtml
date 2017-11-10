@@ -3,7 +3,7 @@
 
 @{
     Payments payment = new Payments();
-
+    payment.date = DateTime.Today.AddDays(1);
     ViewBag.Title = "Details";
 }
 
@@ -58,15 +58,49 @@
     </div>
     <hr>
     <div>
-        @Html.Partial("../Payments/Partial_CreatePayment", payment, new ViewDataDictionary {
+        @*@Html.Partial("../Payments/Partial_CreatePayment", payment, new ViewDataDictionary {
             { "ownerID", Model.ownerID },
             { "visitID", Model.visitID }
-        })
-    </div>
+        })*@
+        <form v-on:submit.prevent="createNewPayment()">
+            <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => payment.amount, htmlAttributes: new { @class = "" }) @*control-label col-md-2*@
+                    @Html.EditorFor(model => payment.amount, new { htmlAttributes = new { @class = "form-control" }, v_model= "newPayment.amount" })
+                    @Html.ValidationMessageFor(model => payment.amount, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => payment.date, htmlAttributes: new { @class = "" })
+                    @Html.EditorFor(model => payment.date, new { htmlAttributes = new { @class = "form-control" }, v_model= "newPayment.date" })
+                    @Html.ValidationMessageFor(model => payment.date, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    @Html.LabelFor(model => payment.typeOfPayment, htmlAttributes: new { @class = "" })
+                    
+                    @Html.EnumDropDownListFor(model => payment.typeOfPayment, new { htmlAttributes = new { @class = "form-control" }, v_model = "newPayment.typeOfPayment" })
+                    @Html.ValidationMessageFor(model => payment.typeOfPayment, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-2">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+        </form>
+        </div>
     <hr>
     <div>
         <h2>List of payments</h2>
-        <table class="table table-hover table-striped">
+        <table class="table table-hover table-striped datatable"> 
             <thead>
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.owner.name)</th>
@@ -112,12 +146,22 @@
         data: {
             message1: 'Hello Vuejs!',
             message2: 'Hola',
+            newPayment: {
+                amount: '',
+                date: '@payment.date.ToString("yyyy/MM/dd")',
+                typeOfPayment: 0,
+                ownerID: '@Model.ownerID',
+                visitID: '@Model.visitID',
+                clone: function () {
+                    return { paymentsID: 0, amount: this.amount, date: this.date, typeOfPayment: this.typeOfPayment, ownerID: this.ownerID, visitID: this.visitID }
+                },
+                clear: function () {
+                    this.amount = ''; this.date = ''; this.typeOfPayment = '';
+                }
+            },
             payments: []
         },
         methods: {
-            createNewPayment: function () {
-              
-            },
             getPayments: function () {
                 var ws = this
                 axios.post('/Payments/Index', {
@@ -129,6 +173,31 @@
                 })
                 .catch(function (error) {
                     console.log(error)
+                })
+            },
+            redirectToOwnerDetails: function(){
+                setTimeout(function () { window.location.replace("/Visits/Details/" + @Model.visitID) }, 2000)
+                swal("Done!","Your visit was scheduled succesfully","success")
+            },
+            createNewPayment: function () {
+                var self = this
+                axios.post('/Payments/Create', {
+                    payment: self.newPayment.clone()
+                })
+                .then(response => {
+                    self.getPayments()
+                    var response = response.data
+                    if (response.numReg) {
+                        self.redirectToOwnerDetails()
+                    } else if (response.errorMsg) {
+                        swal("Oops!", "An error ocurred, plase try again. If error persists, plase send this to the system administrator: " + response.errorMsg, "error")
+                    } else { //Unknown error
+                        console.log(response)
+                    }
+                })
+                .catch(e => {
+                    debugger
+                    console.log(e)
                 })
             }
         },

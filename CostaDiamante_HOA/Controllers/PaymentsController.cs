@@ -62,25 +62,37 @@ namespace CostaDiamante_HOA.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(Payments payments)
+        //[ValidateAntiForgeryToken]
+        public JsonResult Create(Payments payment)
         {
-            if (ModelState.IsValid)
-            {
-                db.Payments.Add(payments);
-                db.SaveChanges();
+            int numReg = 0;
+            string errorMsg = string.Empty;
 
-                Visit visits = db.Visits.Find(payments.visitID);
-                //return RedirectToAction("Details", "Visits", payments.visitID);
-                //return RedirectToAction("Details", new RouteValueDictionary(new { controller = "Visits", action = "Details", Id = payments.visitID }));
-                //return Json(visits);
-                return PartialView("../Payments/Partial_CreatePayment", payments);
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Payments.Add(payment);
+                    numReg = db.SaveChanges();
+                    return Json(new { numReg = numReg });
+
+                    //Visit visits = db.Visits.Find(payment.visitID);
+                    //return RedirectToAction("Details", "Visits", payments.visitID);
+                    //return RedirectToAction("Details", new RouteValueDictionary(new { controller = "Visits", action = "Details", Id = payments.visitID }));
+                    //return Json(visits);
+                    //return Json(new { });
+                }
+            }
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
             }
 
-            ViewBag.ownerID = new SelectList(db.Users, "Id", "name", payments.ownerID);
-            ViewBag.visitID = new SelectList(db.Visits, "visitID", "ownerID", payments.visitID);
+            //ViewBag.ownerID = new SelectList(db.Users, "Id", "name", payment.ownerID);
+            //ViewBag.visitID = new SelectList(db.Visits, "visitID", "ownerID", payment.visitID);
             //return View(payments);
-            return PartialView("../Payments/Partial_CreatePayment", payments);
+            //return Json(new { });
+            return Json(new { numReg = numReg, errorMsg = errorMsg });
         }
 
         // GET: Payments/Edit/5
