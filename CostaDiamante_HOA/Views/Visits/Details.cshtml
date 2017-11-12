@@ -67,7 +67,7 @@
             <div class="form-group">
                 <div class="col-md-12">
                     @Html.LabelFor(model => payment.amount, htmlAttributes: new { @class = "" }) @*control-label col-md-2*@
-                    @Html.EditorFor(model => payment.amount, new { htmlAttributes = new { @class = "form-control" }, v_model= "newPayment.amount" })
+                    @Html.EditorFor(model => payment.amount, new { htmlAttributes = new { @class = "form-control", v_model = "newPayment.amount" } })
                     @Html.ValidationMessageFor(model => payment.amount, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -75,7 +75,7 @@
             <div class="form-group">
                 <div class="col-md-12">
                     @Html.LabelFor(model => payment.date, htmlAttributes: new { @class = "" })
-                    @Html.EditorFor(model => payment.date, new { htmlAttributes = new { @class = "form-control" }, v_model= "newPayment.date" })
+                    @Html.EditorFor(model => payment.date, new { htmlAttributes = new { @class = "form-control", v_model = "newPayment.date" } })
                     @Html.ValidationMessageFor(model => payment.date, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -84,7 +84,7 @@
                 <div class="col-md-12">
                     @Html.LabelFor(model => payment.typeOfPayment, htmlAttributes: new { @class = "" })
                     
-                    @Html.EnumDropDownListFor(model => payment.typeOfPayment, new { htmlAttributes = new { @class = "form-control" }, v_model = "newPayment.typeOfPayment" })
+                    @Html.EnumDropDownListFor(model => payment.typeOfPayment, new { @class = "form-control", v_model = "newPayment.typeOfPayment" } )
                     @Html.ValidationMessageFor(model => payment.typeOfPayment, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -144,10 +144,8 @@
     const v = new Vue({
         el: '#app',
         data: {
-            message1: 'Hello Vuejs!',
-            message2: 'Hola',
             newPayment: {
-                amount: '',
+                amount: 100,
                 date: '@payment.date.ToString("yyyy/MM/dd")',
                 typeOfPayment: 0,
                 ownerID: '@Model.ownerID',
@@ -176,7 +174,7 @@
                 })
             },
             redirectToOwnerDetails: function(){
-                setTimeout(function () { window.location.replace("/Visits/Details/" + @Model.visitID) }, 2000)
+                //setTimeout(function () { window.location.replace("/Visits/Details/" + @Model.visitID) }, 2000)
                 swal("Done!","Your visit was scheduled succesfully","success")
             },
             createNewPayment: function () {
