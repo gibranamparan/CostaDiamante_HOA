@@ -63,7 +63,7 @@
 
                     <div class="form-group col-md-4">
                         <select v-model="typeOfVisit">
-                            <option v-for="option in optionsTypeOfVisit" v-bind:value="option.value">
+                            <option v-for="option in optionsTypeOfVisit" v-bind:value="option.value" v-bind:disabled="option.value == 0">
                                 {{ option.text }}
                             </option>
                         </select>
@@ -72,23 +72,26 @@
                     <div class="form-group col-md-8">
                         <div v-if="typeOfVisit === 1" class="col-md-6">
                             <div class="checkbox">
-                                <label><input type="checkbox" v-model="withTheOwner">with the owner</label>
+                                <label><input v-on:click="selectTypeOfVisit(0)" type="checkbox" v-model="withTheOwner">with the owner</label>
                             </div>
                         </div>
                         
                         <div v-if="typeOfVisit === 1" class="col-md-6">
                             <div class="checkbox">
-                                <label><input type="checkbox" v-model="withoutTheOwner">without the owner</label>
+                                <label><input v-on:click="selectTypeOfVisit(1)" type="checkbox" v-model="withoutTheOwner">without the owner</label>
                             </div>
-                            @*<div v-if="checked" class="alert alert-info" role="alert">
-                                5 dollars per person if under 6 years does not apply
-                            </div>*@
                         </div>
                     </div>
                     <div class="clearfix"></div>
+                   
                     <div class="form-group col-md-12">
-                        <div v-if="isVisitOfFriendsAndFamily"  class="alert alert-info" role="alert">
-                            Visit without payment.
+                        <div v-if="typeOfVisit === 1 && withTheOwner === true || typeOfVisit === 1 && withoutTheOwner === true"  class="alert alert-info" role="alert">
+                           <span v-if="typeOfVisit === 1 && withTheOwner === true">Visit without payment.</span>
+                           <span v-if="typeOfVisit === 1 && withoutTheOwner === true">5 dollars per person if under 6 years does not apply.</span>
+                        </div>
+                        <div v-if="typeOfVisit === 2" class="alert alert-info" role="alert">
+                            En una renta, se permiten 12 personas, las personas extra cuestan 50 dlls el brasalete. <br>
+                            El ͞Rental Impact por visita de renta es de 75 dlls por día.
                         </div>
                     <div>
                     
@@ -178,18 +181,25 @@
                     this.name = ''; this.lastName= ''; this.isYounger = false;
                 }
             },
-            typeOfVisit: 1,
+            typeOfVisit: 0,
             optionsTypeOfVisit: [
+              { text: 'Choose the type of visit', value: 0 },
               { text: 'Visit of friends and family', value: 1 },
               { text: 'Visit by rent', value: 2 }
             ],
-            withTheOwner: false,
+            withTheOwner: true,
             withoutTheOwner: false
         },
         methods: {
-            isVisitOfFriendsAndFamily: function () {
-                if(checked) {return true}
-                if(!checked) {return false}
+            selectTypeOfVisit: function (value) {
+                if(value == 0) {
+                    this.withTheOwner = true
+                    this.withoutTheOwner = false
+                } 
+                if(value == 1) {
+                    this.withoutTheOwner = true
+                    this.withTheOwner = false
+                }
             },
             addVisitorToTable: function () {
                 this.visit.visitors.push(this.newVisitor.clone()) //The model is clone a pushed into the list of visitors in the visit
