@@ -14,7 +14,7 @@ namespace CostaDiamante_HOA.Models
         public int paymentsID { get; set; }
 
         [Display(Name = "Amount")]
-        public double amount { get; set; }
+        public decimal amount { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
         ApplyFormatInEditMode = true)]

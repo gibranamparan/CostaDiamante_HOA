@@ -3,7 +3,7 @@ namespace CostaDiamante_HOA
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialMigration : DbMigration
+    public partial class initial_migrations : DbMigration
     {
         public override void Up()
         {
@@ -72,7 +72,7 @@ namespace CostaDiamante_HOA
                 c => new
                     {
                         paymentsID = c.Int(nullable: false, identity: true),
-                        amount = c.Double(nullable: false),
+                        amount = c.Decimal(nullable: false, precision: 18, scale: 2),
                         date = c.DateTime(nullable: false),
                         typeOfPayment = c.Int(nullable: false),
                         ownerID = c.String(maxLength: 128),
@@ -92,6 +92,7 @@ namespace CostaDiamante_HOA
                         date = c.DateTime(nullable: false),
                         arrivalDate = c.DateTime(nullable: false),
                         departureDate = c.DateTime(nullable: false),
+                        totalCost = c.Decimal(nullable: false, precision: 18, scale: 2),
                         condoID = c.Int(nullable: false),
                         ownerID = c.String(maxLength: 128),
                     })

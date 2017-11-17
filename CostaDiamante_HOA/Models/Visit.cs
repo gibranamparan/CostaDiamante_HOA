@@ -41,7 +41,7 @@ namespace CostaDiamante_HOA.Models
         }
         
         [Display(Name = "Total")]
-        public double totalCost { get; set; }
+        public decimal totalCost { get; set; }
 
         //A visits is for one condo
         [Display(Name = "Condo Number")]

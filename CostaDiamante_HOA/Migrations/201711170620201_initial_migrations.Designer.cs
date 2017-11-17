@@ -7,13 +7,13 @@ namespace CostaDiamante_HOA
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class InitialMigration : IMigrationMetadata
+    public sealed partial class initial_migrations : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialMigration));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initial_migrations));
         
         string IMigrationMetadata.Id
         {
-            get { return "201710250417268_InitialMigration"; }
+            get { return "201711170620201_initial_migrations"; }
         }
         
         string IMigrationMetadata.Source
