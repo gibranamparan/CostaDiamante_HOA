@@ -42,7 +42,7 @@
 
                 <div class="form-group col-md-2">
                     @Html.LabelFor(model => model.totalCost)
-                    @Html.EditorFor(model => model.totalCost, new { HtmlAttributes = new { @class = "form-control", @readonly = "readonly", v_model = "visit.totalCost" } })
+                    @Html.EditorFor(model => model.totalCost, new { HtmlAttributes = new { @class = "form-control", @readonly = "readonly", v_model = "totalCostFunc" } })
                 </div>
 
                 <div class="form-group col-md-2">
@@ -156,6 +156,13 @@
             Authorization: token
         }
     });
+    Vue.mixin({
+        methods: {
+            watchCollection(arr, cb) {
+                arr.forEach((val) => this.$watch(val, cb))
+            }
+        }
+    })
     const v = new Vue({
         el: '#app',
         data: {
@@ -230,6 +237,35 @@
                     debugger
                     console.log(e)
                 })
+            },
+            calculateTotalPerVisit: function () {
+                var visitorCount = 0
+                if(this.typeOfVisit === 1 && this.withTheOwner) {
+                    console.log('Visita gratis')
+                    return this.visit.totalCost = 0
+                }
+                if(this.typeOfVisit === 1 && this.withoutTheOwner) {
+                    let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
+                    return this.visit.totalCost = visitorIsNotYounger.length * 5
+                }
+                if(this.typeOfVisit === 2) {
+                    this.visit.totalCost = 75
+                    if(this.visit.visitors.length > 12) {
+                        var visitorExtra = this.visit.visitors.length - 12
+                        return this.visit.totalCost + (visitorExtra * 50) 
+                    }
+                    return this.visit.totalCost
+                }
+            }
+        },
+        created: function () {
+            this.watchCollection(
+                ['typeOfVisit','withTheOwner','withoutTheOwner'],
+                this.calculateTotalPerVisit)
+        },
+        computed: {
+            totalCostFunc() {
+                return this.calculateTotalPerVisit()
             }
         }
     })
