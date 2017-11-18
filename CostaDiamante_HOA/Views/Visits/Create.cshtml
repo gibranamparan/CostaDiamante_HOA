@@ -251,7 +251,18 @@
                     return this.visit.totalCost = visitorIsNotYounger.length * 5
                 }
                 if(this.typeOfVisit === 2) {
-                    this.visit.totalCost = 75
+
+                    var arrivalDate = new Date(this.visit.arrivalDate).getTime()
+                    var departureDate = new Date(this.visit.departureDate).getTime()
+                    
+                    var differenceDays = departureDate - arrivalDate
+                    //console.log(differenceDays)
+                    //console.log(differenceDays/(1000*60*60*24))
+                    if(this.visit.visitors.length >= 1) {
+                        console.log('entro')
+                        this.visit.totalCost = 75 * (differenceDays/(1000*60*60*24)) // (1000*60*60*24) --> milisegundos -> segundos -> minutos -> horas -> días
+                    }
+                    
                     if(this.visit.visitors.length > 12) {
                         var visitorExtra = this.visit.visitors.length - 12
                         return this.visit.totalCost + (visitorExtra * 50) 
@@ -262,7 +273,7 @@
         },
         created: function () {
             this.watchCollection(
-                ['typeOfVisit','withTheOwner','withoutTheOwner'],
+                ['typeOfVisit','withTheOwner','withoutTheOwner','visit.arrivalDate','visit.departureDate'],
                 this.calculateTotalPerVisit)
         },
         computed: {
