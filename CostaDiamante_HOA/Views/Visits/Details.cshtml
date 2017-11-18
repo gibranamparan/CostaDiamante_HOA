@@ -9,52 +9,29 @@
 
 <div id="app">
     <h2>Details</h2>
-
+    <h4>Information and Payments</h4>
+    <hr />
     <div>
-        <h4>Visit</h4>
-        <hr />
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.condo.name)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.condo.name)
-            </dd>
-
-            <dt>
-                @Html.DisplayNameFor(model => model.owner.name)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.owner.name)
-            </dd>
-
-            <dt>
-                @Html.DisplayNameFor(model => model.date)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.date)
-            </dd>
-
-            <dt>
-                @Html.DisplayNameFor(model => model.arrivalDate)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.arrivalDate)
-            </dd>
-
-            <dt>
-                @Html.DisplayNameFor(model => model.departureDate)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.departureDate)
-            </dd>
-
-        </dl>
+        <div class="form-group col-md-3">
+            @Html.LabelFor(model => model.condo.name)
+            <p class="form-control-static">@Html.DisplayFor(model => model.condo.name)</p>
+        </div>
+        <div class="form-group col-md-3">
+            @Html.LabelFor(model => model.owner.fullName)
+            <p class="form-control-static">@Html.DisplayFor(model => model.owner.fullName)</p>
+        </div>
+        <div class="form-group col-md-3">
+            @Html.LabelFor(model => model.date)
+            <p class="form-control-static">@Html.DisplayFor(model => model.date)</p>
+        </div>
+        <div class="form-group col-md-3">
+            @Html.LabelFor(model => model.arrivalDate)
+            <p class="form-control-static">@Html.DisplayFor(model => model.arrivalDate)</p>
+        </div>
+        <div class="form-group col-md-3">
+            @Html.LabelFor(model => model.departureDate)
+            <p class="form-control-static">@Html.DisplayFor(model => model.departureDate)</p>
+        </div>
     </div>
     <hr>
     <div>
@@ -96,11 +73,11 @@
             </div>
         </div>
         </form>
-        </div>
+    </div>
     <hr>
     <div>
         <h2>List of payments</h2>
-        <table class="table table-hover table-striped datatable"> 
+        <table class="table table-hover table-striped"> 
             <thead>
                 <tr>
                     <th>@Html.DisplayNameFor(model => model.owner.name)</th>
@@ -120,14 +97,6 @@
         </table>
     </div>
 
-    <div>
-        @*@Html.Partial("../Payments/Partial_ListPayments", Model.payments.ToList());*@
-        @*@Html.Partial("../Payments/Partial_ListPayments", Model);*@
-    </div>
-
-
-
-
     <p>
         @*@Html.ActionLink("Create new payment", "Create", "Payments", new { visitID = Model.visitID, ownerID = Model.ownerID }, null) |*@
         @Html.ActionLink("Edit", "Edit", new { id = Model.visitID }) |
@@ -137,26 +106,19 @@
     @*<button v-on:click="getPayments" type="button">Click Me!</button>*@
 </div>
 @Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/node_modules/vue/dist/vue.min.js")
-@Scripts.Render("~/node_modules/axios/dist/axios.min.js")
-
+@section Scripts{
 <script>
     const v = new Vue({
         el: '#app',
         data: {
-            newPayment: {
-                amount: 100,
+            paymentModel: {
+                amount: 0,
                 date: '@payment.date.ToString("yyyy/MM/dd")',
                 typeOfPayment: 0,
                 ownerID: '@Model.ownerID',
-                visitID: '@Model.visitID',
-                clone: function () {
-                    return { paymentsID: 0, amount: this.amount, date: this.date, typeOfPayment: this.typeOfPayment, ownerID: this.ownerID, visitID: this.visitID }
-                },
-                clear: function () {
-                    this.amount = ''; this.date = ''; this.typeOfPayment = '';
-                }
+                visitID: '@Model.visitID'
             },
+            newPayment: Object.assign({}, paymentModel),
             payments: []
         },
         methods: {
@@ -173,20 +135,23 @@
                     console.log(error)
                 })
             },
-            redirectToOwnerDetails: function(){
-                //setTimeout(function () { window.location.replace("/Visits/Details/" + @Model.visitID) }, 2000)
-                swal("Done!","Your visit was scheduled succesfully","success")
-            },
             createNewPayment: function () {
                 var self = this
                 axios.post('/Payments/Create', {
-                    payment: self.newPayment.clone()
+                    payment: self.newPayment
                 })
                 .then(response => {
                     self.getPayments()
                     var response = response.data
                     if (response.numReg) {
-                        self.redirectToOwnerDetails()
+                        var newPayment
+                        //Clone and insert new payment
+                        Object.assign(newPayment, self.newPayment)
+                        self.payments.push(newPayment)
+                        //Clear new payment container
+                        Object.assign(self.newPayment, self.paymentModel)
+                        //Notify successfull registration
+                        swal("Done!", "Your visit was scheduled succesfully", "success")
                     } else if (response.errorMsg) {
                         swal("Oops!", "An error ocurred, plase try again. If error persists, plase send this to the system administrator: " + response.errorMsg, "error")
                     } else { //Unknown error
@@ -204,3 +169,4 @@
         }
     })
 </script>
+}
