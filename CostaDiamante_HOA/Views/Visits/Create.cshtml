@@ -147,8 +147,6 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/node_modules/vue/dist/vue.min.js")
-    @Scripts.Render("~/node_modules/axios/dist/axios.min.js")
     <script>
     var token = $('input[name=__RequestVerificationToken]').val()
     var api = axios.create({

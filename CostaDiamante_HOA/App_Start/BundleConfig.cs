@@ -23,6 +23,11 @@ namespace CostaDiamante_HOA
                         "~/Scripts/sweetalert.min.js",
                         "~/Scripts/custom.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/vue-axios").Include(
+                        "~/Scripts/vue.min.js",
+                        "~/Scripts/axios.min.js",
+                        "~/Scripts/moment.min.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 

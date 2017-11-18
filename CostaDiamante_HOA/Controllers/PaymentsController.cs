@@ -75,12 +75,6 @@ namespace CostaDiamante_HOA.Controllers
                     db.Payments.Add(payment);
                     numReg = db.SaveChanges();
                     return Json(new { numReg = numReg });
-
-                    //Visit visits = db.Visits.Find(payment.visitID);
-                    //return RedirectToAction("Details", "Visits", payments.visitID);
-                    //return RedirectToAction("Details", new RouteValueDictionary(new { controller = "Visits", action = "Details", Id = payments.visitID }));
-                    //return Json(visits);
-                    //return Json(new { });
                 }
             }
             catch (Exception e)
