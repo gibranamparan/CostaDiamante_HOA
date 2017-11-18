@@ -47,7 +47,7 @@
 
                 <div class="form-group col-md-2">
                     <br />
-                    <button v-bind:disabled="visit.visitors.length === 0" 
+                    <button v-bind:disabled="isVisitValid()" 
                             type="submit" class="btn btn-primary pull-right btn-block" >
                             Register
                     </button>
@@ -120,6 +120,7 @@
                 <table class="table table-hover table-striped">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>@Html.DisplayNameFor(model => visitor.name)</th>
                             <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
                             <th>@Html.DisplayNameFor(model => visitor.isYounger)</th>
@@ -128,6 +129,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(visitor, i) in visit.visitors">
+                            <td>{{ i + 1 }}</td>
                             <td>{{ visitor.name }}</td>
                             <td>{{ visitor.lastName }}</td>
                             <td>{{ visitor.isYounger }}</td>
@@ -196,6 +198,9 @@
             withoutTheOwner: false
         },
         methods: {
+            isVisitValid: function () {
+                return this.visit.visitors.length === 0 || this.typeOfVisit === 0
+            },
             selectTypeOfVisit: function (value) {
                 if(value == 0) {
                     this.withTheOwner = true
