@@ -247,10 +247,16 @@
                     return this.visit.totalCost = 0
                 }
                 if(this.typeOfVisit === 1 && this.withoutTheOwner) {
-                    console.log('jjj')
-                    let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger);
-                    console.log('costo ' + visitorIsNotYounger.length * 5)
+                    let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
                     return this.visit.totalCost = visitorIsNotYounger.length * 5
+                }
+                if(this.typeOfVisit === 2) {
+                    this.visit.totalCost = 75
+                    if(this.visit.visitors.length > 12) {
+                        var visitorExtra = this.visit.visitors.length - 12
+                        return this.visit.totalCost + (visitorExtra * 50) 
+                    }
+                    return this.visit.totalCost
                 }
             }
         },
