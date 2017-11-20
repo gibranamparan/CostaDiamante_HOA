@@ -18,7 +18,8 @@ namespace CostaDiamante_HOA.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Payments
-        [HttpPost]
+        [HttpGet]
+        //[ValidateHeaderAntiForgeryToken]
         public JsonResult Index(int id)
         {
             var payments = db.Payments.Where(a => a.visitID == id).ToList().OrderByDescending(pay=>pay.date)
