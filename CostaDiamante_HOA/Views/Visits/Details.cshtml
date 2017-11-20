@@ -1,172 +1,216 @@
-﻿@using CostaDiamante_HOA.Models
-@model CostaDiamante_HOA.Models.Visit
+﻿@model CostaDiamante_HOA.Models.Visit
+@using CostaDiamante_HOA.Models
 
 @{
-    Payments payment = new Payments();
-    payment.date = DateTime.Today.AddDays(1);
+    Payments payment = new Payments() { date = DateTime.Today.AddDays(1), amount = 0};
     ViewBag.Title = "Details";
 }
 
+<nav>
+    <a href="@Url.Action("Index")">
+        <i class="glyphicon glyphicon-arrow-left"></i><span>Back to List</span>
+    </a> |
+    <a href="@Url.Action("Edit", new { id = Model.visitID })">
+        <i class="glyphicon glyphicon-edit"></i><span>Edit Visit</span>
+    </a> 
+</nav>
 <div id="app">
-    <h2>Details</h2>
-    <h4>Information and Payments</h4>
+    <h2>Visit Information and Payments</h2>
+    <h4>
+        <strong>@Model.owner.fullName</strong>, Condo <span>@Model.condo.name</span>
+    </h4>
     <hr />
-    <div>
-        <div class="form-group col-md-3">
-            @Html.LabelFor(model => model.condo.name)
-            <p class="form-control-static">@Html.DisplayFor(model => model.condo.name)</p>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Details</h3>
         </div>
-        <div class="form-group col-md-3">
-            @Html.LabelFor(model => model.owner.fullName)
-            <p class="form-control-static">@Html.DisplayFor(model => model.owner.fullName)</p>
-        </div>
-        <div class="form-group col-md-3">
-            @Html.LabelFor(model => model.date)
-            <p class="form-control-static">@Html.DisplayFor(model => model.date)</p>
-        </div>
-        <div class="form-group col-md-3">
-            @Html.LabelFor(model => model.arrivalDate)
-            <p class="form-control-static">@Html.DisplayFor(model => model.arrivalDate)</p>
-        </div>
-        <div class="form-group col-md-3">
-            @Html.LabelFor(model => model.departureDate)
-            <p class="form-control-static">@Html.DisplayFor(model => model.departureDate)</p>
+        <div class="panel-body">
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => model.date)
+                <p class="form-control-static">@Model.date.ToString("D")</p>
+            </div>
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => model.arrivalDate)
+                <p class="form-control-static">@Model.arrivalDate.ToString("D")</p>
+            </div>
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => model.departureDate)
+                <p class="form-control-static">@Model.departureDate.ToString("D")</p>
+            </div>
         </div>
     </div>
     <hr>
-    <div>
-        @*@Html.Partial("../Payments/Partial_CreatePayment", payment, new ViewDataDictionary {
-            { "ownerID", Model.ownerID },
-            { "visitID", Model.visitID }
-        })*@
-        <form v-on:submit.prevent="createNewPayment()">
-            <div class="form-horizontal">
-            <div class="form-group">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => payment.amount, htmlAttributes: new { @class = "" }) @*control-label col-md-2*@
-                    @Html.EditorFor(model => payment.amount, new { htmlAttributes = new { @class = "form-control", v_model = "newPayment.amount" } })
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Payments</h3>
+        </div>
+        <div class="panel-body">
+            <form class="row form-inline" v-on:submit.prevent="createNewPayment()">
+                @Html.AntiForgeryToken()
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => payment.amount) @*control-label col-md-2*@
+                    @Html.EditorFor(model => payment.amount, new { htmlAttributes = new { @class = "form-control", v_model = "newPayment.amount", type = "number" } })
                     @Html.ValidationMessageFor(model => payment.amount, "", new { @class = "text-danger" })
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => payment.date, htmlAttributes: new { @class = "" })
+                <div class="form-group col-md-4">
+                    @Html.LabelFor(model => payment.date)
                     @Html.EditorFor(model => payment.date, new { htmlAttributes = new { @class = "form-control", v_model = "newPayment.date" } })
                     @Html.ValidationMessageFor(model => payment.date, "", new { @class = "text-danger" })
                 </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => payment.typeOfPayment, htmlAttributes: new { @class = "" })
-                    
-                    @Html.EnumDropDownListFor(model => payment.typeOfPayment, new { @class = "form-control", v_model = "newPayment.typeOfPayment" } )
-                    @Html.ValidationMessageFor(model => payment.typeOfPayment, "", new { @class = "text-danger" })
+                <div class="form-group col-md-2">
+                    <button id="btnRegister" name="createVisit" class="btn btn-success" type="submit">
+                        Registrar
+                    </button>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-md-2">
-                    <input type="submit" value="Create" class="btn btn-default" />
-                </div>
+            </form>
+            <hr>
+            <h2>List of payments</h2>
+            <table id="tblPayments" class="table table-hover table-striped" v-if="payments.length > 0">
+                <thead>
+                    <tr>
+                        <th style="width: 2em"></th>
+                        <th>@Html.DisplayNameFor(model => payment.amount)</th>
+                        <th>@Html.DisplayNameFor(model => payment.date)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(payment, i) in payments">
+                        <td>
+                            <i class="fa fa-remove option remove" v-on:click="removePayment(payment)"></i>
+                        </td>
+                        <td>{{numeral(payment.Amount).format('$0,000.00')}}</td>
+                        <td>{{moment(payment.Date).format('LL')}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="alert alert-info" v-if="payments.length == 0">
+                <strong>No payments</strong> have been registered for this visit.
             </div>
         </div>
-        </form>
     </div>
-    <hr>
-    <div>
-        <h2>List of payments</h2>
-        <table class="table table-hover table-striped"> 
-            <thead>
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.owner.name)</th>
-                    <th>@Html.DisplayNameFor(model => payment.amount)</th>
-                    <th>@Html.DisplayNameFor(model => payment.date)</th>
-                    <th>@Html.DisplayNameFor(model => payment.typeOfPayment)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(payment, i) in payments">
-                    <td>{{payment.OwnerName}}</td>
-                    <td>{{payment.Amount}}</td>
-                    <td>{{payment.Date}}</td>
-                    <td>{{payment.TypeOfPayment}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <p>
-        @*@Html.ActionLink("Create new payment", "Create", "Payments", new { visitID = Model.visitID, ownerID = Model.ownerID }, null) |*@
-        @Html.ActionLink("Edit", "Edit", new { id = Model.visitID }) |
-        @Html.ActionLink("Back to List", "Index")
-    </p>
-
-    @*<button v-on:click="getPayments" type="button">Click Me!</button>*@
 </div>
-@Scripts.Render("~/bundles/jqueryval")
 @section Scripts{
-<script>
-    const v = new Vue({
-        el: '#app',
-        data: {
-            paymentModel: {
-                amount: 0,
-                date: '@payment.date.ToString("yyyy/MM/dd")',
-                typeOfPayment: 0,
-                ownerID: '@Model.ownerID',
-                visitID: '@Model.visitID'
-            },
-            newPayment: Object.assign({}, paymentModel),
-            payments: []
-        },
-        methods: {
-            getPayments: function () {
-                var ws = this
-                axios.post('/Payments/Index', {
-                    id: '@Model.visitID'
-                })
-                .then(function (response) {
-                    ws.payments = response.data
-                    console.log(ws.payments)
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
-            },
-            createNewPayment: function () {
-                var self = this
-                axios.post('/Payments/Create', {
-                    payment: self.newPayment
-                })
-                .then(response => {
-                    self.getPayments()
-                    var response = response.data
-                    if (response.numReg) {
-                        var newPayment
-                        //Clone and insert new payment
-                        Object.assign(newPayment, self.newPayment)
-                        self.payments.push(newPayment)
-                        //Clear new payment container
-                        Object.assign(self.newPayment, self.paymentModel)
-                        //Notify successfull registration
-                        swal("Done!", "Your visit was scheduled succesfully", "success")
-                    } else if (response.errorMsg) {
-                        swal("Oops!", "An error ocurred, plase try again. If error persists, plase send this to the system administrator: " + response.errorMsg, "error")
-                    } else { //Unknown error
-                        console.log(response)
-                    }
-                })
-                .catch(e => {
-                    debugger
-                    console.log(e)
-                })
-            }
-        },
-        created: function () {
-            this.getPayments()
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $.fn.dataTable.moment('LL');
+        var tblPayments
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+        var exception
+        var api = axios.create({
+            baseURL: "/Payments",
+            timeout: 500000,
+            headers: {"__RequestVerificationToken" : antiForgeryToken}
+        });
+        function notifyError(message) {
+            swal("Error!", message, "error")
         }
-    })
-</script>
+        const v = new Vue({
+            el: '#app',
+            data: {
+                paymentModel: {
+                    amount: 0.00,
+                    date: '@payment.date.ToString("yyyy/MM/dd")',
+                    typeOfPayment: 1,
+                    ownerID: '@Model.ownerID',
+                    visitID: '@Model.visitID'
+                },
+                newPayment: {},
+                payments: [],
+                columns: [
+                    'Amount', 'Date'
+                ]
+            },
+            methods: {
+                //Takes all regitesred payments for this visits from server
+                getPayments: function () {
+                    var self = this
+                    api.get('Index/@Model.visitID')
+                    .then(function (response) {
+                        self.payments = response.data
+                    })
+                    .catch(function (error) {
+                        exception = error
+                        swal("Error!",error.message, "error")
+                    })
+                },
+                //Add a new payment for this visit async from server
+                createNewPayment: function () {
+                    var self = this
+                    api.get('Create', {
+                        payment: self.newPayment
+                    })
+                    .then(response => {
+                        var response = response.data
+                        if (response.numReg) {
+                            var newPayment = response.result
+                            //Clone and insert new payment
+                            self.payments.push(newPayment)
+                            tblPayments.row.add([newPayment.amount, newPayment.date])
+                            //Clear new payment container
+                            Object.assign(self.newPayment, self.paymentModel)
+                            //Notify successfull registration
+                            $.notify("@(GlobalMessages.PAY_NEW)", { autoHideDelay: 1000, className: 'success', globalPosition: 'bottom left' });
+                        } else if (response.errorMsg) {
+                            swal("Error!", '@GlobalMessages.ERROR_OCURRED' + response.errorMsg, "error")
+                        } else { //Unknown error
+                            swal("Unknown error",response,"error")
+                        }
+                    })
+                    .catch(e => {
+                        exception = e
+                        swal(e.message, "error")
+                    })
+                },
+                //Remove payment async from server after confirmation
+                removePayment: function (item) {
+                    self = this
+                    //show confirmation dialog
+                    swal("Confirm Delete", '@GlobalMessages.PAY_CANCEL_CONFIRM' + JSON.stringify(item), {
+                        dangerMode: true,
+                        buttons:true
+                    }).then(confirmed=>{
+                        if (confirmed) { //If removal was confirmed
+                            api.post('Delete', { //Execute async request to server
+                                id: item.id
+                            })
+                            .then(response => {
+                                var response = response.data
+                                if (response.numReg) { //If removal was successful
+                                    //updates payments list
+                                    self.payments = self.payments.filter(function (pay) { return pay.id != item.id })
+                                    //Notify successfully done operation
+                                    $.notify('@GlobalMessages.PAY_CANCELED', { autoHideDelay: 1000, className: 'success', elementPosition: 'bottom left' });
+                                } else if (response.errorMsg) { //Custom error from server
+                                    swal("Error!", '@GlobalMessages.ERROR_OCURRED' + response.errorMsg, "error")
+                                } else { //Unknown error
+                                    swal("Unknown error", response, "error")
+                                }
+                            })
+                            .catch(e => { //Error in request
+                                exception = e
+                                notifyError(e.message)
+                            })
+                        }
+                    })
+                },
+                totalPaid: function () {
+
+                }
+            },
+            created: function () {
+                this.getPayments();
+                Object.assign(this.newPayment, this.paymentModel)
+            },
+            updated: function () {
+                if (!tblPayments){ //After all data was loaded, datatable is initialized
+                    tblPayments = $('#tblPayments').DataTable({
+                        'order': [[1, 'desc']],
+                        "paging": false,
+                        "info": false
+                    })
+                }
+            }
+        })
+    </script>
 }

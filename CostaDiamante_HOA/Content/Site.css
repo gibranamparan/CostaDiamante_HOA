@@ -81,6 +81,12 @@ input[readonly='readonly']{
     .panel.panel-default{
         box-shadow: 0em 0em 0em grey !important;
     }
+
+    h3.panel-title {
+        color: white;
+        font-weight: bold;
+        font-size: 1.3em;
+    }
 /*****/
 
 /*For actions column*/
@@ -143,6 +149,18 @@ input[readonly='readonly']{
     position: relative;
     display: inline-block;
     border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+table td i.option{
+    color: blue;
+    cursor: pointer;
+    transition: color 500ms;
+}
+table td i.option:hover{
+    color: chartreuse;
+}
+table td i.option.remove:hover{
+    color: red;
 }
 
 /* Tooltip text */

@@ -19,14 +19,17 @@ namespace CostaDiamante_HOA
                         "~/Scripts/jquery-ui-{version}.js",
                         "~/Scripts/jquery.mask.js",
                         "~/Scripts/jquery.dataTables.min.js",
+                        "~/Scripts/moment.min.js",
+                        "~/Scripts/datetime-moment.js",
                         "~/Scripts/numeral.min.js",
                         "~/Scripts/sweetalert.min.js",
+                        "~/Scripts/notify.min.js",
                         "~/Scripts/custom.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/vue-axios").Include(
                         "~/Scripts/vue.min.js",
                         "~/Scripts/axios.min.js",
-                        "~/Scripts/moment.min.js"));
+                        "~/Scripts/vuetable-2.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
