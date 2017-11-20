@@ -134,7 +134,7 @@
                                     <td>{{ i + 1 }}</td>
                                     <td>{{ visitor.name }}</td>
                                     <td>{{ visitor.lastName }}</td>
-                                    <td>{{ visitor.isYounger }}</td>
+                                    <td>{{ visitor.isYounger | isYoungerFormat }}</td>
                                     <td>
                                         <label v-on:click="removeVisitorToTable(i)" class="removeLabel">
                                             <i class="glyphicon glyphicon-remove"></i>
@@ -158,6 +158,13 @@
         timeout: 100000,
         headers: {
             Authorization: token
+        }
+    });
+    Vue.filter('isYoungerFormat', (value) => {
+        if(value) {
+            return 'Si'
+        } else {
+            return 'No'
         }
     });
     Vue.mixin({
