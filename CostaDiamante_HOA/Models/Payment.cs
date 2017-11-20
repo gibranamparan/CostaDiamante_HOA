@@ -39,24 +39,24 @@ namespace CostaDiamante_HOA.Models
         {
             /**/
             public int id { get; set; }
-            public decimal Amount { get; set; }
-            public string Date { get; set; }
-            public int TypeOfPayment { get; set; }
+            public decimal amount { get; set; }
+            public string date { get; set; }
+            public int typeOfPayment { get; set; }
 
             public VMPayment() { }
             public VMPayment(int paymentsID, decimal amount, DateTime date, typeOfPayment typeOfPayment)
             {
                 id = paymentsID;
-                Amount = amount;
-                Date = date.ToString("s");
-                TypeOfPayment = (int)typeOfPayment;
+                this.amount = amount;
+                this.date = date.ToString("s");
+                this.typeOfPayment = (int)typeOfPayment;
             }
             public VMPayment(Payments pay)
             {
                 id = pay.paymentsID;
-                Amount = pay.amount;
-                Date = pay.date.ToString("s");
-                TypeOfPayment = (int)pay.typeOfPayment;
+                this.amount = pay.amount;
+                this.date = pay.date.ToString("s");
+                this.typeOfPayment = (int)pay.typeOfPayment;
             }
         }
 

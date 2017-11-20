@@ -22,7 +22,7 @@ namespace CostaDiamante_HOA.Controllers
         //[ValidateHeaderAntiForgeryToken]
         public JsonResult Index(int id)
         {
-            var payments = db.Payments.Where(a => a.visitID == id).ToList()
+            var payments = db.Payments.Where(a => a.visitID == id).ToList().OrderByDescending(pay=>pay.date)
             .Select(pay=> new Payments.VMPayment(pay.paymentsID, pay.amount, pay.date, pay.typeOfPayment));
            
             return Json(payments, JsonRequestBehavior.AllowGet);

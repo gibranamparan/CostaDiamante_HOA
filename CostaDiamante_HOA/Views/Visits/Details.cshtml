@@ -65,28 +65,30 @@
                 </div>
             </form>
             <hr>
-            <h2>List of payments</h2>
-            <table id="tblPayments" class="table table-hover table-striped" v-if="payments.length > 0">
-                <thead>
-                    <tr>
-                        <th style="width: 2em"></th>
-                        <th>@Html.DisplayNameFor(model => payment.amount)</th>
-                        <th>@Html.DisplayNameFor(model => payment.date)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(payment, i) in payments">
-                        <td>
-                            <i class="fa fa-remove option remove" v-on:click="removePayment(payment)"></i>
-                        </td>
-                        <td>{{numeral(payment.Amount).format('$0,000.00')}}</td>
-                        <td>{{moment(payment.Date).format('LL')}}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="alert alert-info" v-if="payments.length == 0">
-                <strong>No payments</strong> have been registered for this visit.
-            </div>
+            @**@<div>
+        <h2>List of payments</h2>
+        <table id="tblPayments" class="table table-hover table-striped" v-if="payments.length > 0">
+            <thead>
+                <tr>
+                    <th style="width: 2em"></th>
+                    <th>@Html.DisplayNameFor(model => payment.amount)</th>
+                    <th>@Html.DisplayNameFor(model => payment.date)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(payment, i) in payments">
+                    <td>
+                        <i class="fa fa-remove option remove" v-on:click="removePayment(payment)"></i>
+                    </td>
+                    <td>{{numeral(payment.amount).format('$0,000.00')}}</td>
+                    <td>{{moment(payment.date).format('LL')}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="alert alert-info" v-if="payments.length == 0">
+            <strong>No payments</strong> have been registered for this visit.
+        </div>
+    </div>
         </div>
     </div>
 </div>
@@ -96,6 +98,7 @@
         $.fn.dataTable.moment('LL');
         var tblPayments
         var antiForgeryToken = $("input[name=__RequestVerificationToken]").val();
+
         var exception
         var api = axios.create({
             baseURL: "/Payments",
@@ -109,17 +112,18 @@
             el: '#app',
             data: {
                 paymentModel: {
+                    id:0,
                     amount: 0.00,
                     date: '@payment.date.ToString("yyyy/MM/dd")',
                     typeOfPayment: 1,
                     ownerID: '@Model.ownerID',
-                    visitID: '@Model.visitID'
+                    visitID: '@Model.visitID',
+                    toString: function () {
+                        return numeral(this.amount).format('$0,000.00') + " paid in " + moment(this.date).format('LL') 
+                    }
                 },
                 newPayment: {},
                 payments: [],
-                columns: [
-                    'Amount', 'Date'
-                ]
             },
             methods: {
                 //Takes all regitesred payments for this visits from server
@@ -127,7 +131,15 @@
                     var self = this
                     api.get('Index/@Model.visitID')
                     .then(function (response) {
-                        self.payments = response.data
+                        var dataFromServer = response.data
+                        self.payments = dataFromServer.map(function (item) {
+                            var newItem = {}
+                            Object.assign(newItem, self.paymentModel)
+                            newItem.id = item.id
+                            newItem.date = item.date
+                            newItem.amount = item.amount
+                            return newItem
+                        })
                     })
                     .catch(function (error) {
                         exception = error
@@ -137,20 +149,22 @@
                 //Add a new payment for this visit async from server
                 createNewPayment: function () {
                     var self = this
-                    api.get('Create', {
+                    api.post('Create', {
                         payment: self.newPayment
                     })
                     .then(response => {
                         var response = response.data
                         if (response.numReg) {
                             var newPayment = response.result
-                            //Clone and insert new payment
+                            //Clone and insert new payment to state
                             self.payments.push(newPayment)
-                            tblPayments.row.add([newPayment.amount, newPayment.date])
+                            //Sort paymentes desceding
+                            v.payments.sort(function (payA, payB) { return new Date(payB.Date) - new Date(payA.Date) })
                             //Clear new payment container
                             Object.assign(self.newPayment, self.paymentModel)
                             //Notify successfull registration
                             $.notify("@(GlobalMessages.PAY_NEW)", { autoHideDelay: 1000, className: 'success', globalPosition: 'bottom left' });
+
                         } else if (response.errorMsg) {
                             swal("Error!", '@GlobalMessages.ERROR_OCURRED' + response.errorMsg, "error")
                         } else { //Unknown error
@@ -166,7 +180,7 @@
                 removePayment: function (item) {
                     self = this
                     //show confirmation dialog
-                    swal("Confirm Delete", '@GlobalMessages.PAY_CANCEL_CONFIRM' + JSON.stringify(item), {
+                    swal("Confirm Delete", '@GlobalMessages.PAY_CANCEL_CONFIRM' +" "+ item.toString(), {
                         dangerMode: true,
                         buttons:true
                     }).then(confirmed=>{
@@ -179,6 +193,8 @@
                                 if (response.numReg) { //If removal was successful
                                     //updates payments list
                                     self.payments = self.payments.filter(function (pay) { return pay.id != item.id })
+                                    //Sort paymentes desceding
+                                    v.payments.sort(function (payA, payB) { return new Date(payB.Date) - new Date(payA.Date) })
                                     //Notify successfully done operation
                                     $.notify('@GlobalMessages.PAY_CANCELED', { autoHideDelay: 1000, className: 'success', elementPosition: 'bottom left' });
                                 } else if (response.errorMsg) { //Custom error from server
@@ -201,15 +217,6 @@
             created: function () {
                 this.getPayments();
                 Object.assign(this.newPayment, this.paymentModel)
-            },
-            updated: function () {
-                if (!tblPayments){ //After all data was loaded, datatable is initialized
-                    tblPayments = $('#tblPayments').DataTable({
-                        'order': [[1, 'desc']],
-                        "paging": false,
-                        "info": false
-                    })
-                }
             }
         })
     </script>
