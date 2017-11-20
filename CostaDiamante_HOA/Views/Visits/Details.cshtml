@@ -1,20 +1,28 @@
-﻿@using CostaDiamante_HOA.Models
-@model CostaDiamante_HOA.Models.Visit
+﻿@model CostaDiamante_HOA.Models.Visit
+@using CostaDiamante_HOA.Models
 
 @{
-    Payments payment = new Payments();
-    payment.date = DateTime.Today.AddDays(1);
+    Payments payment = new Payments() { date = DateTime.Today.AddDays(1), amount = 0};
     ViewBag.Title = "Details";
 }
 
+<nav>
+    <a href="@Url.Action("Index")">
+        <i class="glyphicon glyphicon-arrow-left"></i><span>Back to List</span>
+    </a> |
+    <a href="@Url.Action("Edit", new { id = Model.visitID })">
+        <i class="glyphicon glyphicon-edit"></i><span>Edit Visit</span>
+    </a> 
+</nav>
 <div id="app">
-    <h2>Details</h2>
-    <h4>Information and Payments</h4>
+    <h2>Visit Information and Payments</h2>
+    <h4>
+        <strong>@Model.owner.fullName</strong>, Condo <span>@Model.condo.name</span>
+    </h4>
     <hr />
-    <div>
-        <div class="form-group col-md-3">
-            @Html.LabelFor(model => model.condo.name)
-            <p class="form-control-static">@Html.DisplayFor(model => model.condo.name)</p>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Details</h3>
         </div>
         <div class="form-group col-md-3">
             @Html.LabelFor(model => model.owner.fullName)
@@ -32,12 +40,8 @@
             @Html.LabelFor(model => model.departureDate)
             <p class="form-control-static">@Html.DisplayFor(model => model.departureDate)</p>
         </div>
-        <div class="form-group col-md-3">
-            @Html.LabelFor(model => model.totalCost)
-            <p class="form-control-static">@Html.DisplayFor(model => model.totalCost)</p>
-        </div>
     </div>
-    <div class="clearfix"></div>
+    <hr>
     <div>
         @*@Html.Partial("../Payments/Partial_CreatePayment", payment, new ViewDataDictionary {
             { "ownerID", Model.ownerID },
@@ -51,67 +55,48 @@
                     @Html.EditorFor(model => payment.amount, new { htmlAttributes = new { @class = "form-control", v_model = "newPayment.amount" } })
                     @Html.ValidationMessageFor(model => payment.amount, "", new { @class = "text-danger" })
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => payment.date, htmlAttributes: new { @class = "" })
+                <div class="form-group col-md-4">
+                    @Html.LabelFor(model => payment.date)
                     @Html.EditorFor(model => payment.date, new { htmlAttributes = new { @class = "form-control", v_model = "newPayment.date" } })
                     @Html.ValidationMessageFor(model => payment.date, "", new { @class = "text-danger" })
                 </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-md-12">
-                    @Html.LabelFor(model => payment.typeOfPayment, htmlAttributes: new { @class = "" })
-                    
-                    @Html.EnumDropDownListFor(model => payment.typeOfPayment, new { @class = "form-control", v_model = "newPayment.typeOfPayment" } )
-                    @Html.ValidationMessageFor(model => payment.typeOfPayment, "", new { @class = "text-danger" })
+                <div class="form-group col-md-2">
+                    <button id="btnRegister" name="createVisit" class="btn btn-success" type="submit">
+                        Registrar
+                    </button>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-md-2">
-                    <input type="submit" value="Create" class="btn btn-default" />
-                </div>
-            </div>
-        </div>
-        </form>
-    </div>
-    <hr>
-    <div>
+            </form>
+            <hr>
+            @**@<div>
         <h2>List of payments</h2>
-        <table class="table table-hover table-striped"> 
+        <table id="tblPayments" class="table table-hover table-striped" v-if="payments.length > 0">
             <thead>
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.owner.name)</th>
+                    <th style="width: 2em"></th>
                     <th>@Html.DisplayNameFor(model => payment.amount)</th>
                     <th>@Html.DisplayNameFor(model => payment.date)</th>
-                    <th>@Html.DisplayNameFor(model => payment.typeOfPayment)</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(payment, i) in payments">
-                    <td>{{payment.OwnerName}}</td>
-                    <td>{{payment.Amount}}</td>
-                    <td>{{payment.Date}}</td>
-                    <td>{{payment.TypeOfPayment}}</td>
+                    <td>
+                        <i class="fa fa-remove option remove" v-on:click="removePayment(payment)"></i>
+                    </td>
+                    <td>{{numeral(payment.amount).format('$0,000.00')}}</td>
+                    <td>{{moment(payment.date).format('LL')}}</td>
                 </tr>
             </tbody>
         </table>
+        <div class="alert alert-info" v-if="payments.length == 0">
+            <strong>No payments</strong> have been registered for this visit.
+        </div>
     </div>
-
-    <p>
-        @*@Html.ActionLink("Create new payment", "Create", "Payments", new { visitID = Model.visitID, ownerID = Model.ownerID }, null) |*@
-        @Html.ActionLink("Edit", "Edit", new { id = Model.visitID }) |
-        @Html.ActionLink("Back to List", "Index")
-    </p>
-
-    @*<button v-on:click="getPayments" type="button">Click Me!</button>*@
+        </div>
+    </div>
 </div>
-
-@section Scripts{
 @Scripts.Render("~/bundles/jqueryval")
+@section Scripts{
 <script>
     const v = new Vue({
         el: '#app',
@@ -123,7 +108,7 @@
                 ownerID: '@Model.ownerID',
                 visitID: '@Model.visitID'
             },
-            newPayment: Object.assign({}, this.paymentModel),
+            newPayment: Object.assign({}, paymentModel),
             payments: []
         },
         methods: {
