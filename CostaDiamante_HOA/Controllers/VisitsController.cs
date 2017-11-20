@@ -134,18 +134,18 @@ namespace CostaDiamante_HOA.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "visitID,date,arrivalDate,departureDate,condoID,ownerID")] Visit visits)
+        //[ValidateAntiForgeryToken]
+        public ActionResult Edit(Visit visit)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(visits).State = EntityState.Modified;
+                db.Entry(visit).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name", visits.condoID);
-            ViewBag.ownerID = new SelectList(db.Users, "Id", "name", visits.ownerID);
-            return View(visits);
+            ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name", visit.condoID);
+            ViewBag.ownerID = new SelectList(db.Users, "Id", "name", visit.ownerID);
+            return View(visit);
         }
 
         // GET: Visits/Delete/5

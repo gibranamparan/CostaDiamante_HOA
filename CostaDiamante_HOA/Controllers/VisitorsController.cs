@@ -8,16 +8,28 @@ using System.Web;
 using System.Web.Mvc;
 using CostaDiamante_HOA.Models;
 
-namespace Sonora_HOA.Controllers
+namespace CostaDiamante_HOA.Controllers
 {
     public class VisitorsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Visitors
-        public ActionResult Index()
+        [HttpPost]
+        public JsonResult Index(int id)
         {
-            return View(db.Visitor.ToList());
+            //var payments = db.Payments.Include(p => p.owner).Include(p => p.visit);
+            var visitors = db.Visitor.Where(a => a.visitID == id)
+            .Select(a => new
+            {
+                visitorID = a.visitorID,
+                name = a.name,
+                lastName = a.lastName,
+                isYounger = a.isYounger,
+                visitID = a.visitID
+            });
+
+            return Json(visitors);
+            //return Json(payments, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Visitors/Details/5
@@ -45,17 +57,26 @@ namespace Sonora_HOA.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "visitorID,name,lastName,isYounger,visitID")] Visitor visitor)
+        //[ValidateAntiForgeryToken]
+        public JsonResult Create(Visitor visitor)
         {
-            if (ModelState.IsValid)
+            int numReg = 0;
+            string errorMsg = string.Empty;
+            try
             {
-                db.Visitor.Add(visitor);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    db.Visitor.Add(visitor);
+                    db.SaveChanges();
+                    numReg = visitor.visitorID;
+                    return Json(new { numReg = numReg });
+                }
             }
-
-            return View(visitor);
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+            return Json(new { numReg = numReg, errorMsg = errorMsg });
         }
 
         // GET: Visitors/Edit/5
@@ -106,13 +127,24 @@ namespace Sonora_HOA.Controllers
 
         // POST: Visitors/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        //[ValidateAntiForgeryToken]
+        public JsonResult DeleteConfirmed(int id)
         {
-            Visitor visitor = db.Visitor.Find(id);
-            db.Visitor.Remove(visitor);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            int numReg = 0;
+            string errorMsg = string.Empty;
+            try
+            {
+                Visitor visitor = db.Visitor.Find(id);
+                db.Visitor.Remove(visitor);
+                numReg = db.SaveChanges();
+                return Json(new { numReg = numReg });
+            }
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+
+            return Json(new { numReg = numReg, errorMsg = errorMsg });
         }
 
         protected override void Dispose(bool disposing)

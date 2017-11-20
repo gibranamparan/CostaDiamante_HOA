@@ -14,8 +14,7 @@ namespace CostaDiamante_HOA.Controllers
     public class PaymentsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-
-        // GET: Payments
+        
         [HttpPost]
         public JsonResult Index(int id)
         {

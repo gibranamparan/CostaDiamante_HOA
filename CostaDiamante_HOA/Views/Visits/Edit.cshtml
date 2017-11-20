@@ -1,75 +1,432 @@
-﻿@model CostaDiamante_HOA.Models.Visits
+﻿@using CostaDiamante_HOA.Models
+@model CostaDiamante_HOA.Models.Visit
 
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    //Model.arrivalDate = DateTime.Today.AddDays(1);
+    //Model.departureDate = DateTime.Today.AddDays(3);
 }
 
-<h2>Edit</h2>
+<nav>
+    <a href="@Url.Action("Owners","Details",new { id = Model.ownerID })">
+        <i class="glyphicon glyphicon-arrow-left"></i> <span>Back to Owner Details</span>
+    </a>
+</nav>
 
+@Html.Partial("../Owners/Partial_infoOwner", Model.owner)
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Visits</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.visitsID)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.date, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.arrivalDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.arrivalDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.departureDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.condoID, "condoID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("condoID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.condoID, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ownerID, "ownerID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ownerID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ownerID, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
+<h2>New Visit</h2>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Panel title</h3>
     </div>
-}
+    <div class="panel-body">
+        <div id="app">
+            <form v-on:submit.prevent="sendDataToServer()">
+                @Html.AntiForgeryToken()
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group col-md-4">
+                    @Html.LabelFor(model => model.arrivalDate)
+                    @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control", v_model = "visit.arrivalDate" } })
+                    @Html.ValidationMessageFor(model => model.arrivalDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group col-md-4">
+                    @Html.LabelFor(model => model.departureDate)
+                    @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control", v_model = "visit.departureDate" } })
+                    @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => model.totalCost)
+                    @Html.EditorFor(model => model.totalCost, new { HtmlAttributes = new { @class = "form-control", @readonly = "readonly", v_model = "totalCostFunc" } })
+                </div>
+
+                <div class="form-group col-md-2">
+                    <br />
+                    <button v-bind:disabled="isVisitValid()"
+                            type="submit" class="btn btn-primary pull-right btn-block">
+                        Update
+                    </button>
+                    <button />
+                </div>
+            </form>
+
+            <div>
+                @{
+                    Visitor visitor = new Visitor();
+                }
+                <div>
+
+                    <div class="form-group col-md-4">
+                        <select v-model="typeOfVisit">
+                            <option v-for="option in optionsTypeOfVisit" v-bind:value="option.value" v-bind:disabled="option.value == 0">
+                                {{ option.text }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-8">
+                        <div v-if="typeOfVisit === 1" class="col-md-6">
+                            <div class="checkbox">
+                                <label><input v-on:click="selectTypeOfVisit(0)" type="checkbox" v-model="withTheOwner">with the owner</label>
+                            </div>
+                        </div>
+
+                        <div v-if="typeOfVisit === 1" class="col-md-6">
+                            <div class="checkbox">
+                                <label><input v-on:click="selectTypeOfVisit(1)" type="checkbox" v-model="withoutTheOwner">without the owner</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <div class="form-group col-md-12">
+                        <div v-if="typeOfVisit === 1 && withTheOwner === true || typeOfVisit === 1 && withoutTheOwner === true" class="alert alert-info" role="alert">
+                            <span v-if="typeOfVisit === 1 && withTheOwner === true">Visit without payment.</span>
+                            <span v-if="typeOfVisit === 1 && withoutTheOwner === true">5 dollars per person if under 6 years does not apply.</span>
+                        </div>
+                        <div v-if="typeOfVisit === 2" class="alert alert-info" role="alert">
+                            En una renta, se permiten 12 personas, las personas extra cuestan 50 dlls el brasalete. <br>
+                            El ͞Rental Impact por visita de renta es de 75 dlls por día.
+                        </div>
+                        <div>
+
+                            <div class="clearfix"></div>
+                            <div class="form-group col-md-4">
+                                @Html.LabelFor(model => visitor.name)
+                                @Html.EditorFor(model => visitor.name, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.name" } })
+                            </div>
+                            <div class="form-group col-md-4">
+                                @Html.LabelFor(model => visitor.lastName)
+                                @Html.EditorFor(model => visitor.lastName, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.lastName" } })
+                            </div>
+
+                            <div class="form-group col-md-2">
+                                @Html.LabelFor(model => visitor.isYounger)
+                                @Html.EditorFor(model => visitor.isYounger, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.isYounger" } })
+                            </div>
+
+                            <div class="form-group col-md-2">
+                                <br />
+                                <button type="button" value="Add" class="btn btn-success btn-block pull-right" v-on:click="saveNewVisitorDB"
+                                        v-bind:disabled="(newVisitor.name === '' && newVisitor.lastName === '')">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Visitors table -->
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>@Html.DisplayNameFor(model => visitor.name)</th>
+                                    <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
+                                    <th>@Html.DisplayNameFor(model => visitor.isYounger)</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(visitor, i) in visit.visitors">    
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ visitor.name }}</td>
+                                    <td>{{ visitor.lastName }}</td>
+                                    <td>{{ visitor.isYounger }}</td>
+                                    <td>
+                                        <label v-on:click="removeVisitorToTable(i)" class="removeLabel">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                            <span class="">Remove</span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+    var token = $('input[name=__RequestVerificationToken]').val()
+    var api = axios.create({
+        baseURL: "/Visits",
+        timeout: 100000,
+        headers: {
+            Authorization: token
+        }
+    });
+    Vue.mixin({
+        methods: {
+            watchCollection(arr, cb) {
+                arr.forEach((val) => this.$watch(val, cb))
+            }
+        }
+    })
+    const v = new Vue({
+        el: '#app',
+        data: {
+            visit: { //Main model to save what is going to be submited to the server
+                visitID: '@Model.visitID',
+                arrivalDate: '@Model.arrivalDate.ToString("yyyy-MM-dd")', 
+                departureDate: '@Model.departureDate.ToString("yyyy-MM-dd")',
+                condoID: @Model.condoID,
+                ownerID: '@Model.ownerID',
+                totalCost : 0.00,
+                date: '@Model.date',
+                visitors: []
+            },
+            newVisitor:{ //Model to save a new visitor
+                name:'',
+                lastName:'',
+                isYounger:false,
+                clone: function (){
+                    return {visitorID : this.lastVisitorIDFromDB, name : this.name, lastName : this.lastName, isYounger : this.isYounger, visitID: '@Model.visitID'}
+                },
+                clear: function(){
+                    this.name = ''; this.lastName= ''; this.isYounger = false;
+                }
+            },
+            lastVisitorIDFromDB: '',
+            typeOfVisit: 0,
+            optionsTypeOfVisit: [
+                { text: 'Choose the type of visit', value: 0 },
+                { text: 'Visit of friends and family', value: 1 },
+                { text: 'Visit by rent', value: 2 }
+            ],
+            withTheOwner: true,
+            withoutTheOwner: false
+        },
+        methods: {
+            getVisitors: function () {
+                var ws = this
+                axios.post('/Visitors/Index', {
+                    id: '@Model.visitID'
+                })
+                .then(function (response) {
+                    ws.visit.visitors = response.data
+                    console.log(ws.visit.visitors)
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+            },
+            saveNewVisitorDB: function (newVisitor) {
+                var ws = this
+                axios.post('/Visitors/Create', {
+                    visitor: ws.newVisitor.clone()
+                })
+                .then(function (response) {
+                    ws.lastVisitorIDFromDB = response.data.numReg
+                    ws.addVisitorToTable()
+                    
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+            },
+            removeVisitorDB: function (visitorID) {
+                var ws = this
+                axios.post('/Visitors/Delete', {
+                    id: visitorID
+                })
+                .then(function (response) {
+                    console.log(response)
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+            },
+            isVisitValid: function () {
+                return this.visit.visitors.length === 0 || this.typeOfVisit === 0
+            },
+            selectTypeOfVisit: function (value) {
+                if(value == 0) {
+                    this.withTheOwner = true
+                    this.withoutTheOwner = false
+                }
+                if(value == 1) {
+                    this.withoutTheOwner = true
+                    this.withTheOwner = false
+                }
+            },
+            addVisitorToTable: function () {
+                this.visit.visitors.push(this.newVisitor.clone()) //The model is clone a pushed into the list of visitors in the visit
+                this.newVisitor.clear() //The model for a new visitor is clared to enter a new one
+                $("#visitor_name").focus()
+            },
+            removeVisitorToTable: function (index) { //Removing a selected visitor
+                this.removeVisitorDB(this.visit.visitors[index].visitorID)
+                this.visit.visitors.splice(index, 1)
+            },
+            redirectToOwnerDetails: function(){
+                setTimeout(function(){window.location.replace("/Visits/")}, 2000)
+                swal("Done!","Your visit was scheduled succesfully","success")
+            },
+            sendDataToServer: function () { //Async call to save the new visit in DB
+                var self = this
+                axios.post("Edit",{
+                    visit : self.visit                  
+                })
+                .then(response => {
+                    var response = response.data
+                    if(response.numReg){
+                        self.redirectToOwnerDetails()
+                    }else if(response.errorMsg){
+                        swal("Oops!","An error ocurred, plase try again. If error persists, plase send this to the system administrator: "+response.errorMsg,"error")
+                    }else{ //Unknown error
+                        console.log(response)
+                    }
+                })
+                .catch(e => {
+                    //debugger
+                    console.log(e)
+                })
+            },
+            calculateTotalPerVisit: function () {
+                var visitorCount = 0
+                if(this.typeOfVisit === 0) {
+                    return this.visit.totalCost = '@Model.totalCost'
+                }
+                if(this.typeOfVisit === 1 && this.withTheOwner) {
+                    return this.visit.totalCost = 0.00
+                }
+                if(this.typeOfVisit === 1 && this.withoutTheOwner) {
+                    let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
+                    return this.visit.totalCost = visitorIsNotYounger.length * 5
+                }
+                if(this.typeOfVisit === 2) {
+
+                    var arrivalDate = new Date(this.visit.arrivalDate).getTime()
+                    var departureDate = new Date(this.visit.departureDate).getTime()
+
+                    var differenceDays = departureDate - arrivalDate
+                    //console.log(differenceDays)
+                    //console.log(differenceDays/(1000*60*60*24))
+                    if(this.visit.visitors.length >= 1) {
+                        this.visit.totalCost = 75 * (differenceDays/(1000*60*60*24)) // (1000*60*60*24) --> milisegundos -> segundos -> minutos -> horas -> días
+                    }
+
+                    if(this.visit.visitors.length > 12) {
+                        var visitorExtra = this.visit.visitors.length - 12
+                        return this.visit.totalCost + (visitorExtra * 50)
+                    }
+                    return this.visit.totalCost
+                }
+            }
+        },
+        created: function () { 
+            this.getVisitors()
+            this.watchCollection(
+                ['typeOfVisit','withTheOwner','withoutTheOwner','visit.arrivalDate','visit.departureDate'],
+                this.calculateTotalPerVisit)
+        },
+        computed: {
+            totalCostFunc() {
+                return this.calculateTotalPerVisit()
+            }
+        }
+    })
+    </script>
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        @*@model CostaDiamante_HOA.Models.Visit*@
+
+        @*@{
+                ViewBag.Title = "Edit";
+                Layout = "~/Views/Shared/_Layout.cshtml";
+            }
+
+            <h2>Edit</h2>
+
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+                    <h4>Visit</h4>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.visitID)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.date, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.arrivalDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.arrivalDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.departureDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.totalCost, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.totalCost, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.totalCost, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.condoID, "condoID", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("condoID", null, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.condoID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ownerID, "ownerID", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("ownerID", null, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.ownerID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Save" class="btn btn-default" />
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div>
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+
+            @section Scripts {
+                @Scripts.Render("~/bundles/jqueryval")
+            }*@
