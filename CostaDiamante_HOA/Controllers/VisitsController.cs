@@ -135,17 +135,25 @@ namespace CostaDiamante_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult Edit(Visit visit)
+        public JsonResult Edit(Visit visit)
         {
-            if (ModelState.IsValid)
+            int numReg = 0;
+            string errorMsg = string.Empty;
+            try
             {
-                db.Entry(visit).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    db.Entry(visit).State = EntityState.Modified;
+                    numReg = db.SaveChanges();
+                    return Json(new { numReg = numReg });
+                }
             }
-            ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name", visit.condoID);
-            ViewBag.ownerID = new SelectList(db.Users, "Id", "name", visit.ownerID);
-            return View(visit);
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+
+            return Json(new { numReg = numReg, errorMsg = errorMsg });
         }
 
         // GET: Visits/Delete/5
