@@ -62,34 +62,34 @@
                 <div>
 
                     <div class="form-group col-md-4">
-                        <select v-model="typeOfVisit">
-                            <option v-for="option in optionsTypeOfVisit" v-bind:value="option.value" v-bind:disabled="option.value == 0">
+                        <select v-model="visit.typeOfVisit">
+                            <option v-for="option in optionsTypeOfVisit" v-bind:value="option.value" v-bind:selected="option.value == 0">
                                 {{ option.text }}
                             </option>
                         </select>
                     </div>
 
                     <div class="form-group col-md-8">
-                        <div v-if="typeOfVisit === 1" class="col-md-6">
+                        <div v-if="visit.typeOfVisit === 0" class="col-md-6">
                             <div class="checkbox">
-                                <label><input v-on:click="selectTypeOfVisit(0)" type="checkbox" v-model="withTheOwner">with the owner</label>
+                                <label><input type="checkbox" v-model="withTheOwner">with the owner</label>
                             </div>
                         </div>
                         
-                        <div v-if="typeOfVisit === 1" class="col-md-6">
+                        @*<div v-if="visit.typeOfVisit === 0" class="col-md-6">
                             <div class="checkbox">
                                 <label><input v-on:click="selectTypeOfVisit(1)" type="checkbox" v-model="withoutTheOwner">without the owner</label>
                             </div>
-                        </div>
+                        </div>*@
                     </div>
                     <div class="clearfix"></div>
                    
                     <div class="form-group col-md-12">
-                        <div v-if="typeOfVisit === 1 && withTheOwner === true || typeOfVisit === 1 && withoutTheOwner === true"  class="alert alert-info" role="alert">
-                           <span v-if="typeOfVisit === 1 && withTheOwner === true">Visit without payment.</span>
-                           <span v-if="typeOfVisit === 1 && withoutTheOwner === true">5 dollars per person if under 6 years does not apply.</span>
+                        <div v-if="visit.typeOfVisit === 0"  class="alert alert-info" role="alert">
+                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === true">Visit without payment.</span>
+                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === false">5 dollars per person if under 6 years does not apply.</span>
                         </div>
-                        <div v-if="typeOfVisit === 2" class="alert alert-info" role="alert">
+                        <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
                             En una renta, se permiten 12 personas, las personas extra cuestan 50 dlls el brasalete. <br>
                             El ͞Rental Impact por visita de renta es de 75 dlls por día.
                         </div>
@@ -182,6 +182,7 @@
                 condoID: @Model.condoID,
                 ownerID: '@Model.ownerID',
                 totalCost : 0,
+                typeOfVisit: 0,
                 visitors: []
             },
             newVisitor:{ //Model to save a new visitor
@@ -195,29 +196,28 @@
                     this.name = ''; this.lastName= ''; this.isYounger = false;
                 }
             },
-            typeOfVisit: 0,
+            //typeOfVisit: 1,
             optionsTypeOfVisit: [
-              { text: 'Choose the type of visit', value: 0 },
-              { text: 'Visit of friends and family', value: 1 },
-              { text: 'Visit by rent', value: 2 }
+              { text: 'Visit of friends and family', value: 0 },
+              { text: 'Visit by rent', value: 1 }
             ],
-            withTheOwner: true,
-            withoutTheOwner: false
+            withTheOwner: true
+            //withoutTheOwner: false
         },
         methods: {
             isVisitValid: function () {
-                return this.visit.visitors.length === 0 || this.typeOfVisit === 0
+                return this.visit.visitors.length === 0
             },
-            selectTypeOfVisit: function (value) {
-                if(value == 0) {
-                    this.withTheOwner = true
-                    this.withoutTheOwner = false
-                } 
-                if(value == 1) {
-                    this.withoutTheOwner = true
-                    this.withTheOwner = false
-                }
-            },
+            //selectTypeOfVisit: function () {
+            //    if(value == 0) {
+            //        this.withTheOwner = true
+            //        this.withoutTheOwner = false
+            //    } 
+            //    if(value == 1) {
+            //        this.withoutTheOwner = true
+            //        this.withTheOwner = false
+            //    }
+            //},
             addVisitorToTable: function () {
                 this.visit.visitors.push(this.newVisitor.clone()) //The model is clone a pushed into the list of visitors in the visit
                 this.newVisitor.clear() //The model for a new visitor is clared to enter a new one
@@ -252,14 +252,14 @@
             },
             calculateTotalPerVisit: function () {
                 var visitorCount = 0
-                if(this.typeOfVisit === 1 && this.withTheOwner) {
+                if(this.visit.typeOfVisit === 0 && this.withTheOwner) {
                     return this.visit.totalCost = 0
                 }
-                if(this.typeOfVisit === 1 && this.withoutTheOwner) {
+                if(this.visit.typeOfVisit === 0 && !this.withTheOwner) {
                     let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
                     return this.visit.totalCost = visitorIsNotYounger.length * 5
                 }
-                if(this.typeOfVisit === 2) {
+                if(this.visit.typeOfVisit === 1) {
 
                     var arrivalDate = new Date(this.visit.arrivalDate).getTime()
                     var departureDate = new Date(this.visit.departureDate).getTime()
@@ -281,7 +281,7 @@
         },
         created: function () {
             this.watchCollection(
-                ['typeOfVisit','withTheOwner','withoutTheOwner','visit.arrivalDate','visit.departureDate'],
+                ['visit.typeOfVisit','withTheOwner','visit.arrivalDate','visit.departureDate'],
                 this.calculateTotalPerVisit)
         },
         computed: {

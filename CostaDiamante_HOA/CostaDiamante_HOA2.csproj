@@ -221,6 +221,10 @@
     <Compile Include="Migrations\201711200657360_visitor_modified.Designer.cs">
       <DependentUpon>201711200657360_visitor_modified.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711210236318_visit_modified-add-type.cs" />
+    <Compile Include="Migrations\201711210236318_visit_modified-add-type.Designer.cs">
+      <DependentUpon>201711210236318_visit_modified-add-type.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condo.cs" />
@@ -488,6 +492,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711200657360_visitor_modified.resx">
       <DependentUpon>201711200657360_visitor_modified.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711210236318_visit_modified-add-type.resx">
+      <DependentUpon>201711210236318_visit_modified-add-type.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
