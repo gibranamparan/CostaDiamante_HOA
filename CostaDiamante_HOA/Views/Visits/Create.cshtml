@@ -62,7 +62,8 @@
                 <div>
 
                     <div class="form-group col-md-4">
-                        <select v-model="visit.typeOfVisit">
+                        <label>Type of visit</label>
+                        <select v-model="visit.typeOfVisit" class="form-control">
                             <option v-for="option in optionsTypeOfVisit" v-bind:value="option.value" v-bind:selected="option.value == 0">
                                 {{ option.text }}
                             </option>
@@ -71,23 +72,33 @@
 
                     <div class="form-group col-md-8">
                         <div v-if="visit.typeOfVisit === 0" class="col-md-6">
-                            <div class="checkbox">
+                            <label>with the owner</label>
+                            <input class="form-control" type="checkbox" v-model="withTheOwner">
+
+                            @*<div class="checkbox">
                                 <label><input type="checkbox" v-model="withTheOwner">with the owner</label>
-                            </div>
+                            </div>*@
                         </div>
                         
-                        @*<div v-if="visit.typeOfVisit === 0" class="col-md-6">
-                            <div class="checkbox">
-                                <label><input v-on:click="selectTypeOfVisit(1)" type="checkbox" v-model="withoutTheOwner">without the owner</label>
-                            </div>
+                        @*<div class="form-group col-md-2">
+                            @Html.LabelFor(model => visitor.isYounger)
+                            @Html.EditorFor(model => visitor.isYounger, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.isYounger" } })
                         </div>*@
+
+                        <div v-if="visit.typeOfVisit === 0 && !withTheOwner" class="col-md-6">
+                            <label>Skip payment</label>
+                            <input class="form-control" type="checkbox" v-model="skipPayment">
+                            @*<div class="checkbox">
+                                <label><input class="form-control" type="checkbox" v-model="skipPayment">Skip payment</label>
+                            </div>*@
+                        </div>
                     </div>
                     <div class="clearfix"></div>
                    
                     <div class="form-group col-md-12">
                         <div v-if="visit.typeOfVisit === 0"  class="alert alert-info" role="alert">
-                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === true">Visit without payment.</span>
-                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === false">5 dollars per person if under 6 years does not apply.</span>
+                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === true || skipPayment === true">Visit without payment.</span>
+                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === false && skipPayment === false">5 dollars per person if under 6 years does not apply.</span>
                         </div>
                         <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
                             En una renta, se permiten 12 personas, las personas extra cuestan 50 dlls el brasalete. <br>
@@ -201,7 +212,8 @@
               { text: 'Visit of friends and family', value: 0 },
               { text: 'Visit by rent', value: 1 }
             ],
-            withTheOwner: true
+            withTheOwner: true,
+            skipPayment: false
             //withoutTheOwner: false
         },
         methods: {
@@ -252,7 +264,7 @@
             },
             calculateTotalPerVisit: function () {
                 var visitorCount = 0
-                if(this.visit.typeOfVisit === 0 && this.withTheOwner) {
+                if(this.visit.typeOfVisit === 0 && this.withTheOwner || this.skipPayment) {
                     return this.visit.totalCost = 0
                 }
                 if(this.visit.typeOfVisit === 0 && !this.withTheOwner) {
@@ -260,7 +272,7 @@
                     return this.visit.totalCost = visitorIsNotYounger.length * 5
                 }
                 if(this.visit.typeOfVisit === 1) {
-
+                    console.log('hi')
                     var arrivalDate = new Date(this.visit.arrivalDate).getTime()
                     var departureDate = new Date(this.visit.departureDate).getTime()
                     

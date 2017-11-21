@@ -225,6 +225,14 @@
     <Compile Include="Migrations\201711210236318_visit_modified-add-type.Designer.cs">
       <DependentUpon>201711210236318_visit_modified-add-type.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711210354139_updated_visit.cs" />
+    <Compile Include="Migrations\201711210354139_updated_visit.Designer.cs">
+      <DependentUpon>201711210354139_updated_visit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711210355446_return_visist.cs" />
+    <Compile Include="Migrations\201711210355446_return_visist.Designer.cs">
+      <DependentUpon>201711210355446_return_visist.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condo.cs" />
@@ -495,6 +503,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711210236318_visit_modified-add-type.resx">
       <DependentUpon>201711210236318_visit_modified-add-type.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711210354139_updated_visit.resx">
+      <DependentUpon>201711210354139_updated_visit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711210355446_return_visist.resx">
+      <DependentUpon>201711210355446_return_visist.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
