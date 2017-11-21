@@ -74,23 +74,11 @@
                         <div v-if="visit.typeOfVisit === 0" class="col-md-6">
                             <label>with the owner</label>
                             <input class="form-control" type="checkbox" v-model="withTheOwner">
-
-                            @*<div class="checkbox">
-                                <label><input type="checkbox" v-model="withTheOwner">with the owner</label>
-                            </div>*@
-                        </div>
-                        
-                        @*<div class="form-group col-md-2">
-                            @Html.LabelFor(model => visitor.isYounger)
-                            @Html.EditorFor(model => visitor.isYounger, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.isYounger" } })
-                        </div>*@
+                        </div>                   
 
                         <div v-if="visit.typeOfVisit === 0 && !withTheOwner" class="col-md-6">
                             <label>Skip payment</label>
                             <input class="form-control" type="checkbox" v-model="skipPayment">
-                            @*<div class="checkbox">
-                                <label><input class="form-control" type="checkbox" v-model="skipPayment">Skip payment</label>
-                            </div>*@
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -192,8 +180,9 @@
                 departureDate: '@Model.departureDate.ToString("yyyy-MM-dd")',
                 condoID: @Model.condoID,
                 ownerID: '@Model.ownerID',
-                totalCost : 0,
+                totalCost : 0.00,
                 typeOfVisit: 0,
+                paymentOmitted: false,
                 visitors: []
             },
             newVisitor:{ //Model to save a new visitor
@@ -212,7 +201,7 @@
               { text: 'Visit of friends and family', value: 0 },
               { text: 'Visit by rent', value: 1 }
             ],
-            withTheOwner: true,
+            withTheOwner: false,
             skipPayment: false
             //withoutTheOwner: false
         },
@@ -239,15 +228,19 @@
                 this.visit.visitors.splice(index, 1)
             },
             redirectToOwnerDetails: function(){
-                setTimeout(function(){window.location.replace("/Visits/")}, 2000)
+                setTimeout(function(){window.location.replace("/Visits/")}, 20000)
                 swal("Done!","Your visit was scheduled succesfully","success")
             },
             sendDataToServer: function () { //Async call to save the new visit in DB
                 var self = this
+                if(self.skipPayment) {
+                    self.visit.paymentOmitted = self.skipPayment
+                }
                 axios.post("create",{
                     visit : self.visit
                 })
                 .then(response => {
+                    console.log(self.visit)
                     var response = response.data
                     if(response.numReg){
                         self.redirectToOwnerDetails()
@@ -265,14 +258,13 @@
             calculateTotalPerVisit: function () {
                 var visitorCount = 0
                 if(this.visit.typeOfVisit === 0 && this.withTheOwner || this.skipPayment) {
-                    return this.visit.totalCost = 0
+                    return this.visit.totalCost = 0.00
                 }
                 if(this.visit.typeOfVisit === 0 && !this.withTheOwner) {
                     let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
                     return this.visit.totalCost = visitorIsNotYounger.length * 5
                 }
                 if(this.visit.typeOfVisit === 1) {
-                    console.log('hi')
                     var arrivalDate = new Date(this.visit.arrivalDate).getTime()
                     var departureDate = new Date(this.visit.departureDate).getTime()
                     

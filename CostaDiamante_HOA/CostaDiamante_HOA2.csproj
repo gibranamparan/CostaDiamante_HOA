@@ -233,6 +233,10 @@
     <Compile Include="Migrations\201711210355446_return_visist.Designer.cs">
       <DependentUpon>201711210355446_return_visist.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201711210455083_update_model-visit.cs" />
+    <Compile Include="Migrations\201711210455083_update_model-visit.Designer.cs">
+      <DependentUpon>201711210455083_update_model-visit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condo.cs" />
@@ -509,6 +513,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711210355446_return_visist.resx">
       <DependentUpon>201711210355446_return_visist.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711210455083_update_model-visit.resx">
+      <DependentUpon>201711210455083_update_model-visit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
