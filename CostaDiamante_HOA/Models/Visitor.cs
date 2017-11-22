@@ -18,6 +18,13 @@ namespace CostaDiamante_HOA.Models
         [Display(Name = "Last name")]
         public string lastName { get; set; }
 
+        [Display(Name = "Name")]
+        public string fullName {
+            get {
+                return String.Format("{0} {1}", this.name, this.lastName);
+            }
+        }
+
         [Display(Name = "IsYounger")]
         public Boolean isYounger { get; set; }
 

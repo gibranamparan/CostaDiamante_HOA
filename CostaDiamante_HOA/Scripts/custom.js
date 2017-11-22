@@ -53,3 +53,10 @@ Date.prototype.dateISOFormat = function (days) {
 boolParse = function (myStr){
     return myStr.toLowerCase()=='true';
 }
+
+sortBy = function (arr, field, direction) {
+    if (direction=='asc')
+        arr.sort(function (a, b) { return a[field] - b[field] })
+    else if(direction == "desc")
+        arr.sort(function (a, b) { return b[field] - a[field] })
+}

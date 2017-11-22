@@ -39,8 +39,9 @@ namespace CostaDiamante_HOA.Models
                 return new TimePeriod(this.arrivalDate, this.departureDate);
             }
         }
-        
+
         [Display(Name = "Total")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal totalCost { get; set; }
 
         //A visits is for one condo
