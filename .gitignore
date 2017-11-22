@@ -292,5 +292,6 @@ __pycache__/
 *.xsd.cs
 
 # End of https://www.gitignore.io/api/visualstudio
-/Sonora_HOA/Properties/Settings.Designer.cs
-/Sonora_HOA/Properties/Settings.settings
+/CostaDiamante_HOA/Properties/Settings.Designer.cs
+/CostaDiamante_HOA/Properties/Settings.settings
+/CostaDiamante_HOA/Web.config

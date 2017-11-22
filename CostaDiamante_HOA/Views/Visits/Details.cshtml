@@ -53,9 +53,9 @@
                 <form class="row form-inline" v-on:submit.prevent="createNewPayment()" v-if="toPay>0">
                     @Html.AntiForgeryToken()
                     <div class="form-group col-md-2">
-                        @Html.LabelFor(model => payment.amount) @*control-label col-md-2*@
-                        <input class="form-control" type="number"
-                               v-model.number="newPayment.amount" />
+                        @Html.LabelFor(model => payment.amount) (USD)
+                        <input class="form-control" type="number" min="0"
+                               v-model.number="newPayment.amount" id="amount" :max="toPay"/>
                     </div>
 
                     <div class="form-group col-md-4">
@@ -65,7 +65,7 @@
                     </div>
                     <div class="form-group col-md-2">
                         <button id="btnRegister" name="createVisit" class="btn btn-success" type="submit"
-                                disabled="newPayment.amount == 0 || newPayment.amount > toPay">
+                                :disabled="newPayment.amount == 0 || newPayment.amount > toPay">
                             Registrar
                         </button>
                     </div>
@@ -128,15 +128,15 @@
                 </thead>
                 <tbody>
                     @{
-            int c = 1;
-            foreach (var v in Model.visitors)
-            {
+                        int c = 1;
+                        foreach (var v in Model.visitors)
+                        {
                             <tr>
                                 <td>@c</td>
                                 <td>@v.fullName</td>
                             </tr>
-                    c = c + 1;
-            }
+                            c = c + 1;
+                        }
                     }
                 </tbody>
             </table>
@@ -162,30 +162,29 @@
         }
         const v = new Vue({
             el: '#app',
-            data() {
-                return {
-                    sortOrders: {
-                        amount : 'asc',
-                        date: 'asc'
-                    },
-                    newPayment: {
-                        id: 0,
-                        amount: 0.00,
-                        date: '@payment.date.ToString("yyyy-MM-dd")',
-                        dtDate: new Date('@payment.date.ToString("yyyy/MM/dd")'),
-                        typeOfPayment: 1,
-                        ownerID: '@Model.ownerID',
-                        visitID: '@Model.visitID'
-                    },
-                    payments: [],
-                    //totalCost: @Model.totalCost
-                    totalCost: 200,
-                    toPay: 0,
-                    totalPaid: 0,
-                    isblocked: true
-                }
+            data: {
+                sortOrders: {
+                    amount : 'asc',
+                    date: 'asc'
+                },
+                newPayment: {
+                    id: 0,
+                    amount: 0.00,
+                    date: '@payment.date.ToString("yyyy-MM-dd")',
+                    dtDate: new Date('@payment.date.ToString("yyyy/MM/dd")'),
+                    typeOfPayment: 1,
+                    ownerID: '@Model.ownerID',
+                    visitID: '@Model.visitID'
+                },
+                payments: [],
+                //totalCost: @Model.totalCost
+                totalCost: 200,
+                toPay: 0,
+                totalPaid: 0,
+                isblocked: true
             },
             methods: {
+                //Get initially all payments
                 getPayments: function () {
                     var self = this
                     api.get('Index/@Model.visitID')
@@ -193,7 +192,7 @@
                         var dataFromServer = response.data
                         self.payments = dataFromServer.map(function (item) {
                             var newItem = {}
-                            Object.assign(newItem, self.paymentModel)
+                            Object.assign(newItem, self.newPayment)
                             newItem.id = item.id
                             newItem.date = item.date
                             newItem.dtDate = new Date(item.date),
@@ -221,7 +220,13 @@
                             self.sortPayments()
 
                             //Clear new payment container
-                            Object.assign(self.newPayment, self.paymentModel)
+                            self.newPayment.amount = 0
+                            self.newPayment.date = '@payment.date.ToString("yyyy-MM-dd")'
+                            self.newPayment.dtDate = new Date(self.date)
+
+                            //Focus on default
+                            document.getElementById("amount").focus()
+
                             //Notify successfull registration
                             $.notify("@(GlobalMessages.PAY_NEW)", { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
 
@@ -280,7 +285,7 @@
                     this.totalPaid = this.calculateTotalPaid()
                     this.toPay = (this.totalCost < this.totalPaid) ? 0 : (this.totalCost - this.totalPaid)
                     this.allowNewPayment = this.toPay > 0
-                }, 
+                },
                 calculateTotalPaid: function(){
                     return this.payments.map(function (item) { return item.amount }).reduce(function (a, b) { return a + b })
                 },
