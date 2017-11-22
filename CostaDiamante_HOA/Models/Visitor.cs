@@ -29,7 +29,8 @@ namespace CostaDiamante_HOA.Models
         public Boolean isYounger { get; set; }
 
         //A visitor is for one visit
-        [Display(Name = "Visit")]
+        [Display(Name = "Visit #")]
+        public int visitID { get; set; }
         public virtual Visit visit { get; set; }
     }
 }

@@ -22,6 +22,9 @@ namespace CostaDiamante_HOA.Models
         [Display(Name = "Notification Date")]
         public DateTime date { get; set; }
 
+        [Display(Name = "Type of visit")]
+        public typeOfVisit typeOfVisit { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
         ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
@@ -43,6 +46,9 @@ namespace CostaDiamante_HOA.Models
         [Display(Name = "Total")]
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal totalCost { get; set; }
+
+        [Display(Name = "Payment omitted")]
+        public bool paymentOmitted { get; set; }
 
         //A visits is for one condo
         [Display(Name = "Condo Number")]
@@ -81,5 +87,9 @@ namespace CostaDiamante_HOA.Models
             [DisplayName("Include Inhouse Visits")]
             public bool isInHouse { get; set; }
         }
+    }
+    public enum typeOfVisit
+    {
+        FRIENDS_AND_FAMILY, BY_RENT
     }
 }
