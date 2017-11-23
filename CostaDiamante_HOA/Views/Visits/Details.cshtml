@@ -12,9 +12,6 @@
     </a> |
     <a href="@Url.Action("Edit", new { id = Model.visitID })">
         <i class="glyphicon glyphicon-edit"></i><span>Edit Visit</span>
-    </a> 
-    <a href="@Url.Action("SendEmail")" class="btn btn-primary pull-right">
-        <i class="fa fa-envelope"></i> <span>Send</span>
     </a>
 </nav>
 <div id="app">
@@ -79,7 +76,7 @@
                 <hr>
                 <div>
                     <h2>List of payments</h2>
-                    <div class="row col-md-8" style="font-size: 1.5em">
+                    <div class="row col-md-12" style="font-size: 1.2em">
                         <div class="col-md-4">
                             <strong>Total Paid: </strong>
                             <span class="form-control-static">{{numeral(totalPaid).format('$0,000.00')}}</span>
@@ -95,8 +92,8 @@
                                 <th style="width: 2em"></th>
                                 <th v-on:click="sortPayments('amount')"
                                     style="cursor:pointer">@Html.DisplayNameFor(model => payment.amount)</th>
-                                    <th v-on:click="sortPayments('dtDate')"
-                                        style="cursor:pointer">@Html.DisplayNameFor(model => payment.date)</th>
+                                <th v-on:click="sortPayments('dtDate')"
+                                    style="cursor:pointer">@Html.DisplayNameFor(model => payment.date)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -110,7 +107,7 @@
                         </tbody>
                     </table>
                     <div class="alert alert-info" v-if="payments.length == 0">
-                        <strong>No payments</strong> have been registered for this visit.
+                        <strong>No payments</strong> <span>have been registered for this visit.</span>
                     </div>
                 </div>
             </div>
@@ -180,8 +177,7 @@
                     visitID: '@Model.visitID'
                 },
                 payments: [],
-                //totalCost: @Model.totalCost
-                totalCost: 200,
+                totalCost: @(Model.totalCost),
                 toPay: 0,
                 totalPaid: 0,
                 isblocked: true
@@ -289,8 +285,11 @@
                     this.toPay = (this.totalCost < this.totalPaid) ? 0 : (this.totalCost - this.totalPaid)
                     this.allowNewPayment = this.toPay > 0
                 },
-                calculateTotalPaid: function(){
-                    return this.payments.map(function (item) { return item.amount }).reduce(function (a, b) { return a + b })
+                calculateTotalPaid: function () {
+                    var res = 0
+                    if (this.payments && this.payments.length > 0)
+                        res = this.payments.map(function (item) { return item.amount }).reduce(function (a, b) { return a + b })
+                    return res
                 },
             },
             created() {

@@ -69,12 +69,12 @@
 
                     <div class="form-group col-md-8">
                         <div v-if="visit.typeOfVisit === 0" class="col-md-6">
-                            <label>with the owner</label>
+                            <label>Owner is accompanying</label>
                             <input class="form-control" type="checkbox" v-model="withTheOwner">
                         </div>
 
                         <div v-if="visit.typeOfVisit === 0 && !withTheOwner" class="col-md-6">
-                            <label>Skip payment</label>
+                            <label>Skip Payment for Friends and Family</label>
                             <input class="form-control" type="checkbox" v-model="skipPayment">
                         </div>
                     </div>
@@ -86,61 +86,60 @@
                             <span v-if="visit.typeOfVisit === 0 && withTheOwner === false && skipPayment === false">5 dollars per person if under 6 years does not apply.</span>
                         </div>
                         <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
-                            En una renta, se permiten 12 personas, las personas extra cuestan 50 dlls el brasalete. <br>
-                            El ͞Rental Impact por visita de renta es de 75 dlls por día.
+                            For renting, every <strong>extra person</strong> more than <strong>12 guests</strong> cost 50dlls for bracelet. <br>
+                            The <strong>Rental Impact Fee</strong> for the visit visit is 75 dlls per day.
                         </div>
-                        <div>
-
-                            <div class="clearfix"></div>
-                            <div class="form-group col-md-4">
-                                @Html.LabelFor(model => visitor.name)
-                                @Html.EditorFor(model => visitor.name, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.name" } })
-                            </div>
-                            <div class="form-group col-md-4">
-                                @Html.LabelFor(model => visitor.lastName)
-                                @Html.EditorFor(model => visitor.lastName, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.lastName" } })
-                            </div>
-
-                            <div class="form-group col-md-2">
-                                @Html.LabelFor(model => visitor.isYounger)
-                                @Html.EditorFor(model => visitor.isYounger, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.isYounger" } })
-                            </div>
-
-                            <div class="form-group col-md-2">
-                                <br />
-                                <button type="button" value="Add" class="btn btn-success btn-block pull-right" v-on:click="saveNewVisitorDB"
-                                        v-bind:disabled="(newVisitor.name === '' && newVisitor.lastName === '')">
-                                    Add
-                                </button>
-                            </div>
-                        </div>
-                        <!-- Visitors table -->
-                        <table class="table table-hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>@Html.DisplayNameFor(model => visitor.name)</th>
-                                    <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
-                                    <th>@Html.DisplayNameFor(model => visitor.isYounger)</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(visitor, i) in visit.visitors">
-                                    <td>{{ i + 1 }}</td>
-                                    <td>{{ visitor.name }}</td>
-                                    <td>{{ visitor.lastName }}</td>
-                                    <td>{{ visitor.isYounger | isYoungerFormat }}</td>
-                                    <td>
-                                        <label v-on:click="removeVisitorToTable(i)" class="removeLabel">
-                                            <i class="glyphicon glyphicon-remove"></i>
-                                            <span class="">Remove</span>
-                                        </label>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
+                    <div>
+                        <div class="clearfix"></div>
+                        <div class="form-group col-md-4">
+                            @Html.LabelFor(model => visitor.name)
+                            @Html.EditorFor(model => visitor.name, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.name" } })
+                        </div>
+                        <div class="form-group col-md-4">
+                            @Html.LabelFor(model => visitor.lastName)
+                            @Html.EditorFor(model => visitor.lastName, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.lastName" } })
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            @Html.LabelFor(model => visitor.isYounger)
+                            @Html.EditorFor(model => visitor.isYounger, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.isYounger" } })
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            <br />
+                            <button type="button" value="Add" class="btn btn-success btn-block pull-right" v-on:click="saveNewVisitorDB"
+                                    v-bind:disabled="(newVisitor.name === '' && newVisitor.lastName === '')">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Visitors table -->
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>@Html.DisplayNameFor(model => visitor.name)</th>
+                                <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
+                                <th>@Html.DisplayNameFor(model => visitor.isYounger)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(visitor, i) in visit.visitors">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ visitor.name }}</td>
+                                <td>{{ visitor.lastName }}</td>
+                                <td>{{ visitor.isYounger | isYoungerFormat }}</td>
+                                <td>
+                                    <label v-on:click="removeVisitorToTable(i)" class="removeLabel">
+                                        <i class="glyphicon glyphicon-remove"></i>
+                                        <span class="">Remove</span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

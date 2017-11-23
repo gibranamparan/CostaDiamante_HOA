@@ -208,6 +208,7 @@
     <Compile Include="Controllers\VisitorsController.cs" />
     <Compile Include="Controllers\VisitsController.cs" />
     <Compile Include="GeneralTools\FiltrosDeSolicitudes.cs" />
+    <Compile Include="GeneralTools\MailerSendGrid.cs" />
     <Compile Include="GeneralTools\TimePeriod.cs" />
     <Compile Include="GeneralTools\VMConfirmModalAttributes.cs" />
     <Compile Include="Global.asax.cs">

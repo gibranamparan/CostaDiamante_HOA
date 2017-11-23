@@ -6,6 +6,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Threading.Tasks;
+using System.Configuration;
+
 namespace CostaDiamante_HOA.Models
 {
     public class Visit
@@ -43,7 +48,7 @@ namespace CostaDiamante_HOA.Models
             }
         }
 
-        [Display(Name = "Total")]
+        [Display(Name = "Total Cost")]
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal totalCost { get; set; }
 
@@ -86,6 +91,39 @@ namespace CostaDiamante_HOA.Models
 
             [DisplayName("Include Inhouse Visits")]
             public bool isInHouse { get; set; }
+        }
+
+        /// <summary>
+        /// Sends an email to de administrator notifying that the current visit
+        /// was registered in the system.
+        /// </summary>
+        /// <param name="Request">HTTPRequestBase from the controller to get the URL from the web server
+        /// currentrly running the application.</param>
+        /// <returns>A string with an error message, if its empty or null, everything worked OK or the async task did't finished before the response was sent to the client.</returns>
+        public string sendNotificationEmail(HttpRequestBase Request)
+        {
+            string errorMessage = string.Empty;
+
+            //Subject
+            string subject = "A visit was notified by " + this.owner.fullName;
+
+            //URL To see Details
+            string visitDetailsURL = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
+            visitDetailsURL += "/Visits/Details/" + this.visitID;
+
+            //Email Body
+            string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
+            emailMessage += "<h3>New Visit Notified</h3>";
+            emailMessage += "<span>A new visit was notified by " + this.owner.fullName + ". Click this link to see the details:</span>";
+            emailMessage += " <a href='" + visitDetailsURL + "'>Go to visit notification details.</a>";
+            Task.Run(() =>
+            {
+                //Email is sent just to the admin
+                var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, null);
+                errorMessage = response.Result;
+            });
+
+            return errorMessage;
         }
     }
     public enum typeOfVisit

@@ -12,18 +12,13 @@ using static CostaDiamante_HOA.GeneralTools.FiltrosDeSolicitudes;
 using Microsoft.AspNet.Identity;
 using System.Web.Script.Serialization;
 
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System.Threading.Tasks;
-using System.Configuration;
-
 namespace CostaDiamante_HOA.Controllers
 {
     [Authorize]
     public class VisitsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-
+        
         // GET: Visits
         public ActionResult Index(Visit.VMVisitsFilter visitsFilter)
         {
@@ -59,23 +54,6 @@ namespace CostaDiamante_HOA.Controllers
 
             ViewBag.result = visits;
             return View(visitsFilter);
-        }
-
-        public async Task<JsonResult> SendEmail()
-        {
-            //var apiKey = Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
-            var apiKey = ConfigurationManager.AppSettings["sendGrindAPIKey"];
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("gibranamparand@hotmail.com", "Gibran Amparan");
-            var subject = "Sending with SendGrid is Fun for test to Cost Diamante";
-            var to = new List<EmailAddress> { new EmailAddress("gibranamparan@netcodesolutions.net", "Netcode") };
-            var plainTextContent = "and easy to do anywhere, even with C#";
-            var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
-            //var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-            var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, to, subject, plainTextContent, htmlContent);
-            var response = await client.SendEmailAsync(msg);
-
-            return Json(response, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Visits/Details/5
@@ -119,20 +97,28 @@ namespace CostaDiamante_HOA.Controllers
         {
             int numReg = 0;
             string errorMsg = string.Empty;
+            string errorMailer = string.Empty;
             visit.date = DateTime.Now;
             try { 
                 if (ModelState.IsValid)
                 {
                     db.Visits.Add(visit);
                     numReg = db.SaveChanges();
-                    return Json(new { numReg = numReg });
+                    if (numReg > 0) //If the visit notification was added, an email is sent to admin
+                    {
+                        db.Entry(visit).Reference(v => v.owner).Load();
+                        errorMailer = visit.sendNotificationEmail(Request);
+                    }
                 }
             }catch(Exception e)
-            {
-                errorMsg = String.Format("{0}. Details: {1}",e.Message,e.InnerException.Message);
+            {   //An error ocurrend, prepare to be reported
+                if(e == null)
+                    errorMsg = "Error Exception was null, error unknown";
+                else
+                    errorMsg = String.Format("{0}. Details: {1}",e.Message,e.InnerException.Message);
             }
 
-            return Json(new { numReg = numReg, errorMsg = errorMsg });
+            return Json(new { numReg = numReg, errorMsg = errorMsg, errorMailer = errorMailer });
         }
 
         // GET: Visits/Edit/5

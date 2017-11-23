@@ -69,14 +69,14 @@
                         </select>
                     </div>
 
-                    <div class="form-group col-md-8">
+                    <div class="form-group col-md-6">
                         <div v-if="visit.typeOfVisit === 0" class="col-md-6">
-                            <label>with the owner</label>
+                            <label>Owner is accompanying</label>
                             <input class="form-control" type="checkbox" v-model="withTheOwner">
                         </div>                   
 
                         <div v-if="visit.typeOfVisit === 0 && !withTheOwner" class="col-md-6">
-                            <label>Skip payment</label>
+                            <label>Skip Payment for Friends and Family</label>
                             <input class="form-control" type="checkbox" v-model="skipPayment">
                         </div>
                     </div>
@@ -88,8 +88,8 @@
                            <span v-if="visit.typeOfVisit === 0 && withTheOwner === false && skipPayment === false">5 dollars per person if under 6 years does not apply.</span>
                         </div>
                         <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
-                            En una renta, se permiten 12 personas, las personas extra cuestan 50 dlls el brasalete. <br>
-                            El ͞Rental Impact por visita de renta es de 75 dlls por día.
+                            For renting, every <strong>extra person</strong> more than <strong>12 guests</strong> cost <strong>$50 USD</strong> for bracelet. <br>
+                            The <strong>Rental Impact Fee</strong> for the visit visit is <strong>$75 USD</strong> per day.
                         </div>
                     <div>
                     
@@ -227,8 +227,10 @@
                 this.visit.visitors.splice(index, 1)
             },
             redirectToOwnerDetails: function(){
-                setTimeout(function(){window.location.replace("/Visits/")}, 20000)
                 swal("Done!","Your visit was scheduled succesfully","success")
+                .then(function(){
+                    window.location.replace("/Visits/")
+                })
             },
             sendDataToServer: function () { //Async call to save the new visit in DB
                 var self = this
@@ -244,7 +246,7 @@
                     if(response.numReg){
                         self.redirectToOwnerDetails()
                     }else if(response.errorMsg){
-                        swal("Oops!","An error ocurred, plase try again. If error persists, plase send this to the system administrator: "+response.errorMsg,"error")
+                        swal("Oops!","@GlobalMessages.ERROR_OCURRED"+response.errorMsg,"error")
                     }else{ //Unknown error
                         console.log(response)
                     }
