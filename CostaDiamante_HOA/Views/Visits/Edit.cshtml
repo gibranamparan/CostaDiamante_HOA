@@ -121,7 +121,7 @@
                                 <th>#</th>
                                 <th>@Html.DisplayNameFor(model => visitor.name)</th>
                                 <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
-                                <th>@Html.DisplayNameFor(model => visitor.isYounger)</th>
+                                <th>Is less than 6 years old</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -305,17 +305,20 @@
                 if(this.visit.typeOfVisit === 1) {
                     var arrivalDate = new Date(this.visit.arrivalDate).getTime()
                     var departureDate = new Date(this.visit.departureDate).getTime()
-
+                    
                     var differenceDays = departureDate - arrivalDate
-                    //console.log(differenceDays)
-                    //console.log(differenceDays/(1000*60*60*24))
                     if(this.visit.visitors.length >= 1) {
                         this.visit.totalCost = 75 * (differenceDays/(1000*60*60*24)) // (1000*60*60*24) --> milisegundos -> segundos -> minutos -> horas -> días
                     }
-
-                    if(this.visit.visitors.length > 12) {
-                        var visitorExtra = this.visit.visitors.length - 12
-                        return this.visit.totalCost + (visitorExtra * 50)
+                    
+                    var visitorNotYounger = this.visit.visitors.filter(function (item) {
+                        return item.isYounger === false
+                    });
+                    
+                    if(visitorNotYounger.length > 12) {
+                        //var visitorExtra = this.visit.visitors.length - 12
+                        var visitorExtra = visitorNotYounger.length - 12
+                        return this.visit.totalCost + (visitorExtra * 50) 
                     }
                     return this.visit.totalCost
                 }
