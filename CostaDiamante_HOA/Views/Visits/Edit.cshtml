@@ -121,7 +121,7 @@
                                 <th>#</th>
                                 <th>@Html.DisplayNameFor(model => visitor.name)</th>
                                 <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
-                                <th>@Html.DisplayNameFor(model => visitor.isYounger)</th>
+                                <th>Is less than 6 years old</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -307,14 +307,17 @@
                     var departureDate = new Date(this.visit.departureDate).getTime()
 
                     var differenceDays = departureDate - arrivalDate
-                    //console.log(differenceDays)
-                    //console.log(differenceDays/(1000*60*60*24))
                     if(this.visit.visitors.length >= 1) {
                         this.visit.totalCost = 75 * (differenceDays/(1000*60*60*24)) // (1000*60*60*24) --> milisegundos -> segundos -> minutos -> horas -> días
                     }
 
-                    if(this.visit.visitors.length > 12) {
-                        var visitorExtra = this.visit.visitors.length - 12
+                    var visitorNotYounger = this.visit.visitors.filter(function (item) {
+                        return item.isYounger === false
+                    });
+
+                    if(visitorNotYounger.length > 12) {
+                        //var visitorExtra = this.visit.visitors.length - 12
+                        var visitorExtra = visitorNotYounger.length - 12
                         return this.visit.totalCost + (visitorExtra * 50)
                     }
                     return this.visit.totalCost
@@ -322,12 +325,17 @@
             }
         },
         created: function () {
-            if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY' && '@Model.paymentOmitted' === 'False') {
-                console.log('1' + '@Model.paymentOmitted')
+            
+            if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' === '0,00') {
+                console.log('entra1')
                 this.withTheOwner = true
             }
+
+            if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' != '0,00') {
+                this.withTheOwner = false
+            }
+
             if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY' && '@Model.paymentOmitted' === 'True') {
-                console.log('2' + '@Model.paymentOmitted')
                 this.skipPayment = '@Model.paymentOmitted'
             }
 

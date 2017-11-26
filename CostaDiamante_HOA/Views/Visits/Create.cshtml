@@ -69,7 +69,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-8">
                         <div v-if="visit.typeOfVisit === 0" class="col-md-6">
                             <label>Owner is accompanying</label>
                             <input class="form-control" type="checkbox" v-model="withTheOwner">
@@ -121,7 +121,9 @@
                             <th>#</th>
                             <th>@Html.DisplayNameFor(model => visitor.name)</th>
                             <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
-                            <th>@Html.DisplayNameFor(model => visitor.isYounger)</th>
+                            <th>
+
+                            </th>
                             <th></th>
                         </tr>
                     </thead>
@@ -270,14 +272,17 @@
                     var departureDate = new Date(this.visit.departureDate).getTime()
                     
                     var differenceDays = departureDate - arrivalDate
-                    //console.log(differenceDays)
-                    //console.log(differenceDays/(1000*60*60*24))
                     if(this.visit.visitors.length >= 1) {
                         this.visit.totalCost = 75 * (differenceDays/(1000*60*60*24)) // (1000*60*60*24) --> milisegundos -> segundos -> minutos -> horas -> días
                     }
                     
-                    if(this.visit.visitors.length > 12) {
-                        var visitorExtra = this.visit.visitors.length - 12
+                    var visitorNotYounger = this.visit.visitors.filter(function (item) {
+                        return item.isYounger === false
+                    });
+                    
+                    if(visitorNotYounger.length > 12) {
+                        //var visitorExtra = this.visit.visitors.length - 12
+                        var visitorExtra = visitorNotYounger.length - 12
                         return this.visit.totalCost + (visitorExtra * 50) 
                     }
                     return this.visit.totalCost
@@ -286,7 +291,7 @@
         },
         created: function () {
             this.watchCollection(
-                ['visit.typeOfVisit','withTheOwner','visit.arrivalDate','visit.departureDate'],
+                ['visit.typeOfVisit','visit.visitors','withTheOwner','visit.arrivalDate','visit.departureDate'],
                 this.calculateTotalPerVisit)
         },
         computed: {
