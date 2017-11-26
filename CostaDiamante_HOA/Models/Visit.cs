@@ -69,7 +69,7 @@ namespace CostaDiamante_HOA.Models
         public virtual ICollection<Visitor> visitors { get; set; }
 
         //Every visits has a list of payments
-        public virtual ICollection<Payments> payments { get; set;  } 
+        public virtual ICollection<Payment_RentImpact> payments { get; set;  } 
 
         public bool isInHouseInPeriod(TimePeriod tp)
         {

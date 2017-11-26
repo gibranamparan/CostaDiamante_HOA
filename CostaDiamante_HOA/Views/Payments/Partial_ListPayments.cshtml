@@ -1,76 +1,253 @@
-﻿@*@model IEnumerable<CostaDiamante_HOA.Models.Payments>*@
+﻿
+@model Payment
 @using CostaDiamante_HOA.Models
+@{ 
+    decimal totalCost = ViewData["totalCost"] == null ? 0 : (decimal)ViewData["totalCost"];
+    int visitID = Model.typeOfPayment == Payment.TypeOfPayment.RENTAL_IMPACT ? ((Payment_RentImpact)Model).visitID : 0;
+    string ownerID = Model.typeOfPayment == Payment.TypeOfPayment.HOA_FEE ? ((Payment_HOAFee)Model).ownerID : string.Empty;
+    Payment.TypeOfPayment typeOfPayment = Model.typeOfPayment;
 
-@*<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.owner.name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.visit.ownerID)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.amount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.typeOfPayment)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.owner.name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.visit.ownerID)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.amount)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.typeOfPayment)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.paymentsID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.paymentsID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.paymentsID })
-        </td>
-    </tr>
+    //API URLs depends on type of payment
+    string indexURL = typeOfPayment == Payment.TypeOfPayment.HOA_FEE ? "IndexPaymentsHOAFee/"+ownerID : (typeOfPayment == Payment.TypeOfPayment.RENTAL_IMPACT ? "IndexPaymentsRentImpact/" + visitID : "");
+    string createURL = typeOfPayment == Payment.TypeOfPayment.HOA_FEE ? "CreatePaymentsHOAFee" : (typeOfPayment == Payment.TypeOfPayment.RENTAL_IMPACT ? "CreatePaymentsRentImpact" : "");
 }
+<div id="pnlPayments" class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">@Model.TypeOfPaymentName</h3>
+    </div>
+    <div class="panel-body">
+        <form class="row form-inline" v-on:submit.prevent="createNewPayment()" v-if="toPay>0 || paymentType == '@(Payment.TypeOfPayment.HOA_FEE)'">
+            @Html.AntiForgeryToken()
+            <div class="form-group col-md-2">
+                @Html.LabelFor(model => Model.amount) (USD)
+                <input id="amount" class="form-control" type="number"
+                       v-bind:min="0" v-model.number="newPayment.amount" 
+                       v-bind:max="toPay" 
+                       />
+            </div>
 
-</table>*@
-
-
-<div id="app">
-    <h1>{{ message }}</h1>
-    <ul>
-        <li v-for="item in payments">{{ item }}</li>
-    </ul>
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => Model.date)
+                @Html.EditorFor(model => Model.date, new { htmlAttributes = new { @class = "form-control", v_model = "newPayment.date" } })
+                @Html.ValidationMessageFor(model => Model.date, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-2">
+                <button id="btnRegister" name="createVisit" class="btn btn-success" type="submit" 
+                        v-bind:disabled="newPayment.amount == 0 || newPayment.amount > toPay">
+                    Registrar
+                </button>
+            </div>
+        </form>
+        <div class="alert alert-info" v-if="toPay==0 && paymentType != '@(Payment.TypeOfPayment.HOA_FEE)'">
+            This visit was <Strong>paid completely</Strong>.
+        </div>
+        <hr>
+        <div>
+            <div class="row col-md-12" style="font-size: 1.2em" v-if="paymentType == '@(Payment.TypeOfPayment.RENTAL_IMPACT)'">
+                <div class="col-md-4">
+                    <strong>Total Paid: </strong>
+                    <span class="form-control-static">{{numeral(totalPaid).format('$0,000.00')}}</span>
+                </div>
+                <div class="col-md-4">
+                    <strong>To Pay: </strong>
+                    <span class="form-control-static">{{numeral(toPay).format('$0,000.00')}}</span>
+                </div>
+            </div>
+            <table id="tblPayments" class="table table-hover table-striped" v-if="payments.length > 0">
+                <thead>
+                    <tr>
+                        <th style="width: 2em"></th>
+                        <th v-on:click="sortPayments('amount')" style="cursor:pointer">
+                            @Html.DisplayNameFor(model => Model.amount)
+                        </th>
+                        <th v-on:click="sortPayments('dtDate')" style="cursor:pointer">
+                            @Html.DisplayNameFor(model => Model.date)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(payment, i) in payments">
+                        <td>
+                            <i class="fa fa-remove option remove" v-on:click="removePayment(payment)"></i>
+                        </td>
+                        <td>{{numeral(payment.amount).format('$0,000.00')}}</td>
+                        <td>{{moment(payment.date).format('LL')}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="alert alert-info" v-if="payments.length == 0">
+                <strong>No payments</strong> <span>have been registered for this visit.</span>
+            </div>
+        </div>
+    </div>
 </div>
-@Scripts.Render("~/node_modules/vue/dist/vue.min.js")
 
 <script>
-    const v = new Vue({
-        el: '#app',
-        data: {
-            message: 'Hello Vue.js!',
-            payments: this.$data
-        }
-    })
-</script>
+    var tblPayments
+    var exception
+    var paymentType = '@Model.typeOfPayment'
+    var newPaymentModel = {
+        id: 0,
+        amount: 0.00,
+        date: '@Model.date.ToString("yyyy-MM-dd")',
+        dtDate: new Date('@Model.date.ToString("yyyy/MM/dd")'),
+        typeOfPayment: 1,
+        ownerID: '@ownerID',
+        //Set the visit ID just if the payment its for RentImpact
+        visitID: @(visitID)
+    }
+    function initListPayments(){
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val(); //Token
+        var api = axios.create({ //Init connection to server
+            baseURL: "/Payments",
+            timeout: 20000,
+            headers: {"__RequestVerificationToken" : antiForgeryToken}
+        });
+        const v = new Vue({
+            el: '#pnlPayments',
+            data: {
+                sortOrders: {
+                    amount : 'asc',
+                    date: 'asc'
+                },
+                newPayment: newPaymentModel,
+                payments: [],
+                totalCost: @(totalCost),
+                toPay: 0,
+                totalPaid: 0,
+                isblocked: true
+            },
+            methods: {
+                //Get initially all payments
+                getPayments: function () {
+                    var self = this
+                    api.get('@(indexURL)')
+                    .then(function (response) {
+                        var dataFromServer = response.data
+                        debugger
+                        if(dataFromServer.numReg){
+                            dataFromServer = dataFromServer.res
+                            self.payments = dataFromServer.map(function (item) {
+                                var newItem = {}
+                                Object.assign(newItem, self.newPayment)
+                                newItem.id = item.id
+                                newItem.date = item.date
+                                newItem.dtDate = new Date(item.date),
+                                newItem.amount = item.amount
+                                return newItem
+                            })
+                        }else if(dataFromServer.errorMsg){
+                            notifyError(dataFromServer.errorMsg)
+                        }
+                    })
+                    .catch(function (error) {
+                        exception = error
+                        notifyError(error.message)
+                    })
+                },
+                //Add a new payment for this visit async from server
+                createNewPayment: function () {
+                    var self = this
+                    api.post('@(createURL)', {
+                        payment: self.newPayment
+                    })
+                    .then(response => {
+                        var response = response.data
+                        if (response.numReg) {
+                            var newPayment = response.result
+                            //Clone and insert new payment to state
+                            self.payments.push(newPayment)
+                            self.sortPayments()
 
-@*@foreach (var d in Model)
-{
-    @:this.payments.push("@d");
-}*@
+                            //Clear new payment container
+                            self.newPayment.amount = 0
+                            self.newPayment.date = '@Model.date.ToString("yyyy-MM-dd")'
+                            self.newPayment.dtDate = new Date(self.date)
+
+                            //Focus on default
+                            document.getElementById("amount").focus()
+
+                            //Notify successfull registration
+                            $.notify("@(GlobalMessages.PAY_NEW)", { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
+
+                        } else if (response.errorMsg) {
+                            notifyError('@GlobalMessages.ERROR_OCURRED' + response.errorMsg)
+                        } else { //Unknown error
+                            notifyError(response)
+                        }
+                    })
+                    .catch(e => {
+                        exception = e
+                        notifyError(e.message)
+                    })
+                },
+                //Remove payment async from server after confirmation
+                removePayment: function (item) {
+                    self = this
+                    //show confirmation dialog
+                    swal("Confirm Delete", '@GlobalMessages.PAY_CANCEL_CONFIRM'
+                        + " " + numeral(item.amount).format('$0,000.00') + " paid in " + moment(item.date).format('LL'),
+                    {
+                        dangerMode: true,
+                        buttons:true
+                    }).then(confirmed=>{
+                        if (confirmed) { //If removal was confirmed
+                            api.post('Delete', { //Execute async request to server
+                                id: item.id
+                            })
+                            .then(response => {
+                                var response = response.data
+                                if (response.numReg) { //If removal was successful
+                                    //updates payments list
+                                    self.payments = self.payments.filter(function (pay) { return pay.id != item.id })
+                                    self.sortPayments()
+
+                                    //Notify successfully done operation
+                                    $.notify('@GlobalMessages.PAY_CANCELED', { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
+                                } else if (response.errorMsg) { //Custom error from server
+                                    notifyError('@GlobalMessages.ERROR_OCURRED' + response.errorMsg)
+                                } else { //Unknown error
+                                    notifyError(response)
+                                }
+                            })
+                            .catch(e => { //Error in request
+                                exception = e
+                                notifyError(e.message)
+                            })
+                        }
+                    })
+                },
+                sortPayments: function (fieldName) {//Sort paymentes desceding
+                    sortBy(this.payments, fieldName, this.sortOrders.amount)
+                    this.sortOrders.amount = this.sortOrders.amount == 'desc' ? 'asc' : 'desc'
+                },
+                updateAmounts: function () {
+                    this.totalPaid = this.calculateTotalPaid()
+                    this.toPay = (this.totalCost < this.totalPaid) ? 0 : (this.totalCost - this.totalPaid)
+                    this.allowNewPayment = this.toPay > 0
+                },
+                calculateTotalPaid: function () {
+
+                    var res = 0
+                    if (this.payments && this.payments.length > 0)
+                        res = this.payments.map(function (item) { return item.amount }).reduce(function (a, b) { return a + b })
+                    return res
+                },
+            },
+            created() {
+                this.getPayments();
+                if(paymentType == '@(Payment.TypeOfPayment.HOA_FEE)'){
+                    this.toPay = @(int.MaxValue)
+                }else{    
+                    this.updateAmounts()
+                }
+
+            },
+            updated() {
+                if(paymentType == '@(Payment.TypeOfPayment.RENTAL_IMPACT)')
+                    this.updateAmounts()
+            }
+        })
+        return v;
+    }
+</script>

@@ -1,4 +1,4 @@
-namespace CostaDiamante_HOA.Migrations
+namespace CostaDiamante_HOA
 {
     using CostaDiamante_HOA.Models;
     using Microsoft.AspNet.Identity;

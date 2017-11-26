@@ -9,6 +9,10 @@
     vdd.Add("ownerID", Model.Id);
 
     List<CostaDiamante_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
+
+
+    //New default payment as model for partialview, 
+    Payment_HOAFee payment = new Payment_HOAFee() { date = DateTime.Today, ownerID = Model.Id };
 }
 
 @if (Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
@@ -42,3 +46,12 @@
         }
     </div>
 </div>
+
+@Html.Partial("../Payments/Partial_ListPayments",payment)
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        var app = initListPayments()
+    </script>
+}

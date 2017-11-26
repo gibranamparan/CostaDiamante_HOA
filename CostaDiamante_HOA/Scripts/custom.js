@@ -60,3 +60,7 @@ sortBy = function (arr, field, direction) {
     else if(direction == "desc")
         arr.sort(function (a, b) { return b[field] - a[field] })
 }
+
+function notifyError(message) {
+    swal("Error!", message, "error")
+}

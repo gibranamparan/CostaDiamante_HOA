@@ -7,10 +7,10 @@ using System.Web;
 
 namespace CostaDiamante_HOA.Models
 {
-    public class Payments
+    public class Payment
     {
         [Key]
-        [Display(Name = "Notification #")]
+        [Display(Name = "Number #")]
         public int paymentsID { get; set; }
 
         [Display(Name = "Amount")]
@@ -23,18 +23,29 @@ namespace CostaDiamante_HOA.Models
         public DateTime date { get; set; }
 
         [Display(Name = "Type of payment")]
-        public typeOfPayment typeOfPayment { get; set; }
+        public TypeOfPayment typeOfPayment { get
+            {
+                var res = TypeOfPayment.NONE;
+                if (this is Payment_RentImpact)
+                    res = TypeOfPayment.RENTAL_IMPACT;
+                else if (this is Payment_HOAFee)
+                    res = TypeOfPayment.HOA_FEE;
+                return res;
+            }
+        }
 
-        //A payment has one owner
-        [Display(Name = "Owner")]
-        public string ownerID { get; set; }
-        public virtual Owner owner { get; set; }
+        public string TypeOfPaymentName {
+            get
+            {
+                var res = string.Empty;
+                if (this is Payment_RentImpact)
+                    res = GlobalMessages.PAYMENT_TYPE_RENT_IMPACT;
+                else if (this is Payment_HOAFee)
+                    res = GlobalMessages.PAYMENT_TYPE_HOA_FEE;
+                return res;
+            }
+        }
 
-        //A payment has one visit
-        [Display(Name = "Visit #")]
-        public int visitID { get; set;  }
-        public virtual Visit visit { get; set; }
-        
         public class VMPayment
         {
             /**/
@@ -44,14 +55,14 @@ namespace CostaDiamante_HOA.Models
             public int typeOfPayment { get; set; }
 
             public VMPayment() { }
-            public VMPayment(int paymentsID, decimal amount, DateTime date, typeOfPayment typeOfPayment)
+            public VMPayment(int paymentsID, decimal amount, DateTime date, TypeOfPayment typeOfPayment)
             {
                 id = paymentsID;
                 this.amount = amount;
                 this.date = date.ToString("s");
                 this.typeOfPayment = (int)typeOfPayment;
             }
-            public VMPayment(Payments pay)
+            public VMPayment(Payment pay)
             {
                 id = pay.paymentsID;
                 this.amount = pay.amount;
@@ -60,10 +71,9 @@ namespace CostaDiamante_HOA.Models
             }
         }
 
-    }
-
-    public enum typeOfPayment
-    {
-        HOA_FEE, RENTAL_IMPACT, MIX
+        public enum TypeOfPayment
+        {
+            HOA_FEE, RENTAL_IMPACT, NONE
+        }
     }
 }

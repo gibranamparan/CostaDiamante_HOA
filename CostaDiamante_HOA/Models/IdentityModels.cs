@@ -78,18 +78,16 @@ namespace CostaDiamante_HOA.Models
 
         public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Owner> Owners { get; set; }
 
-        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Payments> Payments { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Payment> Payments { get; set; }
 
         public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Condo> Condoes { get; set; }
-
-        //public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Permissions> Permissions { get; set; }
 
         public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Visit> Visits { get; set; }
 
         public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Visitor> Visitor { get; set; }
 
-        //public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.CheckInList> CheckInLists { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Payment_HOAFee> Payment_HOAFee { get; set; }
 
-        //public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Permissions_Visits> Permissions_Visits { get; set; }
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Payment_RentImpact> Payment_RentImpact { get; set; }
     }
 }

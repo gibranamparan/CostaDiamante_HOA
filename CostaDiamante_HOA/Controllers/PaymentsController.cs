@@ -20,12 +20,45 @@ namespace CostaDiamante_HOA.Controllers
         // GET: Payments
         [HttpGet]
         //[ValidateHeaderAntiForgeryToken]
-        public JsonResult Index(int id)
+        public JsonResult IndexPaymentsRentImpact(int id)
         {
-            var payments = db.Payments.Where(a => a.visitID == id).ToList().OrderByDescending(pay=>pay.date)
-            .Select(pay=> new Payments.VMPayment(pay.paymentsID, pay.amount, pay.date, pay.typeOfPayment));
+            /*var payments = db.Payment_RentImpact.Where(a => a.visitID == id).ToList().OrderByDescending(pay => pay.date)
+            .Select(pay => new Payment.VMPayment(pay.paymentsID, pay.amount, pay.date, pay.typeOfPayment));*/
+            int numReg = 0;
+            string errorMsg = string.Empty;
+            try { 
+                var payments = db.Visits.Find(id).payments.OrderByDescending(pay => pay.date).ToList()
+                    .Select(pay => new Payment.VMPayment(pay.paymentsID, pay.amount, pay.date, pay.typeOfPayment));
+                numReg = payments != null ? payments.Count() : 0;
+                return Json( new { res = payments, numReg = payments.Count() }, JsonRequestBehavior.AllowGet);
+            }catch(Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+            return Json(new { numReg = numReg, errorMsg = errorMsg });
+        }
+
+        // GET: Payments
+        [HttpGet]
+        //[ValidateHeaderAntiForgeryToken]
+        public JsonResult IndexPaymentsHOAFee(string id)
+        {
+            int numReg = 0;
+            string errorMsg = string.Empty;
+            try
+            {
+                var owner = db.Owners.Find(id);
+                var payments = owner.payments.OrderByDescending(pay => pay.date).ToList()
+                    .Select(pay => new Payment.VMPayment(pay.paymentsID, pay.amount, pay.date, pay.typeOfPayment));
+                numReg = payments != null ? payments.Count() : 0;
+                return Json(new { res = payments, numReg = payments.Count() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+            return Json(new { numReg = numReg, errorMsg = errorMsg });
            
-            return Json(payments, JsonRequestBehavior.AllowGet);
         }
 
         // POST: Payments/Create
@@ -33,7 +66,7 @@ namespace CostaDiamante_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
-        public JsonResult Create(Payments payment)
+        public JsonResult CreatePaymentsRentImpact(Payment_RentImpact payment)
         {
             int numReg = 0;
             string errorMsg = string.Empty;
@@ -42,9 +75,9 @@ namespace CostaDiamante_HOA.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    db.Payments.Add(payment);
+                    db.Payment_RentImpact.Add(payment);
                     numReg = db.SaveChanges();
-                    return Json(new { numReg = numReg, result = new Payments.VMPayment(payment) });
+                    return Json(new { numReg = numReg, result = new Payment.VMPayment(payment) });
                 }
             }
             catch (Exception e)
@@ -54,7 +87,34 @@ namespace CostaDiamante_HOA.Controllers
 
             return Json(new { numReg = numReg, errorMsg = errorMsg });
         }
-        
+
+        // POST: Payments/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateHeaderAntiForgeryToken]
+        public JsonResult CreatePaymentsHOAFee(Payment_HOAFee payment)
+        {
+            int numReg = 0;
+            string errorMsg = string.Empty;
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Payment_HOAFee.Add(payment);
+                    numReg = db.SaveChanges();
+                    return Json(new { numReg = numReg, result = new Payment.VMPayment(payment) });
+                }
+            }
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+
+            return Json(new { numReg = numReg, errorMsg = errorMsg });
+        }
+
         // POST: Payments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateHeaderAntiForgeryToken]
@@ -62,7 +122,7 @@ namespace CostaDiamante_HOA.Controllers
         {
             int numReg = 0;
             string errorMsg = string.Empty;
-            Payments payments = db.Payments.Find(id);
+            Payment payments = db.Payments.Find(id);
             if (payments != null)
                 try
                 {

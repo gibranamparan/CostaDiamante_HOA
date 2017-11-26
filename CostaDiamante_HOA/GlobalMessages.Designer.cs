@@ -104,5 +104,23 @@ namespace CostaDiamante_HOA {
                 return ResourceManager.GetString("PAY_NOT_FOUND", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HOA Fees Payments.
+        /// </summary>
+        public static string PAYMENT_TYPE_HOA_FEE {
+            get {
+                return ResourceManager.GetString("PAYMENT_TYPE_HOA_FEE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rent Impact Payments.
+        /// </summary>
+        public static string PAYMENT_TYPE_RENT_IMPACT {
+            get {
+                return ResourceManager.GetString("PAYMENT_TYPE_RENT_IMPACT", resourceCulture);
+            }
+        }
     }
 }
