@@ -279,10 +279,8 @@
                     var visitorNotYounger = this.visit.visitors.filter(function (item) {
                         return item.isYounger === false
                     });
-                    console.log(visitorNotYounger)
                     
                     if(visitorNotYounger.length > 12) {
-                        console.log('funciono')
                         //var visitorExtra = this.visit.visitors.length - 12
                         var visitorExtra = visitorNotYounger.length - 12
                         return this.visit.totalCost + (visitorExtra * 50) 
