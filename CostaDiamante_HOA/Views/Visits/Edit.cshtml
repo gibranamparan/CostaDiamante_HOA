@@ -183,7 +183,7 @@
                 totalCost : '@Model.totalCost',
                 typeOfVisit: '',
                 date: '@Model.date',
-                paymentOmitted: this.skipPayment,
+                paymentOmitted: '',
                 visitors: []
             },
             newVisitor:{ //Model to save a new visitor
@@ -203,8 +203,8 @@
                 { text: 'Visit of friends and family', value: 0 },
                 { text: 'Visit by rent', value: 1 }
             ],
-            withTheOwner: false,
-            skipPayment: false
+            withTheOwner: undefined,
+            skipPayment: undefined
         },
         methods: {
             getVisitors: function () {
@@ -274,6 +274,8 @@
             },
             sendDataToServer: function () { //Async call to save the new visit in DB
                 var self = this
+                self.visit.paymentOmitted = self.skipPayment
+                console.log(self.visit)
                 axios.post("Edit",{
                     visit : self.visit
                 })
@@ -293,6 +295,15 @@
                 })
             },
             calculateTotalPerVisit: function () {
+                //cuando una visita se pretende editar, donde atributo visit.paymentOmitted tiene el valor de true por defecto, 
+                //esto evitaría seguir conservando el mismo valor del atributo cuando se seleccione la casilla 'withTheOwner'.
+                if(this.withTheOwner) {
+                    this.skipPayment = false
+                }
+                if(this.skipPayment) {
+                    this.withTheOwner = false
+                }
+
                 var visitorCount = 0
 
                 if(this.visit.typeOfVisit === 0 && this.withTheOwner || this.skipPayment) {
@@ -327,7 +338,6 @@
         created: function () {
             
             if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' === '0,00') {
-                console.log('entra1')
                 this.withTheOwner = true
             }
 
@@ -346,7 +356,7 @@
             }
             this.getVisitors()
             this.watchCollection(
-                ['visit.typeOfVisit','withTheOwner','visit.arrivalDate','visit.departureDate'],
+                ['visit.typeOfVisit','withTheOwner','skipPayment','visit.arrivalDate','visit.departureDate'],
                 this.calculateTotalPerVisit)
         },
         computed: {

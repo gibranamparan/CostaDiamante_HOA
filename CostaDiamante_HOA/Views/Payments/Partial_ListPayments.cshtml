@@ -124,7 +124,7 @@
                     api.get('@(indexURL)')
                     .then(function (response) {
                         var dataFromServer = response.data
-                        debugger
+                       
                         if(dataFromServer.numReg){
                             dataFromServer = dataFromServer.res
                             self.payments = dataFromServer.map(function (item) {
