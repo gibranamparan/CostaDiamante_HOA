@@ -10,9 +10,10 @@
 
     List<CostaDiamante_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
 
+    List<Visit> visits = ViewBag.result;
 
     //New default payment as model for partialview, 
-    Payment_HOAFee payment = new Payment_HOAFee() { date = DateTime.Today, ownerID = Model.Id };
+            Payment_HOAFee payment = new Payment_HOAFee() { date = DateTime.Today, ownerID = Model.Id };
 }
 
 @if (Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
@@ -48,6 +49,8 @@
 </div>
 
 @Html.Partial("../Payments/Partial_ListPayments",payment)
+
+@Html.Partial("../Visits/Partial_ListVisits", visits)
 
 @section Scripts{
     @Scripts.Render("~/bundles/jqueryval")

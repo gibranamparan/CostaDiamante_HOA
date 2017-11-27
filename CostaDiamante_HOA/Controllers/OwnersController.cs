@@ -33,6 +33,8 @@ namespace CostaDiamante_HOA.Controllers
         public ActionResult Details(string id, bool errorGuest=false)
         {
             Owner owners = null;
+            List<Visit> visits = new List<Visit>();
+
             //If owner, show only his details
             if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
                 owners = db.Owners.Find(User.Identity.GetUserId());
@@ -48,7 +50,10 @@ namespace CostaDiamante_HOA.Controllers
             ViewBag.notAssociatedCondos = db.Condoes.Where(con =>
                 String.IsNullOrEmpty(con.ownerID)).ToList();
 
+            visits = owners.visitsHistory.ToList();
+
             ViewBag.errorGuest = errorGuest;
+            ViewBag.result = visits;
 
             return View(owners);
         }
