@@ -208,7 +208,12 @@
         },
         methods: {
             isVisitValid: function () {
-                return this.visit.visitors.length === 0
+                //debugger
+                if (Object.keys(this.visit.visitors).length > 0 && this.visit.arrivalDate < this.visit.departureDate && this.visit.arrivalDate != '' && this.visit.departureDate != '') {
+                    return false
+                } else {
+                    return true 
+                }
             },
             //selectTypeOfVisit: function () {
             //    if(value == 0) {
@@ -259,6 +264,7 @@
                 })
             },
             calculateTotalPerVisit: function () {
+                //this.isVisitValid()
                 var visitorCount = 0
                 if(this.visit.typeOfVisit === 0 && this.withTheOwner || this.skipPayment) {
                     return this.visit.totalCost = 0.00
@@ -290,6 +296,7 @@
             }
         },
         created: function () {
+            //this.isVisitValid()
             this.watchCollection(
                 ['visit.typeOfVisit','visit.visitors','withTheOwner','visit.arrivalDate','visit.departureDate'],
                 this.calculateTotalPerVisit)
