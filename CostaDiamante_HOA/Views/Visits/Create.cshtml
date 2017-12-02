@@ -208,8 +208,7 @@
         },
         methods: {
             isVisitValid: function () {
-                //debugger
-                if (Object.keys(this.visit.visitors).length > 0 && this.visit.arrivalDate < this.visit.departureDate && this.visit.arrivalDate != '' && this.visit.departureDate != '') {
+                if (Object.keys(this.visit.visitors).length > 0 && this.visit.arrivalDate < this.visit.departureDate && this.visit.arrivalDate != '' && this.visit.departureDate != '' && this.visit.typeOfVisit === 0 && this.withTheOwner || this.visit.typeOfVisit === 0 && this.skipPayment || this.visit.typeOfVisit === 1) {
                     return false
                 } else {
                     return true 
