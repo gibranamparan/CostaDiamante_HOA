@@ -62,6 +62,32 @@ namespace CostaDiamante_HOA.Controllers
 
         }
 
+
+        // GET: Payments
+        [HttpGet]
+        //[ValidateHeaderAntiForgeryToken]
+        public JsonResult GetInterestByReferenceDate(int id, int year, int quarter, DateTime refDate)
+        {
+            int numReg = 0;
+            string errorMsg = string.Empty;
+            try
+            {
+                var condo = db.Condoes.Find(id);
+                var vmQuarter = new Payment.VMHOAQuarter(year, quarter, condo);
+                decimal interest = vmQuarter.calcInterest(refDate, true);
+
+                return Json(new { res = interest, numReg = true }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+            return Json(new { numReg = numReg, errorMsg = errorMsg }, JsonRequestBehavior.AllowGet);
+
+        }
+
+
+
         // GET: Payments
         [HttpGet]
         //[ValidateHeaderAntiForgeryToken]

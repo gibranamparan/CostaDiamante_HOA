@@ -14,7 +14,11 @@
     </a>
 </nav>
 
-<h2>HOA Fee Payments</h2>
+@if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+{
+    @Html.Partial("../Owners/Partial_infoOwner", Model.owner)
+}
+
 <!-- HOA FEE PAYMENTS ADMINISTRATION -->
 @Html.Partial("../Payments/Partial_ListPayments", payment)
 <div id="pnlParent">

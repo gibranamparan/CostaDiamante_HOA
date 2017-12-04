@@ -70,6 +70,15 @@ namespace CostaDiamante_HOA {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This quarter was &lt;Strong&gt;paid completely&lt;/Strong&gt;..
+        /// </summary>
+        public static string HOAFEE_COMPLETE_PAID {
+            get {
+                return ResourceManager.GetString("HOAFEE_COMPLETE_PAID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &lt;strong&gt;owner was not registered&lt;/strong&gt; int this whole year..
         /// </summary>
         public static string OWNER_OUTOFYEAR {
@@ -129,6 +138,15 @@ namespace CostaDiamante_HOA {
         public static string PAYMENT_TYPE_RENT_IMPACT {
             get {
                 return ResourceManager.GetString("PAYMENT_TYPE_RENT_IMPACT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This visit was &lt;Strong&gt;paid completely&lt;/Strong&gt;..
+        /// </summary>
+        public static string VISIT_COMPLETE_PAID {
+            get {
+                return ResourceManager.GetString("VISIT_COMPLETE_PAID", resourceCulture);
             }
         }
     }

@@ -46,8 +46,8 @@ namespace CostaDiamante_HOA.Models
             for (int quarter = 1; quarter <= 4; quarter++)
             {
                 quartersStatus.Add(new Payment.VMHOAQuarter(year, quarter, this));
-                delayed = quartersStatus[0].numberOfMonthsDelayed;
             }
+            var interes = quartersStatus[1].interest;
 
             return quartersStatus;
         }

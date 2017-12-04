@@ -120,6 +120,9 @@
   <data name="ERROR_OCURRED" xml:space="preserve">
     <value>An error ocurred, plase try again. If error persists, plase send this to the system administrator: </value>
   </data>
+  <data name="HOAFEE_COMPLETE_PAID" xml:space="preserve">
+    <value>This quarter was &lt;Strong&gt;paid completely&lt;/Strong&gt;.</value>
+  </data>
   <data name="OWNER_OUTOFYEAR" xml:space="preserve">
     <value>The &lt;strong&gt;owner was not registered&lt;/strong&gt; int this whole year.</value>
   </data>
@@ -140,5 +143,8 @@
   </data>
   <data name="PAY_NOT_FOUND" xml:space="preserve">
     <value>The payment was not found.</value>
+  </data>
+  <data name="VISIT_COMPLETE_PAID" xml:space="preserve">
+    <value>This visit was &lt;Strong&gt;paid completely&lt;/Strong&gt;.</value>
   </data>
 </root>

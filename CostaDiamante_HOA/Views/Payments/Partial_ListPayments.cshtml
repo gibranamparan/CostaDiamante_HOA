@@ -29,7 +29,7 @@
             </div>
         </div>
         <div class="panel-body">
-            <form class="row form-inline" v-on:submit.prevent="createNewPayment()" v-if="toPay>0 || paymentType == '@(Payment.TypeOfPayment.HOA_FEE)'">
+            <form class="row form-inline" v-on:submit.prevent="createNewPayment()" v-if="toPay>0">
                 @Html.AntiForgeryToken()
                 <div class="form-group col-md-2">
                     @Html.LabelFor(model => Model.amount) (USD)
@@ -49,8 +49,15 @@
                     </button>
                 </div>
             </form>
-            <div class="alert alert-info" v-if="toPay==0 && paymentType != '@(Payment.TypeOfPayment.HOA_FEE)'">
-                This visit was <Strong>paid completely</Strong>.
+            <div class="alert alert-info" v-if="toPay==0">
+                @if (typeOfPayment == Payment.TypeOfPayment.HOA_FEE)
+                {
+                    @Html.Raw(GlobalMessages.HOAFEE_COMPLETE_PAID)
+                }
+                else if (typeOfPayment == Payment.TypeOfPayment.RENTAL_IMPACT)
+                {
+                    @Html.Raw(GlobalMessages.VISIT_COMPLETE_PAID)
+                }
             </div>
             <hr>
             <div>
@@ -142,6 +149,14 @@
                     this.getPayments();
                     return this.quarter
                 },
+                paymentDate(){
+                    this.getInterest()
+                }
+            },
+            computed:{
+                paymentDate(){
+                    return this.newPayment.date
+                }
             },
             methods: {
                 //Get initially all payments
@@ -279,6 +294,28 @@
                         res = this.payments.map(function (item) { return item.amount }).reduce(function (a, b) { return a + b })
                     return res
                 },
+                getInterest(){
+                    var url = "GetInterestByReferenceDate/"+this.condoid+"?year="+this.year+"&quarter="+this.quarter+"&refDate="+this.newPayment.date
+                    this.loading = true;
+                    var self = this
+                    this.api.get(url)
+                    .then(function (response) {
+                        var dataFromServer = response.data
+
+                        if(dataFromServer.numReg){ //The query returned data from database
+                            self.interest = dataFromServer.res
+                        }else if(dataFromServer.errorMsg){ //There were no rows and an error was reported
+                            notifyError(dataFromServer.errorMsg)
+                        }
+                        self.loading = false
+                    })
+                    .catch(function (error) {
+                        exception = error
+                        notifyError(error.message)
+                        this.loading = false
+                    })
+                }
+                
             },
             created() {
                 this.api = axios.create({ //Init connection to server

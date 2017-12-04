@@ -73,17 +73,17 @@ namespace CostaDiamante_HOA.Models
             }
         }
 
-        public class VMHOAQuarter{
+        public class VMHOAQuarter {
             public int year { get; set; }
             public int quarterNumber { get; set; }
             public DateTime ownerRegistrationDate { get; set; }
             public string ownerID { get; set; }
             public TimePeriod quarterPeriod { get; private set; }
             public decimal HOAFee { get; private set; }
-            private List<Payment_HOAFee> payments { get;} = new List<Payment_HOAFee>();
+            private List<Payment_HOAFee> payments { get; } = new List<Payment_HOAFee>();
 
 
-            public VMHOAQuarter(){ }
+            public VMHOAQuarter() { }
 
             public VMHOAQuarter(int year, int quarterNumber, Condo condo)
             {
@@ -93,28 +93,60 @@ namespace CostaDiamante_HOA.Models
                 this.quarterNumber = quarterNumber;
                 this.ownerID = condo.ownerID;
                 this.ownerRegistrationDate = owner.registrationDate == null ? DateTime.Parse(strDefaultStartDate) : owner.registrationDate.Value;
-                if (condo.payments!=null && condo.payments.Count() > 0) {
+                if (condo.payments != null && condo.payments.Count() > 0) {
                     this.payments = condo.payments.Where(p => p.year == year && p.quarterNumber == quarterNumber).OrderByDescending(p => p.date).ToList();
                 }
                 this.quarterPeriod = this.calculateQuaterPeriod();
                 this.HOAFee = VMHOAQuarter.StandarHOAFee;
             }
 
+
             /// <summary>
-            /// Number of months delayed to be payed.
+            /// Calculates the Number of months delayed to be payed given a date of reference.
+            /// </summary>
+            /// <param name="refDate">Date of reference</param>
+            /// <param name="ignoreIfDelayed">Ignore if its delayed flag, use it for arbitrary redDate not current one.</param>
+            /// <returns>The number of months delayed</returns>
+            private int calcNumberOfMonthsDelayed(DateTime refDate, bool ignoreIfDelayed = false)
+            {
+                int res = 0;
+                DateTime date2 = this.quarterPeriod.endDate;
+                //DateTime date1 = DateTime.Today;
+                DateTime date1 = refDate;
+
+                //If quarter's payment is delayed and reference date is later than end date
+                //Note: We can ignore "isDelayed" Flag to use this method as a calculator beetwenn end date and refDate
+                //setting ignoreIfDelayed to true.
+                if ((ignoreIfDelayed || this.isDelayed) && date1 > date2)
+                    res = ((date1.Year - date2.Year) * 12) + date1.Month - date2.Month;
+
+
+                return res;
+            }
+
+            /// <summary>
+            /// Calculates the Number of months delayed to be payed given a date of reference.
+            /// </summary>
+            /// <param name="refDate">Date of reference</param>
+            /// <param name="ignoreIfDelayed">Ignore if its delayed flag, use it for arbitrary redDate not current one.</param>
+            /// <returns>A amount of interest</returns>
+            public decimal calcInterest(DateTime refDate, bool ignoreIfDelayed = false)
+            {
+                decimal percentInterest = 0;
+                string strPercentInterest = ConfigurationManager.AppSettings["HOAFeeInterestPercent"];
+                strPercentInterest = String.IsNullOrEmpty(strPercentInterest) ? string.Empty : strPercentInterest;
+                decimal.TryParse(strPercentInterest, out percentInterest);
+                return (percentInterest * (this.HOAFee / 3) * this.calcNumberOfMonthsDelayed(refDate, ignoreIfDelayed));
+            }
+
+            /// <summary>
+            /// Calculates the Interests generated until a given date of reference.
+            /// <param name="refDate">Date of reference</param>
             /// </summary>
             public int numberOfMonthsDelayed
             {
-                get { 
-                    int res = 0;
-                    DateTime date2 = this.quarterPeriod.endDate;
-                    DateTime date1 = DateTime.Today;
-
-                    if (this.isDelayed && date1 > date2)
-                        res = ((date1.Year - date2.Year) * 12) + date1.Month - date2.Month;
-                    
-
-                    return res;
+                get {
+                    return this.calcNumberOfMonthsDelayed(DateTime.Today);
                 }
             }
 
@@ -126,19 +158,28 @@ namespace CostaDiamante_HOA.Models
                 get
                 {
                     decimal paidInTime = this.payments.ToList().Where(p => p.date <= this.quarterPeriod.endDate).Sum(p => p.amount);
-                    return paidInTime < this.HOAFee;
+                    if (paidInTime >= this.HOAFee)
+                        return false;
+                    else {
+                        if (this.payments != null && this.payments.Count() > 0) {
+                            var lastPay = this.payments.OrderByDescending(p => p.date).First();
+                            var partInteres = this.calcInterest(lastPay.date,true);
+
+                            return this.TotalPaid < (VMHOAQuarter.StandarHOAFee + partInteres);
+                        } else
+                            return true;
+                    }
                 }
             }
 
+            /// <summary>
+            /// Interests generated until current date (server date)
+            /// </summary>
             public decimal interest
             {
                 get
                 {
-                    decimal percentInterest = 0;
-                    string strPercentInterest = ConfigurationManager.AppSettings["HOAFeeInterestPercent"];
-                    strPercentInterest = String.IsNullOrEmpty(strPercentInterest) ? string.Empty : strPercentInterest;
-                    decimal.TryParse(strPercentInterest, out percentInterest);
-                    return (percentInterest * (this.HOAFee/3) * this.numberOfMonthsDelayed);
+                    return this.calcInterest(DateTime.Today);
                 }
             }
 
