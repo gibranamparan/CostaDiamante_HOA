@@ -1,9 +1,145 @@
 ﻿@model IEnumerable<CostaDiamante_HOA.Models.Visit>
+@using CostaDiamante_HOA.Models
+@using CostaDiamante_HOA.GeneralTools
 
-<table class="table table-hover table-striped">
+@{
+    VMConfirmModalAttributes modalOptions = new VMConfirmModalAttributes
+    {
+        modalID = "cancelVisitConfirmation",
+        modalTitle = "Confirm Visit Cancelation",
+        primaryMessage = "You are going to confirm the cancelation of the selected visit.",
+        routeVals = null,
+        modalStyle = new VMConfirmModalAttributes.Style(VMConfirmModalAttributes.Style.StyleTypes.DANGER),
+        callType = VMConfirmModalAttributes.CallType.JAVASCRIPT,
+        javascriptFunction = "confirmVisitCancelation"
+    };
+}
+
+@if (Model.Count() == 0)
+{
+    <div class="alert alert-info">
+        No visits have been notified.
+    </div>
+}
+
+<table class="table table-hover table-striped datatable">
+    <thead>
+        <tr>
+            <th>
+                #
+            </th>
+            <th>
+                CondoID
+            </th>
+            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+            {
+                <th>
+                    Full Name
+                </th>
+            }
+            <th>
+                Arrival Date
+            </th>
+            <th>
+                Departure Date)
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => item.visitID)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => item.condo.name)
+                </td>
+                @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                {
+                    <td>
+                        @Html.DisplayFor(model => item.owner.fullName)
+                    </td>
+                }
+                <td>
+                    @item.arrivalDate.ToLongDateString()
+                </td>
+                <td>
+                    @item.departureDate.ToLongDateString()
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = item.visitID })">
+                        <i class="fa fa-address-book"></i> View Notification
+                    </a>
+                    @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                    {
+                        @(" | ")
+                        <a onclick="prepareModal(@item.visitID)"
+                           data-toggle="modal" href='#@modalOptions.modalID'>
+                            <i class="glyphicon glyphicon-remove"></i> Cancel
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*@model IEnumerable<CostaDiamante_HOA.Models.Visit>
+@using CostaDiamante_HOA.Models
+
+@{ 
+    List<Visit> result = ViewBag.result;
+}
+
+<table class="table">
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.condo.name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.owner.name)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.typeOfVisit)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.arrivalDate)
@@ -11,19 +147,40 @@
         <th>
             @Html.DisplayNameFor(model => model.departureDate)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.totalCost)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.paymentOmitted)
+        </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
+@foreach (var item in result) {
     <tr>
         <td>
+            @Html.DisplayFor(modelItem => item.condo.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.owner.name)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.typeOfVisit)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.arrivalDate)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.departureDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.totalCost)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.paymentOmitted)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.visitID }) |
@@ -33,4 +190,4 @@
     </tr>
 }
 
-</table>
+</table>*@

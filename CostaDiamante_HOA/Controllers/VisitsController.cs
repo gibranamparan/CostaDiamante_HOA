@@ -182,13 +182,24 @@ namespace CostaDiamante_HOA.Controllers
 
         // POST: Visits/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        //[ValidateAntiForgeryToken]
+        public JsonResult DeleteConfirmed(int id)
         {
-            Visit visits = db.Visits.Find(id);
-            db.Visits.Remove(visits);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            int numReg = 0;
+            string errorMsg = string.Empty;
+
+            try
+            {
+                Visit visits = db.Visits.Find(id);
+                db.Visits.Remove(visits);
+                numReg = db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+
+            return Json(new { numReg = numReg, errorMsg = errorMsg });
         }
 
         protected override void Dispose(bool disposing)

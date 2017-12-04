@@ -122,7 +122,7 @@
                             <th>@Html.DisplayNameFor(model => visitor.name)</th>
                             <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
                             <th>
-
+                                Is less than 6 years old
                             </th>
                             <th></th>
                         </tr>
@@ -208,7 +208,11 @@
         },
         methods: {
             isVisitValid: function () {
-                return this.visit.visitors.length === 0
+                if (Object.keys(this.visit.visitors).length > 0 && this.visit.arrivalDate < this.visit.departureDate && this.visit.arrivalDate != '' && this.visit.departureDate != '' && this.visit.typeOfVisit === 0 && this.withTheOwner || this.visit.typeOfVisit === 0 && this.skipPayment || this.visit.typeOfVisit === 1) {
+                    return false
+                } else {
+                    return true 
+                }
             },
             //selectTypeOfVisit: function () {
             //    if(value == 0) {
@@ -259,6 +263,7 @@
                 })
             },
             calculateTotalPerVisit: function () {
+                //this.isVisitValid()
                 var visitorCount = 0
                 if(this.visit.typeOfVisit === 0 && this.withTheOwner || this.skipPayment) {
                     return this.visit.totalCost = 0.00
@@ -290,6 +295,7 @@
             }
         },
         created: function () {
+            //this.isVisitValid()
             this.watchCollection(
                 ['visit.typeOfVisit','visit.visitors','withTheOwner','visit.arrivalDate','visit.departureDate'],
                 this.calculateTotalPerVisit)
