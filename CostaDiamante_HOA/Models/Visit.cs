@@ -114,7 +114,7 @@ namespace CostaDiamante_HOA.Models
             //Email Body
             string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
             emailMessage += "<h3>New Visit Notified</h3>";
-            emailMessage += "<span>A new visit of " + this.visitors.Count() + "guest(s) was notified by ";
+            emailMessage += "<span>A new visit of " + this.visitors.Count() + " guest(s) was notified by ";
             emailMessage += this.owner.fullName + " in condo " + this.condo.name + ". ";
             emailMessage += "<span>Click this link to see the details:</span>";
             emailMessage += " <a href='" + visitDetailsURL + "'>Go to visit notification details.</a>";

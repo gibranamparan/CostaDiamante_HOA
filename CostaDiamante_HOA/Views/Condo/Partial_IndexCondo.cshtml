@@ -42,9 +42,9 @@
                     Select condo
                 </th>
             }
-            <th>
+            @*<th>
                 ID
-            </th>
+            </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.FirstOrDefault().name)
             </th>
@@ -64,9 +64,9 @@
                             <input type="checkbox" value="@item.condoID" condo-name="@item.name" onchange="selectChange(this)"/>
                         </td>
                     }
-                    <td>
+                    @*<td>
                         @Html.DisplayFor(modelItem => item.condoID)
-                    </td>
+                    </td>*@
                     <td>
                         @Html.DisplayFor(modelItem => item.name)
                     </td>

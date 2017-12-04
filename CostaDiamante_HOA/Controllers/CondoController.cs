@@ -124,22 +124,43 @@ namespace CostaDiamante_HOA.Controllers
             return Json(num);
         }
 
+        private class AreaCondo { public string prefix = ""; public int limit = 0; }
         public JsonResult generateCondos()
         {
             var registeredCondos = db.Condoes;
-            string[] chars = { "E", "N", "O" };
+            var areas = new AreaCondo[] {
+                new AreaCondo { prefix="A",limit = 8 },
+                new AreaCondo { prefix="B",limit = 10 },
+                new AreaCondo { prefix="C",limit = 9 },
+                new AreaCondo { prefix="D",limit = 15 },
+                new AreaCondo { prefix="E",limit = 21 },
+                new AreaCondo { prefix="F",limit = 49 },
+            };
+
             String condoName = "";
             //Every condo name is generated for every tower in the complex
-            for (int towerIdx = 0; towerIdx < 3; towerIdx++)
-                for (int piso = 1; piso <= 8; piso++)
-                    for (int condoCounter = 1; condoCounter <=10; condoCounter++) {
-                        condoName = chars[towerIdx] + piso + condoCounter.ToString("00");
+            areas.ToList().ForEach(area =>
+            {
+                for (int c = 1; c <= area.limit; c++)
+                {
+                    condoName = area.prefix + c.ToString("00");
+                    //
+                    if(condoName != "C02" && condoName != "D07" && condoName != "F11") { 
+                        if (condoName == "C01")
+                            condoName += "-C02";
+                        if (condoName == "D06")
+                            condoName += "-D07";
+                        if (condoName == "F10")
+                            condoName += "-F11";
+
                         //It's registered if doesn't already exists
-                        if(registeredCondos.FirstOrDefault(con=>con.name == condoName) == null)
+                        if (registeredCondos.FirstOrDefault(con => con.name == condoName) == null)
                             db.Condoes.Add(new Condo(condoName));
                     }
-            int numberOfGeneratedCondos = db.SaveChanges();
+                }
+            });
 
+            int numberOfGeneratedCondos = db.SaveChanges();
             return Json(new { numberOfGeneratedCondos = numberOfGeneratedCondos }, 
                 JsonRequestBehavior.AllowGet);
         }
@@ -159,8 +180,14 @@ namespace CostaDiamante_HOA.Controllers
 
         public JsonResult removeAllCondoes()
         {
-            var regs = db.Condoes.RemoveRange(db.Condoes);
-            return Json(regs.Count(), JsonRequestBehavior.AllowGet);
+            int numReg = 0;
+            db.Condoes.ToList().ForEach(con =>
+            {
+                db.Payments.RemoveRange(con.payments);
+                db.Condoes.Remove(con);
+            });
+            numReg = db.SaveChanges();
+            return Json(numReg, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult HOAFees(int? id)

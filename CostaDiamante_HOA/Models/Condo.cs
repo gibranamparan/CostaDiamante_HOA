@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -59,11 +60,20 @@ namespace CostaDiamante_HOA.Models
         public class VMOwnerHOAQuartersRow
         {
             public int condoID { get; set; }
+
+            [DisplayName("Condo")]
             public string condoName { get; set; }
+
             public string ownerID { get; set; }
+            [DisplayName("Owner")]
             public string ownerFullName { get; set; }
+
             public List<Payment.VMHOAQuarter> quarters { get; private set; }
+            [DisplayName("Year")]
             public int year { get; set; }
+
+            [DisplayName("Total")]
+            public decimal total { get; set; }
 
             public VMOwnerHOAQuartersRow() { }
             public VMOwnerHOAQuartersRow(Condo condo, int year)
@@ -74,6 +84,7 @@ namespace CostaDiamante_HOA.Models
                 this.ownerFullName = condo.owner.fullName;
                 this.year = year;
                 this.quarters = condo.getHOAStatusByYear(year);
+                this.total = this.quarters.Sum(q => q.TotalPaid);
             }
         }
     }

@@ -138,7 +138,7 @@ namespace CostaDiamante_HOA.Models
                     string strPercentInterest = ConfigurationManager.AppSettings["HOAFeeInterestPercent"];
                     strPercentInterest = String.IsNullOrEmpty(strPercentInterest) ? string.Empty : strPercentInterest;
                     decimal.TryParse(strPercentInterest, out percentInterest);
-                    return (percentInterest * this.HOAFee * this.numberOfMonthsDelayed);
+                    return (percentInterest * (this.HOAFee/3) * this.numberOfMonthsDelayed);
                 }
             }
 

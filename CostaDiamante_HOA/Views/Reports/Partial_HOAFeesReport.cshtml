@@ -13,6 +13,7 @@
         <h3 class="panel-title">HOA Fees Status</h3>
     </div>
     <div class="panel-body">
+        <!-- YEAR SELECTION -->
         <div id="pnlYearSelection" style="text-align: center">
             <a href="?year=@(year-1)" class="notShowIfOutOfTime hidden-print">
                 <i class="glyphicon glyphicon-circle-arrow-left"></i>
@@ -22,17 +23,20 @@
                 <i class="glyphicon glyphicon-circle-arrow-right"></i>
             </a>
         </div>
+
+        <!-- QUARTER STATUS REPORT TABLE -->
         <table class="table table-hover table-striped notShowIfOutOfTime">
             <thead>
                 <tr>
                     @if (!byOwnerMode) {
-                        <th>Owner</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().ownerFullName)</th>
                     }
-                    <th>Condo</th>
+                    <th>@Html.DisplayNameFor(model => model.FirstOrDefault().condoName)</th>
                     @foreach (string name in quartersNames)
                     {
                         <th>@name</th>
                     }
+                    <th>@Html.DisplayNameFor(model=>model.FirstOrDefault().total)</th>
                 </tr>
             </thead>
             <tbody>
@@ -58,13 +62,14 @@
                         {
                             <td class="@(classNames[(int)quarter.currentStatus])">
                                 @*Show money remaining to pay if quarter is inside time scope of the owner*@
-                                @(quarter.currentStatus == Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME ? "--" : quarter.RemainToPay.ToString("C"))
+                                @(quarter.currentStatus == Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME ? "--" : quarter.TotalPaid.ToString("C"))
                             </td>
                             if (quarter.currentStatus != Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME)
                             {
                                 notShowIfOutOfTimeFlag = false;
                             }
                         }
+                        <td style="font-weight: bold">@(row.total.ToString("C"))</td>
                     </tr>
                 }
             </tbody>

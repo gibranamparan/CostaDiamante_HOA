@@ -118,6 +118,7 @@ namespace CostaDiamante_HOA.Models
             this.userID = owner.Id;
             this.hash = owner.PasswordHash;
             this.stamp = owner.SecurityStamp;
+            this.registrationDate = owner.registrationDate.HasValue ? owner.registrationDate.Value : DateTime.Today;
         }
     }
 
