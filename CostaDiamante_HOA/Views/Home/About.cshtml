@@ -1,7 +1,35 @@
-﻿@{
-    ViewBag.Title = "About";
+﻿@using CostaDiamante_HOA.Models
+@{
+    ViewBag.Title = "Test Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+@Html.Partial("Partial_ComponentVue")
+@{ 
+    ViewDataDictionary vddPayments = new ViewDataDictionary();
+    vddPayments.Add("totalCost", (decimal)150);
+    Payment_RentImpact pay = new Payment_RentImpact { date = DateTime.Today, visitID = 6 };
+}
+@Html.Partial("../Payments/Partial_ListPayments",pay,vddPayments)
+
+<div id="appPadre">
+    <input id="someText" v-model="parent_text" />
+    <comp-example v-bind:out-text ="parent_text" style="border: 1px solid black"></comp-example>
+    <payments-list style="border: 1px solid black"></payments-list>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        var appChild = initComponent()
+        var listPays = initListPayments()
+
+        var appPadre = new Vue({
+            el: "#appPadre",
+            data: {
+                parent_text : ''
+            }
+        })
+    </script>    
+}

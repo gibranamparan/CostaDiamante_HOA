@@ -279,6 +279,26 @@ ul.usrPanel li a {
     color: #8a9835;
 }
 
+.outoftime {
+    color: grey !important;
+}
+.intime{
+    background: #5e9ace !important;
+    color: white !important;
+}
+.payed{
+    background: #94ff83 !important;
+    color: black !important;
+}
+.delayed{
+    background: #ffd800 !important;
+    color: black !important;
+}
+.delinquency{
+    background: red !important;
+    color: white !important;
+}
+
 @media print{
     #main > .inner {
         padding: 0;

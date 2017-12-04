@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -96,6 +97,12 @@ namespace CostaDiamante_HOA.Models
 
         [DisplayName("Register as Administrator")]
         public bool registerAsAdmin { get; set; }
+
+        [DisplayName("Registration Date")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}",
+            ApplyFormatInEditMode = true)]
+        public DateTime registrationDate { get; set; }
 
         public string hash { get; set; }
         public string stamp { get; set; }

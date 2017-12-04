@@ -70,6 +70,15 @@ namespace CostaDiamante_HOA {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &lt;strong&gt;owner was not registered&lt;/strong&gt; int this whole year..
+        /// </summary>
+        public static string OWNER_OUTOFYEAR {
+            get {
+                return ResourceManager.GetString("OWNER_OUTOFYEAR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to cancel this payment?.
         /// </summary>
         public static string PAY_CANCEL_CONFIRM {

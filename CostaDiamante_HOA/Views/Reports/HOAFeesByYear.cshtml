@@ -1,0 +1,19 @@
+﻿@model List<Condo.VMOwnerHOAQuartersRow>
+@using CostaDiamante_HOA.Models
+
+@{
+    int year = ViewBag.year == null ? DateTime.Today.Year : ViewBag.year;
+    ViewBag.Title = "HOA Fees General Report - Year: "+year;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>HOA Fees Report Year: @(year)</h2>
+
+@{
+    ViewDataDictionary vddReport = new ViewDataDictionary();
+    vddReport.Add("year", year);
+    vddReport.Add("byOwner", true);
+}
+
+@Html.Partial("../Reports/Partial_HOAFeesReport", Model, vddReport)
+

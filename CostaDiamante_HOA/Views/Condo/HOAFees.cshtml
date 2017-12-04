@@ -1,0 +1,203 @@
+﻿@model CostaDiamante_HOA.Models.Condo
+@using CostaDiamante_HOA.Models
+
+@{
+    ViewBag.Title = "HOAFees - Condo: "+Model.name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //New default payment as model for partialview, 
+    Payment_HOAFee payment = new Payment_HOAFee() { date = DateTime.Today };
+}
+
+<nav>
+    <a href="@Url.Action("Details","Owners",new { id = Model.ownerID })">
+        <i class="glyphicon glyphicon-arrow-left"></i><span>Back to Owner Details</span>
+    </a>
+</nav>
+
+<h2>HOAFees</h2>
+<!-- HOA FEE PAYMENTS ADMINISTRATION -->
+@Html.Partial("../Payments/Partial_ListPayments", payment)
+<div id="pnlParent">
+
+    <!-- RENDER COMPONENT TO SHOW PAYMENTS BY QUARTER -->
+    <hoa-payments v-bind:condoid="condoID" inline-template>
+        <div>
+            <!-- YEAR SELECTION -->
+            <div id="pnlYearSelection">
+                <i class="glyphicon glyphicon-circle-arrow-left" v-on:click="year--"></i>
+                <strong>Year:</strong> <span>{{year}}</span>
+                <i class="glyphicon glyphicon-circle-arrow-right" v-on:click="year++"></i>
+            </div>
+
+            <!-- QUARTER SELECTION TABS -->
+            <div id="pnlHOAFeeSelector">
+                <div>
+                    <strong>Condo:</strong> <span>{{quarterStatus.condoName}}</span>
+                </div>
+                <div id="pnlQtrSelector">
+                    <!-- FOREACH QUARTER IN THE CONDO -->
+                    <div class="col-md-3" v-for="(item, index) in quarterStatus.status"
+                         v-bind:class="quartersClasses(item,index)"
+                         v-on:click="selectQuarter(item, index)">
+                            <i v-if="quarter == index+1" class="glyphicon glyphicon-chevron-right"></i>
+                            <span>{{quartersNames[index]}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RENDERING PAYMENT LIST VUE COMPONENT -->
+            <br />
+            <payments-list v-if="quarterStatus.condoID>0 && quarter>0"
+                           v-bind:year="year" v-bind:quarter="quarter"
+                           v-bind:interest="quarterStatus.status[quarter-1].interest"
+                           v-bind:condoid="condoID"
+                           v-on:quarter-changed="getQuarterStatus(true)"></payments-list>
+
+            <div class="alert alert-info" v-if="quarter==0">
+                @Html.Raw(GlobalMessages.OWNER_OUTOFYEAR)
+            </div> 
+        </div>
+    </hoa-payments>
+</div>
+
+@section Scripts{
+    <script>
+        var app = initListPayments()
+
+        var exception;
+        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val(); //Token
+        Vue.component("hoa-payments",{
+            props : ["condoid"],
+            data(){
+                return {
+                    year : @(DateTime.Today.Year),
+                    quarter : 1,
+                    quarterStatus: {
+                        condoID:0,
+                        condoName:'',
+                        status:[{interest:0},{interest:0},{interest:0},{interest:0}]
+                    },
+                    quartersNames: ['January - April','April - July','July - Octuber','Octuber - January'],
+                    parentAPI : {}
+                }
+            },
+            watch: {
+                year: function(){
+                    //Get guarter status but dont modify selection
+                    this.getQuarterStatus()},
+            },
+            methods:{
+                getQuarterStatus : function(dontModifyQuarterSelection){ //Get selected quarter status from server
+                    self = this
+                    this.parentAPI.get("/GetQuarterStatus/"+this.condoid+"?year="+this.year)
+                    .then(function (response){
+                        response = response.data
+                        if(response.numReg){
+                            //Quarter status for every condo are updated
+                            self.quarterStatus = response.res
+
+                            //Look for the first a quarter that can be selected
+                            if(!dontModifyQuarterSelection){
+                                self.quarter = self.quarterStatus.status.findIndex(function(item){
+                                     return item.currentStatus!=@((int)Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME);})
+                                 self.quarter += 1;
+                            }
+                        }else if(response.errorMsg){
+                            notifyError(response.errorMsg)
+                        }
+                    }).catch(function(error){
+                        exception = error
+                        notifyError(error.message)
+                    })
+                },
+                isQuarterDelayed : function(quarterNum){
+                    quarterNum = quarterNum - 1
+                    return this.quarterStatus[quarterNum] && this.quarterStatus[quarterNum].numberOfMonthsDelayed > 0
+                },
+                selectQuarter: function (item, index){
+                    if(item.currentStatus != '@((int)Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME)') { this.quarter = index+1 }
+                },
+                quartersClasses : function(item,index){
+                    return {
+                        selected: this.quarter == index+1,
+                        outoftime: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME),
+                        intime: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.INTIME),
+                        payed: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.PAYED),
+                        delayed: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.DELAYED),
+                        delinquency: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.DELINQUENCY),
+                    }
+                }
+            },
+            created(){
+                this.parentAPI = axios.create({ //Init connection to server
+                    baseURL: "/Payments",
+                    timeout: 200000,
+                    headers: {"__RequestVerificationToken" : antiForgeryToken}
+                });
+            },
+            mounted(){
+                this.getQuarterStatus()
+            }
+        })
+
+        //**** PRENT COMPONENT TO LIST ALL PAYMENTS FOR EVERY CONDO ***
+        var parentApp = new Vue({
+            el: "#pnlParent",
+            data:{
+                condoID:@(Model.condoID),
+                ownerID : '@(Model.ownerID)',
+            },
+            methods:{
+            },
+            created(){
+            }
+        })
+    </script>
+}
+
+<style>
+    /*Quarter Selector*/
+    #pnlQtrSelector {
+        box-shadow: 0.5em 0.5em 1em grey;
+    }
+
+        #pnlQtrSelector > div {
+            background: #ddd;
+            text-align: center;
+            color: #428bca;
+            border-top-right-radius: 15px;
+            cursor: pointer;
+            border: 1px solid #428bca;
+        }
+
+            #pnlQtrSelector > div:hover {
+                border: 2px solid #5e9ace;
+            }
+
+            #pnlQtrSelector > div.selected {
+                border: 2px solid #428bca;
+                color: white;
+                cursor: initial;
+                font-weight: bold;
+            }
+
+            #pnlQtrSelector > div.outoftime {
+                border: none !important;
+                cursor: initial !important;
+            }
+
+    /*Year Selector*/
+    #pnlYearSelection {
+        text-align: center;
+    }
+
+    #pnlYearSelection i {
+        cursor: pointer;
+        transition: color .2s;
+        color: #428bca;
+    }
+
+    #pnlYearSelection i:hover {
+        color: #5cb85c;
+    }
+</style>

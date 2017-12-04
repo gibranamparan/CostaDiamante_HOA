@@ -157,7 +157,9 @@ namespace CostaDiamante_HOA.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            var model = new RegisterViewModel();
+            model.registrationDate = DateTime.Today;
+            return View(model);
         }
 
         //
@@ -287,9 +289,11 @@ namespace CostaDiamante_HOA.Controllers
             if (roleName == ApplicationUser.RoleNames.OWNER) {
                 Owner owner = db.Owners.Find(id);
                 var condos = owner.Condos.ToList();
+
                 //var cils = owner.checkInListHistory.ToList();
-                var cils = owner.payments.ToList(); // <-- add by ilmar - check
                 var visits = owner.visitsHistory.ToList();
+
+                //Delete relationship beetween condoes and owner
                 foreach (var condo in condos)
                 {
                     condo.ownerID = null;
@@ -299,18 +303,6 @@ namespace CostaDiamante_HOA.Controllers
                     db.Visits.Remove(visit);
 
                 numReg = db.SaveChanges();
-
-                //If condoes or visits were registered and then removed successfully
-                //or there were already none of this register for the owner
-                if (condos.Count() + visits.Count() > 0 && numReg > 0
-                    || condos.Count() + visits.Count() == 0) { 
-                    foreach (var cil in cils)
-                       // db.CheckInLists.Remove(cil);   ----                        check
-                    
-
-                    db.Owners.Remove(owner);
-                    numReg = 0;
-                }
             } else if (roleName == ApplicationUser.RoleNames.ADMIN)
             {
                 ApplicationUser admin = db.Users.Find(id);

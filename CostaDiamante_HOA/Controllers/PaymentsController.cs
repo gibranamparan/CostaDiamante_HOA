@@ -41,24 +41,47 @@ namespace CostaDiamante_HOA.Controllers
         // GET: Payments
         [HttpGet]
         //[ValidateHeaderAntiForgeryToken]
-        public JsonResult IndexPaymentsHOAFee(string id)
+        public JsonResult IndexPaymentsHOAFee(int id, int year, int quarter)
         {
             int numReg = 0;
             string errorMsg = string.Empty;
             try
             {
-                var owner = db.Owners.Find(id);
-                var payments = owner.payments.OrderByDescending(pay => pay.date).ToList()
+                var condo = db.Condoes.Find(id);
+                var payments = condo.payments.Where(p => p.year == year && p.quarterNumber == quarter).OrderByDescending(pay => pay.date).ToList()
                     .Select(pay => new Payment.VMPayment(pay.paymentsID, pay.amount, pay.date, pay.typeOfPayment));
                 numReg = payments != null ? payments.Count() : 0;
+
                 return Json(new { res = payments, numReg = payments.Count() }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception e)
             {
                 errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
             }
-            return Json(new { numReg = numReg, errorMsg = errorMsg });
-           
+            return Json(new { numReg = numReg, errorMsg = errorMsg }, JsonRequestBehavior.AllowGet);
+
+        }
+
+        // GET: Payments
+        [HttpGet]
+        //[ValidateHeaderAntiForgeryToken]
+        public JsonResult GetQuarterStatus(int id, int year)
+        {
+            int numReg = 0;
+            string errorMsg = string.Empty;
+            try
+            {
+                var condo = db.Condoes.Find(id);
+                var res = new { condoID = condo.condoID, condoName = condo.name, status = condo.getHOAStatusByYear(year) };
+                return Json(new { res = res, numReg = res.status.Count() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+
+            return Json(new { numReg = numReg, errorMsg = errorMsg }, JsonRequestBehavior.AllowGet);
+
         }
 
         // POST: Payments/Create

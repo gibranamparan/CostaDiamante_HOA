@@ -163,6 +163,20 @@ namespace CostaDiamante_HOA.Controllers
             return Json(regs.Count(), JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult HOAFees(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Condo condo = db.Condoes.Find(id);
+            if (condo == null)
+            {
+                return HttpNotFound();
+            }
+            return View(condo);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

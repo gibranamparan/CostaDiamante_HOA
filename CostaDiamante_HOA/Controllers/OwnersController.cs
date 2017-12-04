@@ -30,8 +30,10 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         // GET: Owners/Details/5
-        public ActionResult Details(string id, bool errorGuest=false)
+        public ActionResult Details(string id, int year = 0,bool errorGuest=false)
         {
+            year = year == 0 ? DateTime.Today.Year : year;
+
             Owner owners = null;
             //If owner, show only his details
             if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
@@ -49,8 +51,34 @@ namespace CostaDiamante_HOA.Controllers
                 String.IsNullOrEmpty(con.ownerID)).ToList();
 
             ViewBag.errorGuest = errorGuest;
+            ViewBag.year = year;
 
             return View(owners);
+        }
+
+        // GET: Payments
+        [HttpGet]
+        //[ValidateHeaderAntiForgeryToken]
+        public JsonResult GetQuartersStatus(string id, int year)
+        {
+            int numReg = 0;
+            string errorMsg = string.Empty;
+            try
+            {
+                var condos = db.Owners.Find(id).Condos;
+
+                var res = from condo in condos
+                          select new { condoID = condo.condoID, condoName = condo.name, status = condo.getHOAStatusByYear(year) };
+
+                return Json(new { res = res, numReg = res.Count() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+            }
+
+            return Json(new { numReg = numReg, errorMsg = errorMsg }, JsonRequestBehavior.AllowGet);
+
         }
 
         protected override void Dispose(bool disposing)

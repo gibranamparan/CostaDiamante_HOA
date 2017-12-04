@@ -205,6 +205,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\OwnersController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\VisitorsController.cs" />
     <Compile Include="Controllers\VisitsController.cs" />
     <Compile Include="GeneralTools\FiltrosDeSolicitudes.cs" />
@@ -222,6 +223,22 @@
     <Compile Include="Migrations\201711250623391_init_migration.cs" />
     <Compile Include="Migrations\201711250623391_init_migration.Designer.cs">
       <DependentUpon>201711250623391_init_migration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711261824504_owner_registrationDate.cs" />
+    <Compile Include="Migrations\201711261824504_owner_registrationDate.Designer.cs">
+      <DependentUpon>201711261824504_owner_registrationDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711270113033_hoaFee_year_number.cs" />
+    <Compile Include="Migrations\201711270113033_hoaFee_year_number.Designer.cs">
+      <DependentUpon>201711270113033_hoaFee_year_number.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711282059259_changed_registrationDate.cs" />
+    <Compile Include="Migrations\201711282059259_changed_registrationDate.Designer.cs">
+      <DependentUpon>201711282059259_changed_registrationDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712010123587_payment_hoafee_condoes.cs" />
+    <Compile Include="Migrations\201712010123587_payment_hoafee_condoes.Designer.cs">
+      <DependentUpon>201712010123587_payment_hoafee_condoes.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -296,6 +313,7 @@
     <Content Include="Global.asax" />
     <Content Include="images\favicon.ico" />
     <Content Include="images\favicon.png" />
+    <Content Include="images\loading1.gif" />
     <Content Include="images\logo.png" />
     <Content Include="images\logo_print.png" />
     <Content Include="images\sort_asc.png" />
@@ -465,6 +483,10 @@
     <Content Include="Views\Payments\Partial_ListPayments.cshtml" />
     <Content Include="Views\Visits\Index.cshtml" />
     <Content Include="Views\Visits\Edit.cshtml" />
+    <Content Include="Views\Shared\Partial_ComponentVue.cshtml" />
+    <Content Include="Views\Reports\Partial_HOAFeesReport.cshtml" />
+    <Content Include="Views\Condo\HOAFees.cshtml" />
+    <Content Include="Views\Reports\HOAFeesByYear.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -489,6 +511,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201711250623391_init_migration.resx">
       <DependentUpon>201711250623391_init_migration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711261824504_owner_registrationDate.resx">
+      <DependentUpon>201711261824504_owner_registrationDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711270113033_hoaFee_year_number.resx">
+      <DependentUpon>201711270113033_hoaFee_year_number.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711282059259_changed_registrationDate.resx">
+      <DependentUpon>201711282059259_changed_registrationDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712010123587_payment_hoafee_condoes.resx">
+      <DependentUpon>201712010123587_payment_hoafee_condoes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

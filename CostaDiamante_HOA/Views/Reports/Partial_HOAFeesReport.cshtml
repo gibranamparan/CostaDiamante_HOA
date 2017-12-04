@@ -1,0 +1,87 @@
+﻿@model List<Condo.VMOwnerHOAQuartersRow>
+@using CostaDiamante_HOA.Models
+@{
+    int year = ViewData["year"] == null ? DateTime.Today.Year : (int)ViewData["year"];
+    bool byOwnerMode = ViewData["byOwner"] == null ? false : (bool)ViewData["byOwner"];
+    string[] quartersNames = new string[] { "January - April", "April - July", "July - Octuber", "Octuber - January" };
+    string[] classNames = { "none", "outoftime", "intime", "payed", "delayed", "delinquency" };
+    bool notShowIfOutOfTimeFlag = true;
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">HOA Fees Status</h3>
+    </div>
+    <div class="panel-body">
+        <div id="pnlYearSelection" style="text-align: center">
+            <a href="?year=@(year-1)" class="notShowIfOutOfTime hidden-print">
+                <i class="glyphicon glyphicon-circle-arrow-left"></i>
+            </a>
+            <strong>Year:</strong> <span>@(year)</span>
+            <a href="?year=@(year+1)" class="hidden-print">
+                <i class="glyphicon glyphicon-circle-arrow-right"></i>
+            </a>
+        </div>
+        <table class="table table-hover table-striped notShowIfOutOfTime">
+            <thead>
+                <tr>
+                    @if (!byOwnerMode) {
+                        <th>Owner</th>
+                    }
+                    <th>Condo</th>
+                    @foreach (string name in quartersNames)
+                    {
+                        <th>@name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model)
+                {
+                    <tr>
+                        @if (!byOwnerMode)
+                        {
+                        <td>
+                            <strong class="visible-print">@(row.ownerFullName)</strong>
+                            <a href="@Url.Action("Details", "Owners", new { id = row.ownerID })" target="_blank">
+                                @(row.ownerFullName)
+                            </a>
+                        </td>
+                        }
+                        <td>
+                            <strong class="visible-print">@(row.condoName)</strong>
+                            <a href="@Url.Action("HOAFees","Condo",new { id = row.condoID })" target="_blank" class="hidden-print">
+                                @(row.condoName)
+                            </a>
+                        </td>
+                        @foreach (var quarter in row.quarters)
+                        {
+                            <td class="@(classNames[(int)quarter.currentStatus])">
+                                @*Show money remaining to pay if quarter is inside time scope of the owner*@
+                                @(quarter.currentStatus == Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME ? "--" : quarter.RemainToPay.ToString("C"))
+                            </td>
+                            if (quarter.currentStatus != Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME)
+                            {
+                                notShowIfOutOfTimeFlag = false;
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="alert alert-info showIfOutOfTime" style="display:none">
+            <span>The <strong>owner was not registered</strong> in this whole year.</span>
+        </div>
+    </div>
+</div>
+
+@if (notShowIfOutOfTimeFlag) {
+<style>
+    .notShowIfOutOfTime {
+        display: none;
+    }
+    .showIfOutOfTime {
+        display: block !important;
+    }
+</style>
+}

@@ -53,6 +53,9 @@
         vddPayments.Add("totalCost", Model.totalCost);
     }
     @Html.Partial("../Payments/Partial_ListPayments", payment,vddPayments)
+    <div id="parent-component">
+        <payments-list></payments-list>
+    </div>
 
     <!-- GUESTS LIST -->
     <div class="panel panel-primary">
@@ -88,156 +91,11 @@
 @section Scripts{
     @Scripts.Render("~/bundles/jqueryval")
     <script>
-        $.fn.dataTable.moment('LL');
-        var tblPayments
+        initListPayments()
+        var parent_component = new Vue({
+            el:"#parent-component",
+            data:{
 
-        var antiForgeryToken = $("input[name=__RequestVerificationToken]").val(); //Token
-        var exception
-        var api = axios.create({ //Init connection to server
-            baseURL: "/Payments",
-            timeout: 20000,
-            headers: {"__RequestVerificationToken" : antiForgeryToken}
-        });
-        function notifyError(message) {
-            swal("Error!", message, "error")
-        }
-        const v = new Vue({
-            el: '#app',
-            data: {
-                sortOrders: {
-                    amount : 'asc',
-                    date: 'asc'
-                },
-                newPayment: {
-                    id: 0,
-                    amount: 0.00,
-                    date: '@payment.date.ToString("yyyy-MM-dd")',
-                    dtDate: new Date('@payment.date.ToString("yyyy/MM/dd")'),
-                    typeOfPayment: 1,
-                    ownerID: '@Model.ownerID',
-                    visitID: '@Model.visitID'
-                },
-                payments: [],
-                totalCost: @(Model.totalCost),
-                toPay: 0,
-                totalPaid: 0,
-                isblocked: true
-            },
-            methods: {
-                //Get initially all payments
-                getPayments: function () {
-                    var self = this
-                    api.get('Index/@Model.visitID')
-                    .then(function (response) {
-                        var dataFromServer = response.data
-                        self.payments = dataFromServer.map(function (item) {
-                            var newItem = {}
-                            Object.assign(newItem, self.newPayment)
-                            newItem.id = item.id
-                            newItem.date = item.date
-                            newItem.dtDate = new Date(item.date),
-                            newItem.amount = item.amount
-                            return newItem
-                        })
-                    })
-                    .catch(function (error) {
-                        exception = error
-                        notifyError(error.message)
-                    })
-                },
-                //Add a new payment for this visit async from server
-                createNewPayment: function () {
-                    var self = this
-                    api.post('Create', {
-                        payment: self.newPayment
-                    })
-                    .then(response => {
-                        var response = response.data
-                        if (response.numReg) {
-                            var newPayment = response.result
-                            //Clone and insert new payment to state
-                            self.payments.push(newPayment)
-                            self.sortPayments()
-
-                            //Clear new payment container
-                            self.newPayment.amount = 0
-                            self.newPayment.date = '@payment.date.ToString("yyyy-MM-dd")'
-                            self.newPayment.dtDate = new Date(self.date)
-
-                            //Focus on default
-                            document.getElementById("amount").focus()
-
-                            //Notify successfull registration
-                            $.notify("@(GlobalMessages.PAY_NEW)", { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
-
-                        } else if (response.errorMsg) {
-                            notifyError('@GlobalMessages.ERROR_OCURRED' + response.errorMsg)
-                        } else { //Unknown error
-                            notifyError(response)
-                        }
-                    })
-                    .catch(e => {
-                        exception = e
-                        notifyError(e.message)
-                    })
-                },
-                //Remove payment async from server after confirmation
-                removePayment: function (item) {
-                    self = this
-                    //show confirmation dialog
-                    swal("Confirm Delete", '@GlobalMessages.PAY_CANCEL_CONFIRM'
-                        + " " + numeral(item.amount).format('$0,000.00') + " paid in " + moment(item.date).format('LL'),
-                    {
-                        dangerMode: true,
-                        buttons:true
-                    }).then(confirmed=>{
-                        if (confirmed) { //If removal was confirmed
-                            api.post('Delete', { //Execute async request to server
-                                id: item.id
-                            })
-                            .then(response => {
-                                var response = response.data
-                                if (response.numReg) { //If removal was successful
-                                    //updates payments list
-                                    self.payments = self.payments.filter(function (pay) { return pay.id != item.id })
-                                    self.sortPayments()
-
-                                    //Notify successfully done operation
-                                    $.notify('@GlobalMessages.PAY_CANCELED', { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
-                                } else if (response.errorMsg) { //Custom error from server
-                                    notifyError('@GlobalMessages.ERROR_OCURRED' + response.errorMsg)
-                                } else { //Unknown error
-                                    notifyError(response)
-                                }
-                            })
-                            .catch(e => { //Error in request
-                                exception = e
-                                notifyError(e.message)
-                            })
-                        }
-                    })
-                },
-                sortPayments: function (fieldName) {//Sort paymentes desceding
-                    sortBy(this.payments, fieldName, this.sortOrders.amount)
-                    this.sortOrders.amount = this.sortOrders.amount == 'desc' ? 'asc' : 'desc'
-                },
-                updateAmounts: function () {
-                    this.totalPaid = this.calculateTotalPaid()
-                    this.toPay = (this.totalCost < this.totalPaid) ? 0 : (this.totalCost - this.totalPaid)
-                    this.allowNewPayment = this.toPay > 0
-                },
-                calculateTotalPaid: function () {
-                    var res = 0
-                    if (this.payments && this.payments.length > 0)
-                        res = this.payments.map(function (item) { return item.amount }).reduce(function (a, b) { return a + b })
-                    return res
-                },
-            },
-            created() {
-                this.getPayments();
-            },
-            updated: function () {
-                this.updateAmounts()
             }
         })
     </script>

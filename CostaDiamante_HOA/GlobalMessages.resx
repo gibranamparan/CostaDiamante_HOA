@@ -120,6 +120,9 @@
   <data name="ERROR_OCURRED" xml:space="preserve">
     <value>An error ocurred, plase try again. If error persists, plase send this to the system administrator: </value>
   </data>
+  <data name="OWNER_OUTOFYEAR" xml:space="preserve">
+    <value>The &lt;strong&gt;owner was not registered&lt;/strong&gt; int this whole year.</value>
+  </data>
   <data name="PAYMENT_TYPE_HOA_FEE" xml:space="preserve">
     <value>HOA Fees Payments</value>
   </data>

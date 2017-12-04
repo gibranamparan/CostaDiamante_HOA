@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace CostaDiamante_HOA.Models
 {
@@ -23,8 +25,14 @@ namespace CostaDiamante_HOA.Models
             this.lastName= model.lastname;
             this.PasswordHash = model.hash;
             this.SecurityStamp = model.stamp;
+            this.registrationDate = model.registrationDate;
         }
 
+        /// <summary>
+        /// Overload that given an userID, it get EmailConfirmed from database
+        /// </summary>
+        /// <param name="model">Data that come from the form</param>
+        /// <param name="db">Application DB Context</param>
         public ApplicationUser(RegisterViewModel model, ApplicationDbContext db) : this(model)
         {
             var userFromDB = db.Users.Find(model.userID);
@@ -53,6 +61,10 @@ namespace CostaDiamante_HOA.Models
         {
             get { return this.name + " " + this.lastName; }
         }
+
+        [DisplayName("Registered At")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        public DateTime? registrationDate { get; set; }
 
         public static class RoleNames
         {

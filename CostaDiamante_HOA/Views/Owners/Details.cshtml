@@ -10,20 +10,25 @@
 
     List<CostaDiamante_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
 
-
     //New default payment as model for partialview, 
-    Payment_HOAFee payment = new Payment_HOAFee() { date = DateTime.Today, ownerID = Model.Id };
+    Payment_HOAFee payment = new Payment_HOAFee() { date = DateTime.Today };
 }
 
-@if (Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+<nav class="hidden-print">
+    @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+    {
+        <a href="@Url.Action("Index","Owners")">
+            <i class="glyphicon glyphicon-arrow-left"></i><span>Back to Owners List</span>
+        </a>
+    }
+</nav>
+
+@if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
 {
-    <a href="@Url.Action("Index","Owners")">
-        <i class="glyphicon glyphicon-arrow-left"></i><span>Back to Owners List</span>
-    </a>
     @Html.Partial("Partial_infoOwner", Model)
 }
 
-<div class="panel panel-primary">
+<div class="panel panel-primary hidden-print">
     <div class="panel-heading">
         <h2 class="panel-title"></h2>
     </div>
@@ -47,11 +52,12 @@
     </div>
 </div>
 
-@Html.Partial("../Payments/Partial_ListPayments",payment)
-
-@section Scripts{
-    @Scripts.Render("~/bundles/jqueryval")
-    <script>
-        var app = initListPayments()
-    </script>
+@{ 
+    ViewDataDictionary vddReport = new ViewDataDictionary();
+    int year = ViewBag.year == null ? DateTime.Today.Year : ViewBag.year;
+    var report = Model.ReportHOAFeeByYear(year);
+    vddReport.Add("year", year);
+    vddReport.Add("byOwner", true);
 }
+
+@Html.Partial("../Reports/Partial_HOAFeesReport", report, vddReport)
