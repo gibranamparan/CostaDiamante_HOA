@@ -19,14 +19,7 @@ namespace CostaDiamante_HOA.Controllers
         {
             //var payments = db.Payments.Include(p => p.owner).Include(p => p.visit);
             var visitors = db.Visitor.Where(a => a.visitID == id)
-            .Select(a => new
-            {
-                visitorID = a.visitorID,
-                name = a.name,
-                lastName = a.lastName,
-                isYounger = a.isYounger,
-                visitID = a.visitID
-            });
+            .Select(a => new Visitor.VMVisitor(a));
 
             return Json(visitors);
             //return Json(payments, JsonRequestBehavior.AllowGet);

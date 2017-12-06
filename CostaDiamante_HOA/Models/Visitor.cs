@@ -32,5 +32,23 @@ namespace CostaDiamante_HOA.Models
         [Display(Name = "Visit #")]
         public int visitID { get; set; }
         public virtual Visit visit { get; set; }
+
+        public class VMVisitor
+        {
+            public int visitorID { get; set; }
+            public string name { get; set; }
+            public string lastName { get; set; }
+            public bool isYounger { get; set; }
+            public int visitID { get; set; }
+
+            public VMVisitor(Visitor a)
+            {
+                this.visitorID = a.visitorID;
+                this.name = a.name;
+                this.lastName = a.lastName;
+                this.isYounger = a.isYounger;
+                this.visitID = a.visitID;
+            }
+        }
     }
 }

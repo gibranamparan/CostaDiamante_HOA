@@ -108,7 +108,7 @@
 
                         <div class="form-group col-md-2">
                             <br />
-                            <button type="button" value="Add" class="btn btn-success btn-block pull-right" v-on:click="saveNewVisitorDB"
+                            <button type="button" value="Add" class="btn btn-success btn-block pull-right" v-on:click="saveNewVisitorDB()"
                                     v-bind:disabled="(newVisitor.name === '' && newVisitor.lastName === '')">
                                 Add
                             </button>
@@ -203,8 +203,8 @@
                 { text: 'Visit of friends and family', value: 0 },
                 { text: 'Visit by rent', value: 1 }
             ],
-            withTheOwner: undefined,
-            skipPayment: undefined
+            withTheOwner: false,
+            skipPayment: false
         },
         methods: {
             getVisitors: function () {
@@ -220,7 +220,7 @@
                     console.log(error)
                 })
             },
-            saveNewVisitorDB: function (newVisitor) {
+            saveNewVisitorDB: function () {
                 var ws = this
                 axios.post('/Visitors/Create', {
                     visitor: ws.newVisitor.clone()
@@ -295,13 +295,18 @@
                 })
             },
             calculateTotalPerVisit: function () {
-                //cuando una visita se pretende editar, donde atributo visit.paymentOmitted tiene el valor de true por defecto, 
+                //cuando una visita se pretende editar, donde atributo visit.paymentOmitted tiene el valor de true por defecto,
                 //esto evitaría seguir conservando el mismo valor del atributo cuando se seleccione la casilla 'withTheOwner'.
                 if(this.withTheOwner) {
                     this.skipPayment = false
                 }
                 if(this.skipPayment) {
                     this.withTheOwner = false
+                }
+
+                if(this.visit.typeOfVisit === 1) {
+                    this.withTheOwner = false
+                    this.skipPayment = false
                 }
 
                 var visitorCount = 0
@@ -336,16 +341,15 @@
             }
         },
         created: function () {
-            
-            if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' === '0,00') {
+            if('@Model.typeOfVisit' === '@(typeOfVisit.FRIENDS_AND_FAMILY)' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' === '0.00') {
                 this.withTheOwner = true
             }
 
-            if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' != '0,00') {
+            if('@Model.typeOfVisit' === '@(typeOfVisit.FRIENDS_AND_FAMILY)' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' != '0.00') {
                 this.withTheOwner = false
             }
 
-            if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY' && '@Model.paymentOmitted' === 'True') {
+            if('@Model.typeOfVisit' === '@(typeOfVisit.FRIENDS_AND_FAMILY)' && '@Model.paymentOmitted' === 'True') {
                 this.skipPayment = '@Model.paymentOmitted'
             }
 
