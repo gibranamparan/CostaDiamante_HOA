@@ -94,6 +94,25 @@ namespace CostaDiamante_HOA.Models
         }
 
         /// <summary>
+        /// A visit model is created to avoid returning all collections that have to do with this model.
+        /// </summary>
+        public class VMVisits
+        {
+            public int visitID { get; set; }
+
+            public DateTime arrivalDate { get; set; }
+
+            public DateTime departureDate { get; set; }
+
+            public VMVisits(Visit visit)
+            {
+                this.visitID = visit.visitID;
+                this.arrivalDate = visit.arrivalDate;
+                this.departureDate = visit.departureDate;
+            }
+        }
+
+        /// <summary>
         /// Sends an email to de administrator notifying that the current visit
         /// was registered in the system.
         /// </summary>

@@ -33,6 +33,9 @@ namespace CostaDiamante_HOA.Models
         public int visitID { get; set; }
         public virtual Visit visit { get; set; }
 
+        /// <summary>
+        /// A visitor model is created to avoid returning all collections that have to do with this model.
+        /// <sumary>
         public class VMVisitor
         {
             public int visitorID { get; set; }

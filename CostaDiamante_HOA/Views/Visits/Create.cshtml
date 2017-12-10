@@ -214,16 +214,6 @@
                     return true 
                 }
             },
-            //selectTypeOfVisit: function () {
-            //    if(value == 0) {
-            //        this.withTheOwner = true
-            //        this.withoutTheOwner = false
-            //    } 
-            //    if(value == 1) {
-            //        this.withoutTheOwner = true
-            //        this.withTheOwner = false
-            //    }
-            //},
             addVisitorToTable: function () {
                 this.visit.visitors.push(this.newVisitor.clone()) //The model is clone a pushed into the list of visitors in the visit
                 this.newVisitor.clear() //The model for a new visitor is clared to enter a new one
@@ -247,7 +237,6 @@
                     visit : self.visit
                 })
                 .then(response => {
-                    console.log(self.visit)
                     var response = response.data
                     if(response.numReg){
                         self.redirectToOwnerDetails()
@@ -258,7 +247,6 @@
                     }
                 })
                 .catch(e => {
-                    debugger
                     console.log(e)
                 })
             },

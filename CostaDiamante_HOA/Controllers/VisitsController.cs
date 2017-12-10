@@ -106,9 +106,9 @@ namespace CostaDiamante_HOA.Controllers
                     numReg = db.SaveChanges();
                     if (numReg > 0) //If the visit notification was added, an email is sent to admin
                     {
-                        db.Entry(visit).Reference(v => v.owner).Load();
-                        db.Entry(visit).Reference(v => v.condo).Load();
-                        errorMailer = visit.sendNotificationEmail(Request);
+                        //db.Entry(visit).Reference(v => v.owner).Load();
+                        //db.Entry(visit).Reference(v => v.condo).Load();
+                        //errorMailer = visit.sendNotificationEmail(Request);
                     }
                 }
             }catch(Exception e)
