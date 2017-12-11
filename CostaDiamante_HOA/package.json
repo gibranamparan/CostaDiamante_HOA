@@ -1,9 +1,0 @@
-{
-  "version": "1.0.0",
-  "Name": "CostaDiamante_HOA",
-  "private": true,
-  "devDependencies": {},
-  "dependencies": {
-    "vue-tables-2": "^0.6.93"
-  }
-}

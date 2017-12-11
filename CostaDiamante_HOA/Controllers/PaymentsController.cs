@@ -28,7 +28,7 @@ namespace CostaDiamante_HOA.Controllers
             string errorMsg = string.Empty;
             try { 
                 var payments = db.Visits.Find(id).payments.OrderByDescending(pay => pay.date).ToList()
-                    .Select(pay => new Payment.VMPayment(pay.paymentsID, pay.amount, pay.date, pay.typeOfPayment));
+                    .Select(pay => new Payment.VMPayment(pay));
                 numReg = payments != null ? payments.Count() : 0;
                 return Json( new { res = payments, numReg = payments.Count() }, JsonRequestBehavior.AllowGet);
             }catch(Exception e)
@@ -49,7 +49,7 @@ namespace CostaDiamante_HOA.Controllers
             {
                 var condo = db.Condoes.Find(id);
                 var payments = condo.payments.Where(p => p.year == year && p.quarterNumber == quarter).OrderByDescending(pay => pay.date).ToList()
-                    .Select(pay => new Payment.VMPayment(pay.paymentsID, pay.amount, pay.date, pay.typeOfPayment));
+                    .Select(pay => new Payment.VMPayment(pay));
                 numReg = payments != null ? payments.Count() : 0;
 
                 return Json(new { res = payments, numReg = payments.Count() }, JsonRequestBehavior.AllowGet);
@@ -73,7 +73,7 @@ namespace CostaDiamante_HOA.Controllers
             try
             {
                 var condo = db.Condoes.Find(id);
-                var vmQuarter = new Payment.VMHOAQuarter(year, quarter, condo);
+                var vmQuarter = new VMHOAQuarter(year, quarter, condo);
                 decimal interest = vmQuarter.calcInterest(refDate, true);
 
                 return Json(new { res = interest, numReg = true }, JsonRequestBehavior.AllowGet);
@@ -126,6 +126,7 @@ namespace CostaDiamante_HOA.Controllers
                 {
                     db.Payment_RentImpact.Add(payment);
                     numReg = db.SaveChanges();
+                    //payment.sendEmailNotification()
                     return Json(new { numReg = numReg, result = new Payment.VMPayment(payment) });
                 }
             }

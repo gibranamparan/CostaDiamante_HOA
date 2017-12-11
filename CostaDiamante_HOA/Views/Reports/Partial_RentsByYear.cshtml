@@ -1,0 +1,118 @@
+﻿@using CostaDiamante_HOA.Models
+@model IEnumerable<VMVisitreport>
+@{ 
+    int year = ViewData["year"] == null ? DateTime.Today.Year : (int)ViewData["year"];
+    Condo condo = ViewData["condo"] == null ? new Condo() : (Condo)ViewData["condo"];
+    bool pdfMode = ViewData["pdfMode"] == null ? false : (bool)ViewData["pdfMode"];
+}
+<div class="pull-right">
+    <strong>Report At: </strong><span>@DateTime.Today.ToLongDateString()</span>
+</div>
+<h2>Rents By Year</h2>
+<!-- YEAR SELECTION -->
+<div id="pnlYearSelection" style="text-align: center">
+    <a href="?year=@(year - 1)" class="notShowIfOutOfTime hidden-print @(pdfMode?"hidden":"")">
+        <i class="glyphicon glyphicon-circle-arrow-left"></i>
+    </a>
+    <strong>Year:</strong> <span>@(year)</span>
+    <a href="?year=@(year + 1)" class="hidden-print @(pdfMode?"hidden":"")">
+        <i class="glyphicon glyphicon-circle-arrow-right"></i>
+    </a>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span>Condo: </span><span>@condo.name</span>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="@(Model.Count()>0?"":"hidden")">
+            <div class="pull-right">
+                <span> | </span>
+                <strong>Total Paid:</strong>
+                <span>@(Model.Sum(v => v.paid).ToString("C")) of @(Model.Sum(v => v.cost).ToString("C"))</span>
+            </div>
+            @{
+                decimal totalDiscount = Model.Sum(v => v.discount);
+            }
+            @if (totalDiscount > 0)
+            {
+                <div class="pull-right">
+                    <span> | </span>
+                    <strong>Total Discount:</strong>
+                    <span>@(totalDiscount.ToString("C"))</span>
+                </div>
+            }
+            <div class="pull-right">
+                <strong>Total Days Rented:</strong>
+                <span>@(Model.Sum(v => v.daysRented))</span>
+            </div>
+            <table id="tblReport" class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>@Html.DisplayNameFor(model => model.arrivalDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.departureDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.renters)</th>
+                        <th>@Html.DisplayNameFor(model => model.daysRented)</th>
+                        <th>@Html.DisplayNameFor(model => model.cost)</th>
+                        <th>@Html.DisplayNameFor(model => model.paid)</th>
+                        <th>@Html.DisplayNameFor(model => model.discount)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int month = 0;
+                        bool cambioFecha = false;
+                        foreach (var v in Model.OrderBy(v => v.arrivalDate))
+                        {
+                            if (month != v.arrivalDate.Month)
+                            {
+                                month = v.arrivalDate.Month;
+                                cambioFecha = true;
+                            }
+                            <tr class="@(cambioFecha?"borderRow":"")">
+                                @if (cambioFecha)
+                                {
+                                    <td style="font-weight: bold" rowspan="@(Model.Where(v2=>v2.arrivalDate.Month == month).Count())">
+                                        @(v.arrivalDate.ToString("MMMM"))
+                                    </td>
+                                    cambioFecha = false;
+                                }
+                                <td>@Html.DisplayFor(model => v.arrivalDate)</td>
+                                <td>@Html.DisplayFor(model => v.departureDate)</td>
+                                <td>@Html.DisplayFor(model => v.renters)</td>
+                                <td>@Html.DisplayFor(model => v.daysRented)</td>
+                                <td>@Html.DisplayFor(model => v.cost)</td>
+                                <td>@Html.DisplayFor(model => v.paid)</td>
+                                <td>
+                                    @if (v.discount > 0)
+                                    {
+                                        Html.DisplayFor(model => v.discount);
+                                    }
+                                    else
+                                    {
+                                        <span>--</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="alert alert-info  @(Model.Count()>0?"hidden":"")">
+            @Html.Raw(GlobalMessages.NO_VISITS)
+        </div>
+    </div>
+</div>
+
+<style>
+    tr.borderRow td {
+        border-top: 2px solid !important;
+    }
+
+    .tblReport tr:last-child td {
+        border-bottom: 2px solid !important;
+    }
+</style>

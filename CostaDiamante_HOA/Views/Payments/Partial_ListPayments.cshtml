@@ -5,7 +5,7 @@
 @{ 
     //Total cost to pay
     decimal totalCost = ViewData["totalCost"] == null ? 0 : (decimal)ViewData["totalCost"];
-    decimal HOAStandarFee = Payment.VMHOAQuarter.StandarHOAFee;
+    decimal HOAStandarFee = VMHOAQuarter.StandarHOAFee;
 
     //Setting up identity variables for this payments
     int visitID = Model.typeOfPayment == Payment.TypeOfPayment.RENTAL_IMPACT ? ((Payment_RentImpact)Model).visitID : 0; //For Impact of rent
@@ -24,18 +24,26 @@
             <div class="row">
                 <h3 class="panel-title col-md-11">@Model.TypeOfPaymentName</h3>
                 <div class="col-md-1">
-                    <img style="width: 1.5em;" class="pull-right" src="/images/loading1.gif" v-if="loading"/>
+                    <img style="width: 1.3em;" class="pull-right" src="/images/loading1.gif" v-if="loading"/>
                 </div>
             </div>
         </div>
         <div class="panel-body">
-            <form class="row form-inline" v-on:submit.prevent="createNewPayment()" v-if="toPay>0">
+            <form class="row form-inline" v-on:submit.prevent="createNewPayment()">
                 @Html.AntiForgeryToken()
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => Model.isDiscount)
+                    <input id="isDiscount" class="form-control" type="checkbox" v-model="newPayment.isDiscount"/>
+                </div>
+                <div class="form-group col-md-2">
+                    @Html.LabelFor(model => Model.reference)
+                    <input id="reference" class="form-control" type="text" v-model="newPayment.reference"/>
+                </div>
                 <div class="form-group col-md-2">
                     @Html.LabelFor(model => Model.amount) (USD)
                     <input id="amount" class="form-control" type="number"
                            v-bind:min="0" v-model.number="newPayment.amount"
-                           v-bind:max="toPay + (interest?interest:0)" />
+                           v-bind:max="currentDebt" />
                 </div>
 
                 <div class="form-group col-md-4">
@@ -44,12 +52,12 @@
                 </div>
                 <div class="form-group col-md-2">
                     <button id="btnRegister" name="createVisit" class="btn btn-success" type="submit"
-                            v-bind:disabled="newPayment.amount == 0 || (newPayment.amount > (toPay + interest))">
+                            v-bind:disabled="!allowNewPayment && newPayment.amount <= 0">
                         Registrar
                     </button>
                 </div>
             </form>
-            <div class="alert alert-info" v-if="toPay==0">
+            <div class="alert alert-info" style="margin-top: 1em" v-if="!allowNewPayment">
                 @if (typeOfPayment == Payment.TypeOfPayment.HOA_FEE)
                 {
                     @Html.Raw(GlobalMessages.HOAFEE_COMPLETE_PAID)
@@ -63,22 +71,40 @@
             <div>
                 <div class="row col-md-12" style="font-size: 1.2em">
                     <div class="col-md-4">
-                        <strong>Total Paid: </strong>
-                        <span class="form-control-static">{{numeral(totalPaid).format('$0,000.00')}}</span>
+                        <strong>Current debt: </strong>
+                        <span class="form-control-static">{{numeral(currentDebt).format('$0,000.00')}}</span>
                     </div>
-                    <div class="col-md-4" v-if="interest>0">
-                        <strong>Interest: </strong>
-                        <span class="form-control-static">{{numeral(interest).format('$0,000.00')}}</span>
+                    <!-- SHOW AMOUNT TO BE PAID FOR HOA FEE -->
+                    <div class="form-group col-md-4" v-if="newPayment.typeOfPayment == '@(Payment.TypeOfPayment.HOA_FEE)'">
+                        <label>HOA Fee: </label>
+                        <span class="form-control-static">
+                            Paid {{numeral(feePaid).format('$0,000.00')}}
+                        </span>
+                        <span> of <strong>{{numeral(totalCost).format('$0,000.00')}}</strong></span>
                     </div>
-                    <div class="col-md-4">
-                        <strong>To Pay: </strong>
-                        <span class="form-control-static">{{numeral(toPay + (interest?interest:0) ).format('$0,000.00')}}</span>
+                    <!-- SHOW AMOUNT TO BE PAID FOR IMPACT OF RENT -->
+                    <div class="form-group col-md-4" v-if="newPayment.typeOfPayment == '@(Payment.TypeOfPayment.RENTAL_IMPACT)'">
+                        <label>Impact of Rent: </label>
+                        <span class="form-control-static">
+                            Paid {{numeral(totalPaid).format('$0,000.00')}}
+                        </span>
+                        <span> of <strong>{{numeral(totalCost).format('$0,000.00')}}</strong></span>
+                    </div>
+                    <div class="form-group col-md-4" v-if="interest>0">
+                        <label>Interest: </label>
+                        <span class="form-control-static">
+                            <span>Paid {{numeral(interestPaid).format('$0,000.00')}}</span>
+                            <span> of <strong>{{numeral(interest).format('$0,000.00')}}</strong></span>
+                        </span>
                     </div>
                 </div>
                 <table id="tblPayments" class="table table-hover table-striped" v-if="payments.length > 0">
                     <thead>
                         <tr>
                             <th style="width: 2em"></th>
+                            <th v-on:click="sortPayments('reference')" style="cursor:pointer">
+                                @Html.DisplayNameFor(model => Model.reference)
+                            </th>
                             <th v-on:click="sortPayments('amount')" style="cursor:pointer">
                                 @Html.DisplayNameFor(model => Model.amount)
                             </th>
@@ -88,10 +114,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(payment, i) in payments">
+                        <tr v-for="(payment, i) in payments" :class="{isDiscount:payment.isDiscount}">
                             <td>
                                 <i class="fa fa-remove option remove" v-on:click="removePayment(payment)"></i>
                             </td>
+                            <td>{{payment.reference?payment.reference:'0000'}}{{payment.isDiscount?' (Discount)':''}}</td>
                             <td>{{numeral(payment.amount).format('$0,000.00')}}</td>
                             <td>{{moment(payment.date).format('LL')}}</td>
                         </tr>
@@ -105,48 +132,88 @@
     </div>
 </script>
 
+<style>
+    .isDiscount td{
+        background: grey !important;
+    }
+    .isDiscount:hover td{
+        background: grey !important
+    }
+</style>
+
 <script>
     var exception
+    class Payment{
+        constructor(obj){
+            if(obj){
+                this.id = obj.id
+                this.isDiscount = obj.isDiscount
+                this.reference = obj.reference
+                this.amount = obj.amount
+                this.date = obj.date
+                this.dtDate = new Date(obj.date)
+                this.typeOfPayment = obj.typeOfPayment
+                //Set the visit ID just if the payment its for RentImpact
+                this.visitID = obj.visitID
+                this.year = obj.year
+                this.quarterNumber = obj.quarterNumber
+                this.condoID = obj.condoID
+            }
+        }
+        initPayment(){
+            this.id = 0,
+            this.isDiscount =false,
+            this.reference ='',
+            this.amount = 0.00,
+            this.date = '@Model.date.ToString("yyyy-MM-dd")',
+            this.dtDate = new Date('@Model.date.ToString("yyyy/MM/dd")'), //For sorting
+            this.typeOfPayment = '@(typeOfPayment)',
+            //Set the visit ID just if the payment its for RentImpact
+            this.visitID = @(visitID),
+            this.year = 0,
+            this.quarterNumber = 0,
+            this.condoID =0
+
+            return this;
+        }
+    }
     function initListPayments(){
         var antiForgeryToken = $("input[name=__RequestVerificationToken]").val(); //Token
         const v = Vue.component('payments-list',{
-            props: ['year', 'quarter', 'interest','condoid'],
+            props: ['year', 'quarter','condoid','status'],
             template: '#payments-list-template',
             data: function() {
                 return {
                     sortOrders: {
                         amount : 'asc',
-                        date: 'asc'
+                        date: 'asc',
+                        reference: 'asc'
                     },
-                    newPayment: {
-                        id: 0,
-                        amount: 0.00,
-                        date: '@Model.date.ToString("yyyy-MM-dd")',
-                        dtDate: new Date('@Model.date.ToString("yyyy/MM/dd")'),
-                        typeOfPayment: 1,
-                        //Set the visit ID just if the payment its for RentImpact
-                        visitID: @(visitID),
-                        year: 0,
-                        quarterNumber: 0,
-                        loading : false,
-                        condoID:0
-                    },
+                    newPayment: new Payment().initPayment(),
                     paymentType : '@Model.typeOfPayment',
                     payments: [],
                     totalCost: @(totalCost),
                     toPay: 0,
                     totalPaid: 0,
                     isblocked: true,
-                    api: {}
+                    loading : false,
+                    interest : 0,
+                    interestPaid:0,
+                    feePaid:0,
+                    currentDebt: 0,
+
+                    api: {},
                 }
             },
             watch:{
                 year: function(){
                     this.getPayments();
+                    this.getInterest()
                     return this.year
                 },
                 quarter: function(){
                     this.getPayments();
+                    this.getInterest()
                     return this.quarter
                 },
                 paymentDate(){
@@ -176,14 +243,9 @@
                         if(dataFromServer.numReg){ //The query returned data from database
                             dataFromServer = dataFromServer.res
                             self.payments = dataFromServer.map(function (item) {
-                                var newItem = {}
-                                Object.assign(newItem, self.newPayment)
-                                newItem.id = item.id
-                                newItem.date = item.date
-                                newItem.dtDate = new Date(item.date),
-                                newItem.amount = item.amount
-                                return newItem
+                                return new Payment(item)
                             })
+                            self.updateAmounts()
                         }else if(dataFromServer.errorMsg){ //There were no rows and an error was reported
                             notifyError(dataFromServer.errorMsg)
                         }else{ //No rows and no errors, no payments
@@ -195,11 +257,12 @@
                     .catch(function (error) {
                         exception = error
                         notifyError(error.message)
-                        this.loading = false
+                        self.loading = false
                     })
                 },
                 //Add a new payment for the impact of rent or HOAFee async from server
                 createNewPayment: function () {
+                    this.newPayment.amount = this.newPayment.amount > this.currentDebt ? this.currentDebt : this.newPayment.amount
                     //If its a HOAFee payment
                     if(this.paymentType == '@(Payment.TypeOfPayment.HOA_FEE)'){
                         //Set condoID, year and quarter
@@ -220,16 +283,19 @@
                             self.payments.push(newPayment)
                             self.sortPayments()
 
-                            //Clear new payment container
-                            self.newPayment.amount = 0
-                            self.newPayment.date = '@Model.date.ToString("yyyy-MM-dd")'
-                            self.newPayment.dtDate = new Date(self.date)
+                            //Clear form
+                            var tempDate = self.newPayment.date
+                            self.newPayment = new Payment().initPayment()
+                            self.newPayment.date = tempDate
+                            self.newPayment.dtDate = new Date(tempDate)
 
+                            self.updateAmounts()
                             //Focus on default
-                            document.getElementById("amount").focus()
+                            document.getElementById("reference").focus()
                             self.$emit('quarter-changed')
                             //Notify successfull registration
-                            $.notify("@(GlobalMessages.PAY_NEW)", { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
+                            $.notify("@(GlobalMessages.PAY_NEW)",
+                                { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
 
                         } else if (response.errorMsg) {
                             notifyError('@GlobalMessages.ERROR_OCURRED' + response.errorMsg)
@@ -262,6 +328,7 @@
                                     //updates payments list
                                     self.payments = self.payments.filter(function (pay) { return pay.id != item.id })
                                     self.sortPayments()
+                                    self.updateAmounts()
 
                                     self.$emit('quarter-changed')
                                     //Notify successfully done operation
@@ -280,13 +347,26 @@
                     })
                 },
                 sortPayments: function (fieldName) {//Sort paymentes desceding
-                    sortBy(this.payments, fieldName, this.sortOrders.amount)
-                    this.sortOrders.amount = this.sortOrders.amount == 'desc' ? 'asc' : 'desc'
+                    sortBy(this.payments, fieldName, this.sortOrders[fieldName])
+                    this.sortOrders[fieldName] = this.sortOrders[fieldName] == 'desc' ? 'asc' : 'desc'
                 },
                 updateAmounts: function () { //Function to recalculate amounts in screen after getting payments
+                    //debugger
                     this.totalPaid = this.calculateTotalPaid()
+
+                    if(this.status == '@((int)VMHOAQuarter.QuarterStatus.PAYED)'
+                        //|| (this.status == '@((int)VMHOAQuarter.QuarterStatus.DELAYED)' && !this.interest)
+                        )
+                    {
+                        this.interest = this.totalPaid - this.totalCost
+                    }
+
+                    this.interestPaid = this.totalPaid<=this.interest?this.totalPaid:this.interest
+                    this.feePaid = this.totalPaid<=this.interest ? 0 : this.totalPaid - this.interest
                     this.toPay = (this.totalCost < this.totalPaid) ? 0 : (this.totalCost - this.totalPaid)
-                    this.allowNewPayment = this.toPay > 0
+                    this.currentDebt = (this.interest + this.totalCost)-this.totalPaid
+
+                    this.allowNewPayment = this.currentDebt > 0
                 },
                 calculateTotalPaid: function () {
                     var res = 0
@@ -295,27 +375,31 @@
                     return res
                 },
                 getInterest(){
-                    var url = "GetInterestByReferenceDate/"+this.condoid+"?year="+this.year+"&quarter="+this.quarter+"&refDate="+this.newPayment.date
-                    this.loading = true;
-                    var self = this
-                    this.api.get(url)
-                    .then(function (response) {
-                        var dataFromServer = response.data
+                    console.log(this.newPayment.date)
+                    if(Date.parse(this.newPayment.date) > 0){ //If the payment date is valid
+                        var params = this.condoid+"?year="+this.year+"&quarter="+this.quarter+"&refDate="+this.newPayment.date
+                        var url = "GetInterestByReferenceDate/"+params
+                        this.loading = true;
+                        var self = this
+                        this.api.get(url)
+                        .then(function (response) {
+                            var dataFromServer = response.data
 
-                        if(dataFromServer.numReg){ //The query returned data from database
-                            self.interest = dataFromServer.res
-                        }else if(dataFromServer.errorMsg){ //There were no rows and an error was reported
-                            notifyError(dataFromServer.errorMsg)
-                        }
-                        self.loading = false
-                    })
-                    .catch(function (error) {
-                        exception = error
-                        notifyError(error.message)
-                        this.loading = false
-                    })
+                            if(dataFromServer.numReg){ //The query returned data from database
+                                self.interest = dataFromServer.res
+                            }else if(dataFromServer.errorMsg){ //There were no rows and an error was reported
+                                notifyError(dataFromServer.errorMsg)
+                            }
+                            self.loading = false
+                        })
+                        .catch(function (error) {
+                            exception = error
+                            notifyError(error.message)
+                            self.loading = false
+                        })
+                    }
                 }
-                
+
             },
             created() {
                 this.api = axios.create({ //Init connection to server
@@ -323,13 +407,14 @@
                     timeout: 200000,
                     headers: {"__RequestVerificationToken" : antiForgeryToken}
                 });
-
                 this.getPayments(); //Get payments
+                if(this.typeOfPayment == '@(Payment.TypeOfPayment.HOA_FEE)'){
+                    this.getInterest()
+                }
                 this.updateAmounts() //Recalculate
             },
-            updated() {
-
-                this.updateAmounts() //Just recalculate
+            updated(){
+                this.updateAmounts() //Recalculate
             }
         })
         return v;

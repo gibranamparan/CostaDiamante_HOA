@@ -69,7 +69,33 @@ namespace CostaDiamante_HOA.Models
         public virtual ICollection<Visitor> visitors { get; set; }
 
         //Every visits has a list of payments
-        public virtual ICollection<Payment_RentImpact> payments { get; set;  } 
+        public virtual ICollection<Payment_RentImpact> payments { get; set; }
+
+        [DisplayName("Paid")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public decimal totalPaid
+        {
+            get
+            {
+                decimal res = 0;
+                if (this.payments != null && this.payments.Count() > 0)
+                    res = this.payments.Sum(p => p.amount);
+                return res;
+            }
+        }
+
+        [DisplayName("Discount")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public decimal totalDiscount
+        {
+            get
+            {
+                decimal res = 0;
+                if (this.payments != null && this.payments.Count() > 0)
+                    res = this.payments.Where(p=>p.isDiscount).Sum(p => p.amount);
+                return res;
+            }
+        }
 
         public bool isInHouseInPeriod(TimePeriod tp)
         {
@@ -131,5 +157,61 @@ namespace CostaDiamante_HOA.Models
     public enum typeOfVisit
     {
         FRIENDS_AND_FAMILY, BY_RENT
+    }
+
+    public class VMVisitreport
+    {
+        [DisplayName("Arrival Date")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        public DateTime arrivalDate { get; set; }
+
+        [DisplayName("Departure Date")]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        public DateTime departureDate { get; set; }
+
+        public TimePeriod period { get
+            {
+                return new TimePeriod(this.arrivalDate, this.departureDate);
+            }
+        }
+
+        [DisplayName("Renters")]
+        public int renters { get; set; }
+
+        public bool isRent { get; private set;}
+
+        [DisplayName("Cost")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public decimal cost { get; set; }
+
+        [DisplayName("Discount")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public decimal discount { get; set; }
+
+        [DisplayName("Paid")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public decimal paid { get; set; }
+
+        [DisplayName("Days Rented")]
+        public int daysRented {
+            get
+            {
+                int res = 0;
+                if (this.period != null)
+                    res = this.period.time.Days;
+                return res;
+            }
+        }
+
+        public VMVisitreport(Visit v)
+        {
+            this.departureDate = v.departureDate;
+            this.arrivalDate = v.arrivalDate;
+            this.renters = v.visitors.Count();
+            this.isRent = v.typeOfVisit == typeOfVisit.BY_RENT;
+            this.cost = v.totalCost;
+            this.discount = v.totalDiscount;
+            this.paid = v.totalPaid;
+        }
     }
 }

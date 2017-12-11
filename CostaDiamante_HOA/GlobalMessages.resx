@@ -123,6 +123,9 @@
   <data name="HOAFEE_COMPLETE_PAID" xml:space="preserve">
     <value>This quarter was &lt;Strong&gt;paid completely&lt;/Strong&gt;.</value>
   </data>
+  <data name="NO_VISITS" xml:space="preserve">
+    <value>&lt;strong&gt;No visits&lt;/strong&gt; have been registered this year</value>
+  </data>
   <data name="OWNER_OUTOFYEAR" xml:space="preserve">
     <value>The &lt;strong&gt;owner was not registered&lt;/strong&gt; int this whole year.</value>
   </data>

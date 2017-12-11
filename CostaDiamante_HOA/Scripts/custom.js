@@ -55,11 +55,20 @@ boolParse = function (myStr){
 }
 
 sortBy = function (arr, field, direction) {
-    if (direction=='asc')
-        arr.sort(function (a, b) { return a[field] - b[field] })
-    else if(direction == "desc")
-        arr.sort(function (a, b) { return b[field] - a[field] })
+    var dir = direction == 'asc' ? 1 : direction == 'desc' ? -1 : 0;
+
+    arr.sort(function (a, b) {
+        return compareItems(dir, a[field], b[field])
+    })
 }
+
+compareItems = function (dir, a, b) {
+    if (typeof a === 'string')
+        return dir * a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())
+    else
+        return dir * (a - b)
+}
+
 
 function notifyError(message) {
     swal("Error!", message, "error")

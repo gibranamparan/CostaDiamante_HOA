@@ -1,4 +1,4 @@
-﻿@model List<Condo.VMOwnerHOAQuartersRow>
+﻿@model List<VMOwnerHOAQuartersRow>
 @using CostaDiamante_HOA.Models
 
 @{
@@ -7,13 +7,27 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<div class="visible-print">
+    @Html.Partial("ReportHeader")
+</div>
+
+<div class="pull-right">
+    <strong>Report At: </strong><span>@DateTime.Today.ToLongDateString()</span>
+</div>
 <h2>HOA Fees Report Year: @(year)</h2>
 
 @{
     ViewDataDictionary vddReport = new ViewDataDictionary();
     vddReport.Add("year", year);
-    vddReport.Add("byOwner", true);
 }
 
+@*Show Table Report*@
 @Html.Partial("../Reports/Partial_HOAFeesReport", Model, vddReport)
 
+@section Scripts{
+    @Scripts.Render("~/bundles/jquery-datatables-reports")
+    <script>
+        @*INitialize datatables js in the table report*@
+        initReport()
+    </script>
+}

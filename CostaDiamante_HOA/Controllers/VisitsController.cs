@@ -108,7 +108,7 @@ namespace CostaDiamante_HOA.Controllers
                     {
                         db.Entry(visit).Reference(v => v.owner).Load();
                         db.Entry(visit).Reference(v => v.condo).Load();
-                        errorMailer = visit.sendNotificationEmail(Request);
+                        //errorMailer = visit.sendNotificationEmail(Request);
                     }
                 }
             }catch(Exception e)

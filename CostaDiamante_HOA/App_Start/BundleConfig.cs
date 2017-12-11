@@ -19,12 +19,21 @@ namespace CostaDiamante_HOA
                         "~/Scripts/jquery-ui-{version}.js",
                         "~/Scripts/jquery.mask.js",
                         "~/Scripts/jquery.dataTables.min.js",
+                        "~/Scripts/dataTables.buttons.min.js",
                         "~/Scripts/moment.min.js",
                         "~/Scripts/datetime-moment.js",
                         "~/Scripts/numeral.min.js",
                         "~/Scripts/sweetalert.min.js",
                         "~/Scripts/notify.min.js",
                         "~/Scripts/custom.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jquery-datatables-reports").Include(
+                        "~/Scripts/buttons.flash.min.js",
+                        "~/Scripts/buttons.html5.min.js",
+                        "~/Scripts/buttons.print.min.js",
+                        "~/Scripts/jszip.min.js",
+                        "~/Scripts/pdfmake.min.js",
+                        "~/Scripts/vfs_fonts.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/vue-axios").Include(
                         "~/Scripts/vue.min.js",
@@ -48,7 +57,8 @@ namespace CostaDiamante_HOA
                       "~/Content/main.css",
                       "~/Content/bootstrap.css",
                       "~/Content/Site.css",
-                      "~/Content/jquery.dataTables.min.css"));
+                      "~/Content/jquery.dataTables.min.css",
+                      "~/Content/buttons.dataTables.min.css"));
 
             bundles.Add(new StyleBundle("~/Content/icons").Include(
                       "~/Content/font-awesome.min.css",

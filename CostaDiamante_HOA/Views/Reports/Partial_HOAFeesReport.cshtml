@@ -1,73 +1,76 @@
-﻿@model List<Condo.VMOwnerHOAQuartersRow>
+﻿@model List<VMOwnerHOAQuartersRow>
 @using CostaDiamante_HOA.Models
 @{
     int year = ViewData["year"] == null ? DateTime.Today.Year : (int)ViewData["year"];
     bool byOwnerMode = ViewData["byOwner"] == null ? false : (bool)ViewData["byOwner"];
-    string[] quartersNames = new string[] { "January - April", "April - July", "July - Octuber", "Octuber - January" };
+    string[] quartersNames = new string[] { "Q1: January - March", "Q2: April - Jun", "Q3: July - September", "Q4: Octuber - December" };
     string[] classNames = { "none", "outoftime", "intime", "payed", "delayed", "delinquency" };
-    bool notShowIfOutOfTimeFlag = true;
+    bool isOutOfTime = true;
 }
 
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h3 class="panel-title">HOA Fees Status</h3>
+        <h3 class="panel-title">Report by Condo, Total Paid by Quarter</h3>
     </div>
     <div class="panel-body">
         <!-- YEAR SELECTION -->
         <div id="pnlYearSelection" style="text-align: center">
-            <a href="?year=@(year-1)" class="notShowIfOutOfTime hidden-print">
+            <a href="?year=@(year - 1)" class="notShowIfOutOfTime hidden-print">
                 <i class="glyphicon glyphicon-circle-arrow-left"></i>
             </a>
             <strong>Year:</strong> <span>@(year)</span>
-            <a href="?year=@(year+1)" class="hidden-print">
+            <a href="?year=@(year + 1)" class="hidden-print">
                 <i class="glyphicon glyphicon-circle-arrow-right"></i>
             </a>
         </div>
 
         <!-- QUARTER STATUS REPORT TABLE -->
-        <table class="table table-hover table-striped notShowIfOutOfTime">
+        <table id="tblReport" class="table table-hover table-striped notShowIfOutOfTime">
             <thead>
                 <tr>
+                    <th>#</th>
                     @if (!byOwnerMode) {
                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().ownerFullName)</th>
                     }
                     <th>@Html.DisplayNameFor(model => model.FirstOrDefault().condoName)</th>
                     @foreach (string name in quartersNames)
                     {
-                        <th>@name</th>
+                        <th style="text-align: center" >@name</th>
                     }
-                    <th>@Html.DisplayNameFor(model=>model.FirstOrDefault().total)</th>
+                    <th>@Html.DisplayNameFor(model => model.FirstOrDefault().total)</th>
                 </tr>
             </thead>
             <tbody>
+                @{int c = 0;}
                 @foreach (var row in Model)
                 {
+                    c++;
                     <tr>
+                        <td>@c</td>
                         @if (!byOwnerMode)
                         {
                         <td>
                             <strong class="visible-print">@(row.ownerFullName)</strong>
-                            <a href="@Url.Action("Details", "Owners", new { id = row.ownerID })" target="_blank">
+                            <a class="hidden-print" href="@Url.Action("Details", "Owners", new { id = row.ownerID })" target="_blank">
                                 @(row.ownerFullName)
                             </a>
                         </td>
                         }
                         <td>
                             <strong class="visible-print">@(row.condoName)</strong>
-                            <a href="@Url.Action("HOAFees","Condo",new { id = row.condoID })" target="_blank" class="hidden-print">
+                            <a href="@Url.Action("HOAFees","Condo",new { id = row.condoID, year=year })" 
+                               target="_blank" class="hidden-print">
                                 @(row.condoName)
                             </a>
                         </td>
                         @foreach (var quarter in row.quarters)
                         {
-                            <td class="@(classNames[(int)quarter.currentStatus])">
-                                @*Show money remaining to pay if quarter is inside time scope of the owner*@
-                                @(quarter.currentStatus == Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME ? "--" : quarter.TotalPaid.ToString("C"))
+                            if (quarter.currentStatus != VMHOAQuarter.QuarterStatus.OUT_OF_TIME){ isOutOfTime = false; }
+                            @*Cell is background painted to indicate its status*@
+                            <td style="text-align: center" class="@(classNames[(int)quarter.currentStatus])">
+                                @*Show paid if quarter is inside time scope of the owner*@
+                                @(isOutOfTime ? "--" : quarter.TotalRealPaid.ToString("C"))
                             </td>
-                            if (quarter.currentStatus != Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME)
-                            {
-                                notShowIfOutOfTimeFlag = false;
-                            }
                         }
                         <td style="font-weight: bold">@(row.total.ToString("C"))</td>
                     </tr>
@@ -80,7 +83,15 @@
     </div>
 </div>
 
-@if (notShowIfOutOfTimeFlag) {
+<script>
+    function initReport() {
+        $('#tblReport').dataTable({
+            "paging": false
+        });
+    }
+</script>
+
+@if (isOutOfTime) {
 <style>
     .notShowIfOutOfTime {
         display: none;
@@ -90,3 +101,23 @@
     }
 </style>
 }
+
+<style>
+    @@media print {
+        #tblReport td,#tblReport th {
+            -webkit-print-color-adjust: exact; 
+        }
+        #tblReport th {
+            color: white !important;
+        }
+        #tblReport th,#tblReport td {
+            border: 1px solid #c5c5c5
+        }
+        .datatables-length, .datatables-filter{
+            display: none
+        }
+        #tblReport_filter, #tblReport_info {
+            display: none;
+        }
+    }
+</style>

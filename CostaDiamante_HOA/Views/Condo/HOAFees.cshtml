@@ -4,6 +4,7 @@
 @{
     ViewBag.Title = "HOAFees - Condo: "+Model.name;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    int year = ViewBag.year == null ? DateTime.Today.Year : (int)ViewBag.year;
     //New default payment as model for partialview, 
     Payment_HOAFee payment = new Payment_HOAFee() { date = DateTime.Today };
 }
@@ -53,7 +54,7 @@
             <br />
             <payments-list v-if="quarterStatus.condoID>0 && quarter>0"
                            v-bind:year="year" v-bind:quarter="quarter"
-                           v-bind:interest="quarterStatus.status[quarter-1].interest"
+                           v-bind:status="quarterStatus.status[quarter-1].currentStatus"
                            v-bind:condoid="condoID"
                            v-on:quarter-changed="getQuarterStatus(true)"></payments-list>
 
@@ -74,14 +75,14 @@
             props : ["condoid"],
             data(){
                 return {
-                    year : @(DateTime.Today.Year),
+                    year : @(year),
                     quarter : 1,
                     quarterStatus: {
                         condoID:0,
                         condoName:'',
                         status:[{interest:0},{interest:0},{interest:0},{interest:0}]
                     },
-                    quartersNames: ['January - April','April - July','July - Octuber','Octuber - January'],
+                    quartersNames: [ "Q1: January - March", "Q2: April - Jun", "Q3: July - September", "Q4: Octuber - December" ],
                     parentAPI : {}
                 }
             },
@@ -103,7 +104,7 @@
                             //Look for the first a quarter that can be selected
                             if(!dontModifyQuarterSelection){
                                 self.quarter = self.quarterStatus.status.findIndex(function(item){
-                                     return item.currentStatus!=@((int)Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME);})
+                                     return item.currentStatus!=@((int)VMHOAQuarter.QuarterStatus.OUT_OF_TIME);})
                                  self.quarter += 1;
                             }
                         }else if(response.errorMsg){
@@ -119,16 +120,16 @@
                     return this.quarterStatus[quarterNum] && this.quarterStatus[quarterNum].numberOfMonthsDelayed > 0
                 },
                 selectQuarter: function (item, index){
-                    if(item.currentStatus != '@((int)Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME)') { this.quarter = index+1 }
+                    if(item.currentStatus != '@((int)VMHOAQuarter.QuarterStatus.OUT_OF_TIME)') { this.quarter = index+1 }
                 },
                 quartersClasses : function(item,index){
                     return {
                         selected: this.quarter == index+1,
-                        outoftime: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.OUT_OF_TIME),
-                        intime: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.INTIME),
-                        payed: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.PAYED),
-                        delayed: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.DELAYED),
-                        delinquency: item.currentStatus == @((int)Payment.VMHOAQuarter.QuarterStatus.DELINQUENCY),
+                        outoftime: item.currentStatus == @((int)VMHOAQuarter.QuarterStatus.OUT_OF_TIME),
+                        intime: item.currentStatus == @((int)VMHOAQuarter.QuarterStatus.INTIME),
+                        payed: item.currentStatus == @((int)VMHOAQuarter.QuarterStatus.PAYED),
+                        delayed: item.currentStatus == @((int)VMHOAQuarter.QuarterStatus.DELAYED),
+                        delinquency: item.currentStatus == @((int)VMHOAQuarter.QuarterStatus.DELINQUENCY),
                     }
                 }
             },
@@ -165,30 +166,30 @@
         box-shadow: 0.5em 0.5em 1em grey;
     }
 
-        #pnlQtrSelector > div {
-            background: #ddd;
-            text-align: center;
-            color: #428bca;
-            border-top-right-radius: 15px;
-            cursor: pointer;
-            border: 1px solid #428bca;
-        }
+    #pnlQtrSelector > div {
+        background: #ddd;
+        text-align: center;
+        color: #428bca;
+        border-top-right-radius: 15px;
+        cursor: pointer;
+        border: 1px solid #428bca;
+    }
 
-            #pnlQtrSelector > div:hover {
-                border: 2px solid #5e9ace;
-            }
+    #pnlQtrSelector > div:hover {
+        border: 2px solid #5e9ace;
+    }
 
-            #pnlQtrSelector > div.selected {
-                border: 2px solid #428bca;
-                color: white;
-                cursor: initial;
-                font-weight: bold;
-            }
+    #pnlQtrSelector > div.selected {
+        border: 2px solid #428bca;
+        color: white;
+        cursor: initial;
+        font-weight: bold;
+    }
 
-            #pnlQtrSelector > div.outoftime {
-                border: none !important;
-                cursor: initial !important;
-            }
+    #pnlQtrSelector > div.outoftime {
+        border: none !important;
+        cursor: initial !important;
+    }
 
     /*Year Selector*/
     #pnlYearSelection {

@@ -279,22 +279,43 @@ ul.usrPanel li a {
     color: #8a9835;
 }
 
+/*HOAFee Quarters out of time*/
 .outoftime {
     color: grey !important;
 }
+
+/*HOAFee Quarters not selected*/
 .intime{
-    background: #5e9ace !important;
+    background: #4c779d !important;
     color: white !important;
 }
 .payed{
-    background: #94ff83 !important;
+    background: #66b45a !important;
     color: black !important;
 }
 .delayed{
-    background: #ffd800 !important;
+    background: #c4a600 !important;
     color: black !important;
 }
 .delinquency{
+    background: #9b0000 !important;
+    color: white !important;
+}
+
+/*HOAFee Quarters not selected*/
+.selected.intime, td.intime{
+    background: #5e9ace !important;
+    color: white !important;
+}
+.selected.payed, td.payed{
+    background: #94ff83 !important;
+    color: black !important;
+}
+.selected.delayed, td.delayed{
+    background: #ffd800 !important;
+    color: black !important;
+}
+.selected.delinquency, td.delinquency{
     background: red !important;
     color: white !important;
 }

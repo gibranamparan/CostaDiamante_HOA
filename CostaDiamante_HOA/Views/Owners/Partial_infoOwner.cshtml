@@ -2,11 +2,8 @@
 @model CostaDiamante_HOA.Models.ApplicationUser
 
 @{ 
-    String roleName = ApplicationUser.RoleNames.OWNER;
-    if (ViewData["roleName"] != null)
-    {
-        roleName = (string)ViewData["roleName"];
-    }
+    String roleName = ViewData["roleName"] != null ? (string)ViewData["roleName"] : ApplicationUser.RoleNames.OWNER;
+    bool showLinks = ViewData["showLinks"] != null ? (bool)ViewData["showLinks"] : true;
 }
 
 <div class="panel panel-info">
@@ -32,7 +29,7 @@
             </div>
             }
         </div>
-        <div class="col-md-12 hidden-print">
+        <div class="col-md-12 hidden-print @(!showLinks?"hidden":"")">
             <a href="@Url.Action("Edit", "Account", new { id = Model.Id })">
                 <i class="fa fa-pencil"></i>Edit
             </a> 

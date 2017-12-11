@@ -79,6 +79,15 @@ namespace CostaDiamante_HOA {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;strong&gt;No visits&lt;/strong&gt; have been registered this year.
+        /// </summary>
+        public static string NO_VISITS {
+            get {
+                return ResourceManager.GetString("NO_VISITS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &lt;strong&gt;owner was not registered&lt;/strong&gt; int this whole year..
         /// </summary>
         public static string OWNER_OUTOFYEAR {

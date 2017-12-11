@@ -33,9 +33,9 @@ namespace CostaDiamante_HOA.Models
         /// </summary>
         /// <param name="year">The year of the report</param>
         /// <returns></returns>
-        public List<Condo.VMOwnerHOAQuartersRow> ReportHOAFeeByYear(int year)
+        public List<VMOwnerHOAQuartersRow> ReportHOAFeeByYear(int year)
         {
-            List<Condo.VMOwnerHOAQuartersRow> report = new List<Condo.VMOwnerHOAQuartersRow>();
+            List<VMOwnerHOAQuartersRow> report = new List<VMOwnerHOAQuartersRow>();
             //For each condo, generates the HOA Fees payments status in a year
             this.Condos.ToList().ForEach(con => report.Add(con.ReportHOAFeeByYear(year)));
 

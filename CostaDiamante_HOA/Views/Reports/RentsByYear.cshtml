@@ -1,0 +1,41 @@
+﻿@using CostaDiamante_HOA.Models
+@model IEnumerable<VMVisitreport>
+@{
+    int year = ViewBag.year == null ? DateTime.Today.Year : ViewBag.year;
+    Condo condo = ViewBag.condo == null ? new Condo() : ViewBag.condo;
+    ViewBag.Title = "Report - Rents By Year " + condo.name + ", Owner: " + condo.owner.fullName;
+    bool pdfMode = ViewBag.pdfMode == null ? false : ViewBag.pdfMode;
+
+    Layout = pdfMode?"~/Views/Shared/_LayoutPDF.cshtml": "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="@(!pdfMode?"visible-print":"")">
+    @Html.Partial("ReportHeader")
+</div>
+
+<nav class="hidden-print @(pdfMode?"hidden":"")">
+    <a href="@Url.Action("Details","Owners",new { id = condo.ownerID })">
+        <i class="glyphicon glyphicon-arrow-left"></i><span>Back to Owner Details</span>
+    </a><span> | </span>
+    <a href="@Url.Action("DownloadPDfRentsByYear",new { id = condo.condoID, year=year })">
+        <i class="fa fa-print"></i><span>Download PDF</span>
+    </a>
+</nav>
+
+@*Show owner general information*@
+@if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+{
+    ViewDataDictionary vddOwner = new ViewDataDictionary();
+    vddOwner.Add("showLinks", !pdfMode);
+    @Html.Partial("../Owners/Partial_infoOwner", condo.owner, vddOwner)
+}
+
+
+@*Show Impact of Rent report by year*@
+@{
+    ViewDataDictionary vdd = new ViewDataDictionary();
+    vdd.Add("year", year);
+    vdd.Add("condo", condo);
+    vdd.Add("pdfMode", pdfMode);
+}
+@Html.Partial("Partial_RentsByYear",Model,vdd)

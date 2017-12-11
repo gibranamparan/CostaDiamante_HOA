@@ -23,6 +23,10 @@
     }
 </nav>
 
+<div class="visible-print">
+    @Html.Partial("ReportHeader")
+</div>
+
 @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
 {
     @Html.Partial("Partial_infoOwner", Model)

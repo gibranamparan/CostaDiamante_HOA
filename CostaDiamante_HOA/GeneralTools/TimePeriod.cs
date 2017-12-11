@@ -28,6 +28,15 @@ namespace CostaDiamante_HOA.GeneralTools
             this.endDate = endDate;
         }
 
+        /// <summary>
+        /// Return time time inside the period.
+        /// </summary>
+        public TimeSpan time { get
+            {
+                return this.endDate - this.startDate;
+            }
+        }
+
         public bool isValid()
         {
             return this.startDate <= this.endDate;

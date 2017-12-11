@@ -78,6 +78,9 @@
                             </a> <span> | </span>
                             <a href="@Url.Action("HOAFees", "Condo", new { id = item.condoID })">
                                 <i class="fa fa-money"></i> HOA Fees
+                            </a>  <span> | </span>
+                            <a href="@Url.Action("RentsByYear", "Reports", new { id = item.condoID })">
+                                <i class="fa fa-list-alt"></i> Rents by Year
                             </a> 
                             @if(Request.IsAuthenticated && User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                             {

@@ -39,13 +39,13 @@ namespace CostaDiamante_HOA.Models
         /// <param name="year">Year for the report.</param>
         /// <returns>Return a List of VMHOAQuartes, ordered from 1sts quarter of January-April to 
         /// last quarter from October to January of next year.</returns>
-        public List<Payment.VMHOAQuarter> getHOAStatusByYear(int year)
+        public List<VMHOAQuarter> getHOAStatusByYear(int year)
         {
-            List<Payment.VMHOAQuarter> quartersStatus = new List<Payment.VMHOAQuarter>();
+            List<VMHOAQuarter> quartersStatus = new List<VMHOAQuarter>();
             int delayed = 0;
             for (int quarter = 1; quarter <= 4; quarter++)
             {
-                quartersStatus.Add(new Payment.VMHOAQuarter(year, quarter, this));
+                quartersStatus.Add(new VMHOAQuarter(year, quarter, this));
             }
             var interes = quartersStatus[1].interest;
 
@@ -54,38 +54,7 @@ namespace CostaDiamante_HOA.Models
 
         public VMOwnerHOAQuartersRow ReportHOAFeeByYear(int year)
         {
-            return new Condo.VMOwnerHOAQuartersRow(this, year);
-        }
-
-        public class VMOwnerHOAQuartersRow
-        {
-            public int condoID { get; set; }
-
-            [DisplayName("Condo")]
-            public string condoName { get; set; }
-
-            public string ownerID { get; set; }
-            [DisplayName("Owner")]
-            public string ownerFullName { get; set; }
-
-            public List<Payment.VMHOAQuarter> quarters { get; private set; }
-            [DisplayName("Year")]
-            public int year { get; set; }
-
-            [DisplayName("Total")]
-            public decimal total { get; set; }
-
-            public VMOwnerHOAQuartersRow() { }
-            public VMOwnerHOAQuartersRow(Condo condo, int year)
-            {
-                this.condoID = condo.condoID;
-                this.condoName = condo.name;
-                this.ownerID = condo.ownerID;
-                this.ownerFullName = condo.owner.fullName;
-                this.year = year;
-                this.quarters = condo.getHOAStatusByYear(year);
-                this.total = this.quarters.Sum(q => q.TotalPaid);
-            }
+            return new VMOwnerHOAQuartersRow(this, year);
         }
     }
 }
