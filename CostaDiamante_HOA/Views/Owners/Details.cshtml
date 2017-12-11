@@ -76,10 +76,7 @@
    <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="row">
-                <h3 class="panel-title col-md-11">List of visits</h3>
-                <div class="col-md-1">
-                    @*<img style="width: 1.5em;" class="pull-right" src="/images/loading1.gif" v-if="loading" />*@
-                </div>
+                <h3 class="panel-title col-md-12">List of visits</h3>
             </div>
         </div>
         <div class="panel-body">
@@ -126,7 +123,7 @@
                         <th>
                             @Html.DisplayNameFor(model => visit.departureDate)
                         </th>
-                        @*<th></th>*@
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -140,8 +137,8 @@
                         <td>
                             {{visit.arrivalDate | formatDate}}
                         </td>
-                        @*<td>
-                            <a href="@Url.Action("Details", "Visits", new { id = visit.visitID })">
+                        <td>
+                            <a v-bind:href="setUrlOfVisit(visit.visitID)">
                                 <i class="fa fa-address-book"></i> View Notification
                             </a>
                             @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
@@ -151,7 +148,7 @@
                                     <i class="glyphicon glyphicon-remove"></i> Cancel
                                 </a>
                             }
-                        </td>*@
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -189,6 +186,9 @@
                 visits: []
             },
             methods: {
+                setUrlOfVisit(visitId) {
+                    return '/Visits/Details/' + visitId
+                },
                 getVisits() {
                     //Request /Owners/getVisits/:ownerID?startdate=this.filtro.startdate&endDate=this.filtro.enddate
                     var ws = this
