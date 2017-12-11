@@ -8,10 +8,13 @@
     vdd.Add("selectionMode", true);
     vdd.Add("ownerID", Model.Id);
 
+    //Visit visit = new Visit();
     List<CostaDiamante_HOA.Models.Condo> notAssociatedCondos = ViewBag.notAssociatedCondos;
 
     //New default payment as model for partialview, 
     Payment_HOAFee payment = new Payment_HOAFee() { date = DateTime.Today };
+
+    Visit visit = new Visit();
 }
 
 <nav class="hidden-print">
@@ -65,3 +68,206 @@
 }
 
 @Html.Partial("../Reports/Partial_HOAFeesReport", report, vddReport)
+
+<!-- LIST OF VISISTS by Owner -->
+@{ 
+    Visit.VMVisitsFilter visitFilter = new Visit.VMVisitsFilter();
+    //Visit visitModel = new Visit();
+}
+@*@Html.Partial("../Visits/Partial_ListVisits", visit)*@
+<div id="pnlVisits">
+    @*<visits-list v-bind:ownerid="@(Model.Id)"></visits-list>*@
+   <div class="panel panel-primary">
+        <div class="panel-heading">
+            <div class="row">
+                <h3 class="panel-title col-md-12">List of visits</h3>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="alert alert-info">
+                The filter search for arrivals in the selected range of time.
+            </div>
+            <div class="form-inline">
+                <div class="row">
+                    <div class="form-group col-md-5">
+                        @Html.LabelFor(model => visitFilter.TimePeriod.startDate)
+                        @Html.EditorFor(model => visitFilter.TimePeriod.startDate,
+                    new { htmlAttributes = new { @class = "form-control", v_model = "startdate" } })
+                    </div>
+
+                    <div class="form-group col-md-5">
+                        @Html.LabelFor(model => visitFilter.TimePeriod.endDate)
+                        @Html.EditorFor(model => visitFilter.TimePeriod.endDate,
+                    new { htmlAttributes = new { @class = "form-control", v_model = "enddate" } })
+                    </div>
+
+                    <button v-on:click="getVisits()" id="btnSearch" name="searchVisits" class="btn btn-primary" v-bind:disabled="validDate">
+                        <i class="fa fa-search"></i> Search
+                    </button>
+                </div>
+
+                <div id="errorMessage" class="field-validation-error"></div>
+            </div>
+
+            <br>
+
+            <div v-if="visits.length === 0" class="alert alert-info">
+                No visits have been notified in selected period.
+            </div>
+
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => visit.visitID)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => visit.arrivalDate)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => visit.departureDate)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="visit in visits">
+                        <td>
+                            {{visit.visitID}}
+                        </td>
+                        <td>
+                            {{visit.arrivalDate | formatDate}}
+                        </td>
+                        <td>
+                            {{visit.arrivalDate | formatDate}}
+                        </td>
+                        <td>
+                            <a v-bind:href="setUrlOfVisit(visit.visitID)">
+                                <i class="fa fa-address-book"></i> View Notification
+                            </a>
+                            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                            {
+                                @(" | ")
+                                <a href="" v-on:click="deleteVisit(visit.visitID)" data-toggle="modal">
+                                    <i class="glyphicon glyphicon-remove"></i> Cancel
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+   </div>
+</div>
+
+@section Scripts{ 
+    <script>
+        //initListVisits()
+        //Vue.filter('formatDate', function(value) {
+        //    if (value) {
+        //        return moment(String(value)).format('MM/DD/YYYY hh:mm')
+        //    }
+        //}
+        Vue.filter('formatDate', (value) => {
+            if (value) {
+                return moment(String(value)).format('dddd, MMMM Do, YYYY')
+            }
+        });
+        Vue.mixin({
+            methods: {
+                watchCollection(arr, cb) {
+                    arr.forEach((val) => this.$watch(val, cb))
+                }
+            }
+        })
+        //*** PRENT COMPONENT TO LIST ALL VISITS OF A OWNER ***
+        var pnlVisitsParent = new Vue({
+            el: '#pnlVisits',
+            data: {
+                startdate: '@visitFilter.TimePeriod.startDate.ToString("yyyy-MM-dd")',
+                enddate: '@visitFilter.TimePeriod.endDate.ToString("yyyy-MM-dd")',
+                validDate: false,
+                visits: []
+            },
+            methods: {
+                setUrlOfVisit(visitId) {
+                    return '/Visits/Details/' + visitId
+                },
+                getVisits() {
+                    //Request /Owners/getVisits/:ownerID?startdate=this.filtro.startdate&endDate=this.filtro.enddate
+                    var ws = this
+                    axios.get('/Owners/GetVisits', {
+                        params: {
+                            id: '@Model.Id',
+                            startdate: this.startdate,
+                            enddate: this.enddate
+                        }
+                    })
+                    .then(function (response) {
+                        ws.visits = response.data
+                        console.log(ws.visits)
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                },
+                validDateFunc: function () {
+                    if (this.startdate < this.enddate && this.startdate != '' && this.enddate != '') {
+                        this.validDate = false
+                    } else {
+                        this.validDate = true
+                    }
+                }
+                //deleteVisit: function (visitID) {
+                //    swal({
+                //        title: "Are you sure?",
+                //        text: "Once deleted, you will not be able to recover this imaginary file!",
+                //        icon: "warning",
+                //        buttons: true,
+                //        dangerMode: true,
+                //    })
+                //    .then((willDelete) => {
+                //        if (willDelete) {
+                //            this.confirmVisitCancelation(visitID)
+                //        } else {
+                //            //swal("Your imaginary file is safe!");
+                //        }
+                //    });
+                //},
+                //confirmVisitCancelation: function (visitID) {
+                //    axios.post('/Visits/Delete', {
+                //        id: visitID
+                //    })
+                //    .then(function (response) {
+                //        if (response.data.numReg) {
+                //            window.location.reload()
+                //            swal('Deleted visit successfully', {
+                //                buttons: false,
+                //                icon: "success",
+                //            });
+                //        }
+                //        if (response.data.errorMsg != '') {
+                //            swal(response.data.errorMsg, {
+                //                buttons: false,
+                //                timer: 3000,
+                //                icon: "error",
+                //            });
+                //        }
+                //    })
+                //    .catch(function (error) {
+                //        console.log(error);
+                //        swal(error, {
+                //            icon: "error",
+                //        });
+                //    });
+                //}
+            },
+            created() {
+                this.getVisits()
+                this.watchCollection(
+                   ['startdate', 'enddate'],
+                   this.validDateFunc)
+            }
+        })
+    </script>
+}

@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using CostaDiamante_HOA.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using CostaDiamante_HOA.GeneralTools;
 
 namespace CostaDiamante_HOA.Controllers
 {
@@ -54,6 +55,25 @@ namespace CostaDiamante_HOA.Controllers
             ViewBag.year = year;
 
             return View(owners);
+        }
+
+        [HttpGet]
+        public JsonResult GetVisits(string id, DateTime startdate, DateTime enddate) //  DateTime startdate, DateTime enddate
+        { 
+            TimePeriod periodReported = new TimePeriod(startdate, enddate);
+            List<Visit> visits = new List<Visit>();
+
+            Owner owner = db.Owners.Find(id);
+            visits = owner.visitsHistory.ToList();
+
+            // Se filtran visitas
+            var listVisits = visits.Where(vis => periodReported
+                             .hasInside(vis.timePeriod.startDate))
+                             .OrderBy(vis => vis.timePeriod.startDate)
+                             .Select(vis => new Visit.VMVisits(vis));
+
+            return Json(listVisits, JsonRequestBehavior.AllowGet);
+            //return Json(listVisits);
         }
 
         // GET: Payments

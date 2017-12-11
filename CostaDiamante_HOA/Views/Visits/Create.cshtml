@@ -84,14 +84,14 @@
                    
                     <div class="form-group col-md-12">
                         <div v-if="visit.typeOfVisit === 0"  class="alert alert-info" role="alert">
-                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === true || skipPayment === true"><strong>Free</strong> Payment Visit.</span>
-                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === false && skipPayment === false">Fee of <strong>5 dollars</strong> per person. <strong>No fee for children</strong> under 6 years old.</span>
+                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === true || skipPayment === true">Visit without payment.</span>
+                           <span v-if="visit.typeOfVisit === 0 && withTheOwner === false && skipPayment === false">5 dollars per person if under 6 years does not apply.</span>
                         </div>
                         <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
                             For renting, every <strong>extra person</strong> more than <strong>12 guests</strong> cost <strong>$50 USD</strong> for bracelet. <br>
                             The <strong>Rental Impact Fee</strong> for the visit visit is <strong>$75 USD</strong> per day.
                         </div>
-                    </div>
+                    <div>
                     
                     <div class="clearfix"></div>
                     <div class="form-group col-md-4">
@@ -208,10 +208,7 @@
         },
         methods: {
             isVisitValid: function () {
-                if (Object.keys(this.visit.visitors).length > 0 
-                    && this.visit.arrivalDate < this.visit.departureDate && this.visit.arrivalDate != '' && this.visit.departureDate != '' 
-                    //&& this.visit.typeOfVisit === 0 && this.withTheOwner || this.visit.typeOfVisit === 0 && this.skipPayment || this.visit.typeOfVisit === 1
-                    ) {
+                if (Object.keys(this.visit.visitors).length > 0 && this.visit.arrivalDate < this.visit.departureDate && this.visit.arrivalDate != '' && this.visit.departureDate != '') { // && this.visit.typeOfVisit === 0 && this.withTheOwner || this.visit.typeOfVisit === 0 && this.skipPayment || this.visit.typeOfVisit === 1) { 
                     return false
                 } else {
                     return true 
@@ -240,7 +237,6 @@
                     visit : self.visit
                 })
                 .then(response => {
-                    console.log(self.visit)
                     var response = response.data
                     if(response.numReg){
                         self.redirectToOwnerDetails()
@@ -251,12 +247,18 @@
                     }
                 })
                 .catch(e => {
-                    debugger
                     console.log(e)
                 })
             },
             calculateTotalPerVisit: function () {
-                //this.isVisitValid()
+                
+                // Comprueba que solo se active un checkbox al momento de seleccionar el tipo de visita 'Visit of friends and family'
+                if(this.withTheOwner) {
+                    this.skipPayment = false
+                }
+                if(this.skipPayment) {
+                    this.withTheOwner = false
+                }
                 var visitorCount = 0
                 if(this.visit.typeOfVisit === 0 && this.withTheOwner || this.skipPayment) {
                     return this.visit.totalCost = 0.00
