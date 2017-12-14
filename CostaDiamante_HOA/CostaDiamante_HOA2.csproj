@@ -328,13 +328,6 @@
     <Content Include="images\sort_both.png" />
     <Content Include="images\sort_desc.png" />
     <Content Include="images\sort_desc_disabled.png" />
-    <Content Include="images\UserManual\0-Portada.jpg" />
-    <Content Include="images\UserManual\1-Log In.jpg" />
-    <Content Include="images\UserManual\2-Change password.jpg" />
-    <Content Include="images\UserManual\3-Check in list.jpg" />
-    <Content Include="images\UserManual\4-Notify new visits.jpg" />
-    <Content Include="images\UserManual\5-Unnamed Non-Paying Guests.jpg" />
-    <Content Include="images\UserManual\6-Visits and report printing.jpg" />
     <Content Include="Rotativa\wkhtmltopdf.exe" />
     <Content Include="Scripts\axios.min.js" />
     <Content Include="Scripts\bootstrap.js" />
