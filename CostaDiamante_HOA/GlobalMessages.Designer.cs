@@ -133,6 +133,15 @@ namespace CostaDiamante_HOA {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Payments for Family and/or Friends Rent.
+        /// </summary>
+        public static string PAYMENT_TYPE_FAMILY_FRIENDS_RENT {
+            get {
+                return ResourceManager.GetString("PAYMENT_TYPE_FAMILY_FRIENDS_RENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to HOA Fees Payments.
         /// </summary>
         public static string PAYMENT_TYPE_HOA_FEE {

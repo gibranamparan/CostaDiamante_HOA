@@ -52,6 +52,23 @@ namespace CostaDiamante_HOA.Models
             return quartersStatus;
         }
 
+        public Rotativa.ActionAsPdf generateRotativaPDF_RentsByYearReport(int? year, HttpRequestBase Request)
+        {
+            System.Web.Routing.RouteValueDictionary rvd = new System.Web.Routing.RouteValueDictionary();
+            rvd.Add("id", this.condoID);
+            rvd.Add("year", year);
+            rvd.Add("pdfMode", true);
+            var cookies = Request.Cookies.AllKeys.ToDictionary(k => k, k => Request.Cookies[k].Value);
+            var fileView = new Rotativa.ActionAsPdf("../Reports/RentsByYear", rvd)
+            {
+                FileName = $"Rent Imp {this.name}_{year}" + ".pdf",
+                FormsAuthenticationCookieName = System.Web.Security.FormsAuthentication.FormsCookieName,
+                Cookies = cookies
+            };
+
+            return fileView;
+        }
+
         public VMOwnerHOAQuartersRow ReportHOAFeeByYear(int year)
         {
             return new VMOwnerHOAQuartersRow(this, year);

@@ -166,13 +166,17 @@ namespace CostaDiamante_HOA.Models
             Task.Run(() =>
             {
                 //Email is sent just to the admin
-                var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, null);
+                var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, null,null);
                 errorMessage = response.Result;
             });
 
             return errorMessage;
         }
     }
+
+    /// <summary>
+    /// Enumeration to list the different types of visits
+    /// </summary>
     public enum typeOfVisit
     {
         FRIENDS_AND_FAMILY, BY_RENT

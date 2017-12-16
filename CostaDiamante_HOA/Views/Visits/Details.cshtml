@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Details";
     //New default payment as model for partialview, 
-    Payment_RentImpact payment = new Payment_RentImpact() { date = DateTime.Today, visitID = Model.visitID };
+    Payment_RentImpact payment = new Payment_RentImpact() { date = DateTime.Today, visitID = Model.visitID, visit = Model };
 }
 
 <nav>
@@ -27,21 +27,21 @@
         <h3 class="panel-title">Details</h3>
     </div>
     <div class="panel-body">
-        <div class="col-md-4">
+        <div class="form-group col-md-4">
+            @Html.LabelFor(model => model.arrivalDate)
+            <p class="form-control-static">@Model.arrivalDate.ToString("D")</p>
+        </div>
+        <div class="form-group col-md-8">
+            @Html.LabelFor(model => model.departureDate)
+            <p class="form-control-static">@Model.departureDate.ToString("D")</p>
+        </div>
+        <div class="form-group col-md-4">
             <strong>@Html.DisplayNameFor(model => model.totalCost): </strong>
             <span class="form-control-static">@Html.DisplayFor(model => model.totalCost)</span>
         </div>
         <div class="form-group col-md-4">
             @Html.LabelFor(model => model.date)
             <p class="form-control-static">@Model.date.ToString("D")</p>
-        </div>
-        <div class="form-group col-md-4">
-            @Html.LabelFor(model => model.arrivalDate)
-            <p class="form-control-static">@Model.arrivalDate.ToString("D")</p>
-        </div>
-        <div class="form-group col-md-4">
-            @Html.LabelFor(model => model.departureDate)
-            <p class="form-control-static">@Model.departureDate.ToString("D")</p>
         </div>
     </div>
 </div>

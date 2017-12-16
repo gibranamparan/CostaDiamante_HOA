@@ -272,6 +272,7 @@
                     }
 
                     var self = this;
+                    this.loading = true;
                     this.api.post('@(createURL)', {
                         payment: self.newPayment
                     })
@@ -296,7 +297,8 @@
                             //Notify successfull registration
                             $.notify("@(GlobalMessages.PAY_NEW)",
                                 { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
-
+                            
+                            this.loading = false;
                         } else if (response.errorMsg) {
                             notifyError('@GlobalMessages.ERROR_OCURRED' + response.errorMsg)
                         } else { //Unknown error

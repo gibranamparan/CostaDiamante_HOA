@@ -1,11 +1,14 @@
 ﻿using CostaDiamante_HOA.GeneralTools;
+using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 
 namespace CostaDiamante_HOA.Models
 {
@@ -17,7 +20,7 @@ namespace CostaDiamante_HOA.Models
         public int visitID { get; set; }
         public virtual Visit visit { get; set; }
 
-        public string sendEmailNotification(HttpRequestBase Request)
+        public string sendEmailNotification_NewRentPayment(HttpRequestBase Request, ControllerContext controllerContext)
         {
             string errorMessage = string.Empty;
 
@@ -27,22 +30,40 @@ namespace CostaDiamante_HOA.Models
             //URL To see Details
             int year = this.visit.arrivalDate.Year;
             string detailsURL = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
-            detailsURL += $"/Reports/DownloadPDfRentsByYear/{this.visit.condoID}?year={year}";
+            detailsURL += $"/Reports/RentsByYear/{this.visit.condoID}?year={year}";
 
             //Email Body
             string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
-            emailMessage += "<h3>New Rent Impact Payment</h3>";
-            emailMessage += $"<span>A new impact rent payment of {this.amount.ToString("C")} USD to";
+            emailMessage += $"<h3>Notification of a New {this.TypeOfPaymentName}</h3>";
+            emailMessage += $"<span>A new payment of {this.amount.ToString("C")} USD to";
             emailMessage += $" condo {this.visit.condo.name }, property of {this.visit.condo.owner.fullName} related to visit from {this.visit.timePeriod}";
             emailMessage += $" for {this.visit.visitors.Count()} guests.";
-            emailMessage += $" <span>Click this link to download your updated Impact of Rent status report for year {year}:</span>";
-            emailMessage += " <a href='" + detailsURL + "'>Download Impact of Rent Report Year .</a>";
+
+            List<Attachment> attachments = null;
+            if (this.visit.typeOfVisit == typeOfVisit.BY_RENT) { //Add link to see report if its a visit that cause Impact of Rent
+                emailMessage += $" <span>See attached PDF or click this link to go to your Impact of Rent status report for year {year}:</span>";
+                emailMessage += " <a href='" + detailsURL + "'>Download Impact of Rent Report Year .</a>";
+                
+                //Just send Impact of Rent report for paid visits marked as that.
+                if (controllerContext != null)
+                {
+                    //Generate the report to be send
+                    var fileView = this.visit.condo.generateRotativaPDF_RentsByYearReport(year, Request);
+                    //Converts report to PDF file
+                    var fileBytes = fileView.BuildPdf(controllerContext);
+                    //Add PDF file to attachments
+                    Attachment attach = new Attachment() { Filename = fileView.FileName, Content = Convert.ToBase64String(fileBytes), Type = "application/pdf" };
+                    attachments = new List<Attachment>() { attach };
+                }
+            }
+
+            //Async sending of email
             Task.Run(() =>
             {
                 var ownerAdress = new List<SendGrid.Helpers.Mail.EmailAddress>
                 { new SendGrid.Helpers.Mail.EmailAddress(this.visit.owner.Email, this.visit.owner.fullName) };
                 //Email is sent just to the admin
-                var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, ownerAdress);
+                var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, ownerAdress, attachments);
                 errorMessage = response.Result;
             });
 

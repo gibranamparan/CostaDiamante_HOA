@@ -59,7 +59,7 @@ namespace CostaDiamante_HOA.Controllers
             var condo = db.Condoes.Find(id);
             if (condo == null)
                 return HttpNotFound();
-
+            /*
             System.Web.Routing.RouteValueDictionary rvd = new System.Web.Routing.RouteValueDictionary();
             rvd.Add("id", id);
             rvd.Add("year", year);
@@ -70,7 +70,8 @@ namespace CostaDiamante_HOA.Controllers
                 FileName = $"Rent Imp {condo.name}_{year}" + ".pdf",
                 FormsAuthenticationCookieName = System.Web.Security.FormsAuthentication.FormsCookieName,
                 Cookies = cookies
-            };
+            };*/
+            var fileView = condo.generateRotativaPDF_RentsByYearReport(year, Request);
 
             //Code to get content
             return fileView;

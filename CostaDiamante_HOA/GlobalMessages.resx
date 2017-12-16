@@ -129,6 +129,9 @@
   <data name="OWNER_OUTOFYEAR" xml:space="preserve">
     <value>The &lt;strong&gt;owner was not registered&lt;/strong&gt; int this whole year.</value>
   </data>
+  <data name="PAYMENT_TYPE_FAMILY_FRIENDS_RENT" xml:space="preserve">
+    <value>Payments for Family and/or Friends Rent</value>
+  </data>
   <data name="PAYMENT_TYPE_HOA_FEE" xml:space="preserve">
     <value>HOA Fees Payments</value>
   </data>

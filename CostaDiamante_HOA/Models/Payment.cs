@@ -46,10 +46,14 @@ namespace CostaDiamante_HOA.Models
             get
             {
                 var res = string.Empty;
-                if (this is Payment_RentImpact)
-                    res = GlobalMessages.PAYMENT_TYPE_RENT_IMPACT;
+                if (this is Payment_RentImpact) { //Payments for rents
+                    res = GlobalMessages.PAYMENT_TYPE_RENT_IMPACT; //Default impact rent
+                    if(((Payment_RentImpact)this).visit.typeOfVisit == typeOfVisit.FRIENDS_AND_FAMILY){
+                        res = GlobalMessages.PAYMENT_TYPE_FAMILY_FRIENDS_RENT; //Family rent
+                    }
+                }
                 else if (this is Payment_HOAFee)
-                    res = GlobalMessages.PAYMENT_TYPE_HOA_FEE;
+                    res = GlobalMessages.PAYMENT_TYPE_HOA_FEE; //Payment for HOAFee
                 return res;
             }
         }

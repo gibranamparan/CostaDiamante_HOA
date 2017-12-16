@@ -3,6 +3,7 @@ using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -18,8 +19,9 @@ namespace CostaDiamante_HOA.GeneralTools
         /// <param name="subject">Email Title</param>
         /// <param name="bodyMessage">HTML body message</param>
         /// <param name="aditionalRecipients">Optional list to add additional recipients to the email</param>
+        /// <param name="attachments">Optional list to add attachments to the email</param>
         /// <returns>A string with an error message, if its empty or null, everything worked OK.</returns>
-        public static async Task<String> sendEmailToMultipleRecipients(string subject, string bodyMessage, List<EmailAddress> aditionalRecipients)
+        public static async Task<String> sendEmailToMultipleRecipients(string subject, string bodyMessage, List<EmailAddress> aditionalRecipients, List<Attachment> attachments)
         {
             string errorMessage = string.Empty;
 
@@ -62,6 +64,11 @@ namespace CostaDiamante_HOA.GeneralTools
 
                 //var plainTextContent = "and easy to do anywhere, even with C#";
                 var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, to, subject, string.Empty, bodyMessage);
+
+                //Attach files to email if set
+                if(attachments!=null && attachments.Count() > 0)
+                    msg.AddAttachments(attachments);
+
                 var response = await client.SendEmailAsync(msg);
 
                 //If an error ocurred

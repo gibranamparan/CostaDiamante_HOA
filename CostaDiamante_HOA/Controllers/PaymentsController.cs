@@ -127,7 +127,7 @@ namespace CostaDiamante_HOA.Controllers
                     db.Payment_RentImpact.Add(payment);
                     numReg = db.SaveChanges();
                     db.Entry(payment).Reference(p => p.visit).Load();
-                    payment.sendEmailNotification(Request);
+                    payment.sendEmailNotification_NewRentPayment(Request,ControllerContext);
                     return Json(new { numReg = numReg, result = new Payment.VMPayment(payment) });
                 }
             }
