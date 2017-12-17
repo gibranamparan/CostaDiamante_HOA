@@ -127,6 +127,9 @@
                         <th>
                             @Html.DisplayNameFor(model => visit.departureDate)
                         </th>
+                        <th>
+                            @Html.DisplayNameFor(ProcessModelInfo => visit.typeOfVisit)
+                        </th>
                         <th></th>
                     </tr>
                 </thead>
@@ -140,6 +143,9 @@
                         </td>
                         <td>
                             {{visit.arrivalDate | formatDate}}
+                        </td>
+                        <td>
+                            {{visit.typeOfVisit | typeOfVisit}}
                         </td>
                         <td>
                             <a v-bind:href="setUrlOfVisit(visit.visitID)">
@@ -172,7 +178,11 @@
             if (value) {
                 return moment(String(value)).format('dddd, MMMM Do, YYYY')
             }
-        });
+        })
+        Vue.filter('typeOfVisit', (value) => {
+            if (value === 0) { return 'Visit of friends and family' }
+            if (value === 1) { return 'Visit by rent' }
+        })
         Vue.mixin({
             methods: {
                 watchCollection(arr, cb) {
