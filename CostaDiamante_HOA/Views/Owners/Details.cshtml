@@ -227,50 +227,50 @@
                     } else {
                         this.validDate = true
                     }
+                },
+                deleteVisit: function (visitID) {
+                    swal({
+                        title: "Are you sure?",
+                        text: "Once deleted, you will not be able to recover this imaginary file!",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            this.confirmVisitCancelation(visitID)
+                        } else {
+                            //swal("Your imaginary file is safe!");
+                        }
+                    });
+                },
+                confirmVisitCancelation: function (visitID) {
+                    axios.post('/Visits/Delete', {
+                        id: visitID
+                    })
+                    .then(function (response) {
+                        if (response.data.numReg) {
+                            window.location.reload()
+                            swal('Deleted visit successfully', {
+                                buttons: false,
+                                icon: "success",
+                            });
+                        }
+                        if (response.data.errorMsg != '') {
+                            swal(response.data.errorMsg, {
+                                buttons: false,
+                                timer: 3000,
+                                icon: "error",
+                            });
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        swal(error, {
+                            icon: "error",
+                        });
+                    });
                 }
-                //deleteVisit: function (visitID) {
-                //    swal({
-                //        title: "Are you sure?",
-                //        text: "Once deleted, you will not be able to recover this imaginary file!",
-                //        icon: "warning",
-                //        buttons: true,
-                //        dangerMode: true,
-                //    })
-                //    .then((willDelete) => {
-                //        if (willDelete) {
-                //            this.confirmVisitCancelation(visitID)
-                //        } else {
-                //            //swal("Your imaginary file is safe!");
-                //        }
-                //    });
-                //},
-                //confirmVisitCancelation: function (visitID) {
-                //    axios.post('/Visits/Delete', {
-                //        id: visitID
-                //    })
-                //    .then(function (response) {
-                //        if (response.data.numReg) {
-                //            window.location.reload()
-                //            swal('Deleted visit successfully', {
-                //                buttons: false,
-                //                icon: "success",
-                //            });
-                //        }
-                //        if (response.data.errorMsg != '') {
-                //            swal(response.data.errorMsg, {
-                //                buttons: false,
-                //                timer: 3000,
-                //                icon: "error",
-                //            });
-                //        }
-                //    })
-                //    .catch(function (error) {
-                //        console.log(error);
-                //        swal(error, {
-                //            icon: "error",
-                //        });
-                //    });
-                //}
             },
             created() {
                 this.getVisits()
