@@ -130,11 +130,14 @@ namespace CostaDiamante_HOA.Models
 
             public DateTime departureDate { get; set; }
 
+            public typeOfVisit typeOfVisit { get; set; }
+
             public VMVisits(Visit visit)
             {
                 this.visitID = visit.visitID;
                 this.arrivalDate = visit.arrivalDate;
                 this.departureDate = visit.departureDate;
+                this.typeOfVisit = visit.typeOfVisit;
             }
         }
 
