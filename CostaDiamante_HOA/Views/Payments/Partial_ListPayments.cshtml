@@ -57,6 +57,7 @@
                     </button>
                 </div>
             </form>
+            @*ONLY APPEAR IF A NEW PAYMENT IS ALLOWED*@
             <div class="alert alert-info" style="margin-top: 1em" v-if="!allowNewPayment">
                 @if (typeOfPayment == Payment.TypeOfPayment.HOA_FEE)
                 {
@@ -74,7 +75,7 @@
                         <strong>Current debt: </strong><br />
                         <span class="form-control-static">{{numeral(currentDebt).format('$0,000.00')}}</span>
                     </div>
-                    <!-- SHOW AMOUNT TO BE PAID FOR HOA FEE -->
+                    @*SHOW AMOUNT TO BE PAID FOR HOA FEE*@
                     <div class="form-group col-md-4" v-if="newPayment.typeOfPayment == '@(Payment.TypeOfPayment.HOA_FEE)'">
                         <label>HOA Fee: </label><br />
                         <span class="form-control-static">
@@ -82,7 +83,7 @@
                         </span>
                         <span> of <strong>{{numeral(totalCost).format('$0,000.00')}}</strong></span>
                     </div>
-                    <!-- SHOW AMOUNT TO BE PAID FOR IMPACT OF RENT -->
+                    @*SHOW AMOUNT TO BE PAID FOR IMPACT OF RENT*@
                     <div class="form-group col-md-4" v-if="newPayment.typeOfPayment == '@(Payment.TypeOfPayment.RENTAL_IMPACT)'">
                         <label>Impact of Rent: </label><br />
                         <span class="form-control-static">
