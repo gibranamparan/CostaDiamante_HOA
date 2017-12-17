@@ -290,7 +290,7 @@
                             self.newPayment = new Payment().initPayment()
                             self.newPayment.date = tempDate
                             self.newPayment.dtDate = new Date(tempDate)
-
+                            debugger
                             self.updateAmounts()
                             //Focus on default
                             document.getElementById("reference").focus()
@@ -331,6 +331,7 @@
                                     //updates payments list
                                     self.payments = self.payments.filter(function (pay) { return pay.id != item.id })
                                     self.sortPayments()
+                                    debugger
                                     self.updateAmounts()
 
                                     self.$emit('quarter-changed')
