@@ -89,7 +89,7 @@
                         </div>
                         <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
                             For renting, every <strong>extra person</strong> more than <strong>12 guests</strong> cost <strong>$50 USD</strong> for bracelet. <br>
-                            The <strong>Rental Impact Fee</strong> for the visit visit is <strong>$25 USD</strong> per day.
+                            The <strong>Rental Impact Fee</strong> for the visit visit is <strong>${{priceByDay}} USD</strong> per day.
                         </div>
                     <div>
                     
@@ -203,8 +203,8 @@
               { text: 'Visit by rent', value: 1 }
             ],
             withTheOwner: false,
-            skipPayment: false
-            //withoutTheOwner: false
+            skipPayment: false,
+            priceByDay: 25
         },
         methods: {
             isVisitValid: function () {
@@ -273,7 +273,7 @@
                     
                     var differenceDays = departureDate - arrivalDate
                     if(this.visit.visitors.length >= 1) {
-                        this.visit.totalCost = 25 * (differenceDays/(1000*60*60*24)) // (1000*60*60*24) --> milisegundos -> segundos -> minutos -> horas -> días
+                        this.visit.totalCost = this.priceByDay * (differenceDays/(1000*60*60*24)) // (1000*60*60*24) --> milisegundos -> segundos -> minutos -> horas -> días
                     }
                     
                     var visitorNotYounger = this.visit.visitors.filter(function (item) {
