@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,9 +44,12 @@ namespace CostaDiamante_HOA.Models
             if (this.visit.typeOfVisit == typeOfVisit.BY_RENT) { //Add link to see report if its a visit that cause Impact of Rent
                 emailMessage += $" <span>See attached PDF or click this link to go to your Impact of Rent status report for year {year}:</span>";
                 emailMessage += " <a href='" + detailsURL + "'>Download Impact of Rent Report Year .</a>";
-                
+
+                //Is mailer enabled
+                bool emailEnabled = true;
+                Boolean.TryParse(ConfigurationManager.AppSettings["enableEmail"], out emailEnabled);
                 //Just send Impact of Rent report for paid visits marked as that.
-                if (controllerContext != null)
+                if (controllerContext != null && emailEnabled)
                 {
                     //Generate the report to be send
                     var fileView = this.visit.condo.generateRotativaPDF_RentsByYearReport(year, Request);
