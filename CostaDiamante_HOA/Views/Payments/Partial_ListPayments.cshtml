@@ -263,6 +263,7 @@
                 },
                 //Add a new payment for the impact of rent or HOAFee async from server
                 createNewPayment: function () {
+                    //debugger
                     this.newPayment.amount = this.newPayment.amount > this.currentDebt ? this.currentDebt : this.newPayment.amount
                     //If its a HOAFee payment
                     if(this.paymentType == '@(Payment.TypeOfPayment.HOA_FEE)'){
@@ -290,7 +291,7 @@
                             self.newPayment = new Payment().initPayment()
                             self.newPayment.date = tempDate
                             self.newPayment.dtDate = new Date(tempDate)
-                            debugger
+                            //debugger
                             self.updateAmounts()
                             //Focus on default
                             document.getElementById("reference").focus()
@@ -331,7 +332,7 @@
                                     //updates payments list
                                     self.payments = self.payments.filter(function (pay) { return pay.id != item.id })
                                     self.sortPayments()
-                                    debugger
+                                    //debugger
                                     self.updateAmounts()
 
                                     self.$emit('quarter-changed')
@@ -358,12 +359,8 @@
                     //debugger
                     this.totalPaid = this.calculateTotalPaid()
 
-                    if(this.status == '@((int)VMHOAQuarter.QuarterStatus.PAYED)'
-                        //|| (this.status == '@((int)VMHOAQuarter.QuarterStatus.DELAYED)' && !this.interest)
-                        )
-                    {
+                    if(this.status == '@((int)VMHOAQuarter.QuarterStatus.PAYED)')
                         this.interest = this.totalPaid - this.totalCost
-                    }
 
                     this.interestPaid = this.totalPaid<=this.interest?this.totalPaid:this.interest
                     this.feePaid = this.totalPaid<=this.interest ? 0 : this.totalPaid - this.interest

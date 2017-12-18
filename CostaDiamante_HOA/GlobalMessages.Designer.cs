@@ -61,6 +61,24 @@ namespace CostaDiamante_HOA {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emails are disabled in system configuration.
+        /// </summary>
+        public static string ERROR_MSG_EMAILS_DISABLED {
+            get {
+                return ResourceManager.GetString("ERROR_MSG_EMAILS_DISABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No receipients were registered to send the email.
+        /// </summary>
+        public static string ERROR_MSG_NO_RECEIPIENTS {
+            get {
+                return ResourceManager.GetString("ERROR_MSG_NO_RECEIPIENTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error ocurred, plase try again. If error persists, plase send this to the system administrator: .
         /// </summary>
         public static string ERROR_OCURRED {

@@ -86,6 +86,10 @@
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => result.FirstOrDefault().departureDate)
+                </th>
+                <th>
+                    Paid / Total
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -100,7 +104,7 @@
                         @Html.DisplayFor(model => item.condo.name)
                     </td>
                     @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
-                {
+                    {
                         <td>
                             @Html.DisplayFor(model => item.owner.fullName)
                         </td>
@@ -110,6 +114,11 @@
                     </td>
                     <td>
                         @item.departureDate.ToLongDateString()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.totalPaid)
+                        <span>/</span>
+                        @Html.DisplayFor(model => item.totalCost)
                     </td>
                     <td>
                         <a href="@Url.Action("Details", new { id = item.visitID })">

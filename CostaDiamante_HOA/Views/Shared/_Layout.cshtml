@@ -90,5 +90,17 @@
     @Scripts.Render("~/bundles/bootstrap")
 
     @RenderSection("scripts", required: false)
+
+    <script>
+        $(document).ready(autoHideShowMenu)
+        $(window).resize(autoHideShowMenu)
+
+        function autoHideShowMenu() {
+            if ($(this).width() <= 1024)
+                $("#sidebar").addClass("inactive")
+            else
+                $("#sidebar").removeClass("inactive")
+        }
+    </script>
 </body>
 </html>

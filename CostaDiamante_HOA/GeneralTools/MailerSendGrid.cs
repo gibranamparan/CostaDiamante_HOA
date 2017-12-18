@@ -29,6 +29,10 @@ namespace CostaDiamante_HOA.GeneralTools
             string AdminMail = ConfigurationManager.AppSettings["AdminMail"];
             string AdminNameMail = ConfigurationManager.AppSettings["AdminNameMail"];
 
+            //Is mailer enabled
+            bool emailEnabled = true;
+            Boolean.TryParse(ConfigurationManager.AppSettings["enableEmail"], out emailEnabled);
+
             //Init receipients list
             var to = new List<EmailAddress>();
 
@@ -55,7 +59,7 @@ namespace CostaDiamante_HOA.GeneralTools
                     to.Add(rec);
 
             //If at least one receipient was added to the list
-            if (to.Count() > 0)
+            if (to.Count() > 0 && emailEnabled)
             {
                 var from = new EmailAddress(AdminMail, AdminNameMail);
 
@@ -76,7 +80,8 @@ namespace CostaDiamante_HOA.GeneralTools
                     errorMessage = await response.Body.ReadAsStringAsync();
             }
             else
-                errorMessage = "No receipients were registered to send the email";
+                errorMessage = to.Count()==0 ? GlobalMessages.ERROR_MSG_NO_RECEIPIENTS: 
+                    !emailEnabled?GlobalMessages.ERROR_MSG_EMAILS_DISABLED:string.Empty;
 
             return errorMessage;
         }
