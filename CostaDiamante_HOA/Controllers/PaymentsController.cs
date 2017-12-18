@@ -128,7 +128,7 @@ namespace CostaDiamante_HOA.Controllers
                     numReg = db.SaveChanges();
                     db.Entry(payment).Reference(p => p.visit).Load();
                     payment.sendEmailNotification_NewRentPayment(Request,ControllerContext);
-                    return Json(new { numReg = numReg, result = new Payment.VMPayment(payment) });
+                    return Json(new { numReg = numReg, result = new { payment = new Payment.VMPayment(payment) } });
                 }
             }
             catch (Exception e)
@@ -155,11 +155,11 @@ namespace CostaDiamante_HOA.Controllers
                 {
                     db.Payment_HOAFee.Add(payment);
                     numReg = db.SaveChanges();
+                    db.Entry(payment).Reference(p => p.condo).Load();
                     if (numReg > 0) {
-                        db.Entry(payment).Reference(p => p.condo).Load();
                         payment.sendNotificationEmail(Request);
                     }
-                    return Json(new { numReg = numReg, result = new Payment.VMPayment(payment) });
+                    return Json(new { numReg = numReg, result = new { payment = new Payment.VMPayment(payment), status = payment.quarter.currentStatus } });
                 }
             }
             catch (Exception e)
@@ -175,14 +175,26 @@ namespace CostaDiamante_HOA.Controllers
         [ValidateHeaderAntiForgeryToken]
         public JsonResult DeleteConfirmed(int id)
         {
-            int numReg = 0;
+            int numReg = 0, quarterNumber = 0;
             string errorMsg = string.Empty;
-            Payment payments = db.Payments.Find(id);
-            if (payments != null)
+            Payment payment = db.Payments.Find(id);
+            Condo condo = null;
+            VMHOAQuarter quarter = null;
+            if (payment != null)
                 try
                 {
-                    db.Payments.Remove(payments);
+                    if (payment.typeOfPayment == Payment.TypeOfPayment.HOA_FEE) { 
+                        quarter = ((Payment_HOAFee)payment).quarter;
+                        condo = ((Payment_HOAFee)payment).condo;
+                        quarterNumber = quarter.quarterNumber;
+                    }
+
+                    db.Payments.Remove(payment);
                     numReg = db.SaveChanges();
+
+                    if (payment.typeOfPayment == Payment.TypeOfPayment.HOA_FEE)
+                        quarter = new VMHOAQuarter(payment.date.Year, quarterNumber, condo);
+
                 }
                 catch (Exception e)
                 {
@@ -191,8 +203,10 @@ namespace CostaDiamante_HOA.Controllers
             else
                 errorMsg = GlobalMessages.PAY_NOT_FOUND;
 
-
-            return Json(new { numReg, errorMsg });
+            if (payment.typeOfPayment == Payment.TypeOfPayment.HOA_FEE)
+                return Json(new { numReg, errorMsg, status = quarter.currentStatus });
+            else
+                return Json(new { numReg, errorMsg});
         }
 
         protected override void Dispose(bool disposing)

@@ -23,6 +23,11 @@ namespace CostaDiamante_HOA.Models
         public int? condoID { get; set; }
         public virtual Condo condo { get; set; }
 
+        public VMHOAQuarter quarter { get {
+                return new VMHOAQuarter(this.year, this.quarterNumber, this.condo);
+            }
+        }
+
         public string sendNotificationEmail(HttpRequestBase Request)
         {
             string errorMessage = string.Empty;
@@ -50,6 +55,7 @@ namespace CostaDiamante_HOA.Models
 
             return errorMessage;
         }
+
     }
 
     public class VMHOAQuarter
@@ -127,10 +133,7 @@ namespace CostaDiamante_HOA.Models
         /// </summary>
         public int numberOfMonthsDelayed
         {
-            get
-            {
-                return this.calcNumberOfMonthsDelayed(DateTime.Today);
-            }
+            get { return this.calcNumberOfMonthsDelayed(DateTime.Today); }
         }
 
         /// <summary>
@@ -163,10 +166,7 @@ namespace CostaDiamante_HOA.Models
         /// </summary>
         public decimal interest
         {
-            get
-            {
-                return this.calcInterest(DateTime.Today);
-            }
+            get{ return this.calcInterest(DateTime.Today); }
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace CostaDiamante_HOA.Models
         /// Period of time for this quarter instance.
         /// </summary>
         public TimePeriod calculateQuaterPeriod()
-        {
+        {/*
             int quarterDay = int.Parse(ConfigurationManager.AppSettings["QuarterDay"]);
             int startMonth = 1 + (this.quarterNumber - 1) * 3;
             int endMonth = startMonth == 10 ? 1 : startMonth + 3;
@@ -244,8 +244,21 @@ namespace CostaDiamante_HOA.Models
             DateTime end = new DateTime(startMonth == 10 ? this.year + 1 : this.year, endMonth, quarterDay);
             TimePeriod tpQuarter = new TimePeriod(start, end);
 
-            return tpQuarter;
+            return tpQuarter;*/
+            return VMHOAQuarter.calculateQuarterPeriod(this.quarterNumber, this.year);
 
+        }
+
+        public static TimePeriod calculateQuarterPeriod(int quarterNumber, int year)
+        {
+            int quarterDay = int.Parse(ConfigurationManager.AppSettings["QuarterDay"]);
+            int startMonth = 1 + (quarterNumber - 1) * 3;
+            int endMonth = startMonth == 10 ? 1 : startMonth + 3;
+            DateTime start = new DateTime(year, startMonth, quarterDay);
+            DateTime end = new DateTime(startMonth == 10 ? year + 1 : year, endMonth, quarterDay);
+            TimePeriod tpQuarter = new TimePeriod(start, end);
+
+            return tpQuarter;
         }
 
         /// <summary>
