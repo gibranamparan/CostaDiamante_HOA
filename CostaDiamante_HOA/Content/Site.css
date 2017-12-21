@@ -320,6 +320,17 @@ ul.usrPanel li a {
     color: white !important;
 }
 
+.errorTitle{
+    text-align: center; color: red; font-weight: bold
+}
+
+i.errorLogo{
+    display:block;
+    margin: auto;
+    font-size: 5em;
+    text-align: center;
+}
+
 @media print{
     #main > .inner {
         padding: 0;

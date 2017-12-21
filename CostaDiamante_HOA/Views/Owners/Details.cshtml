@@ -87,7 +87,7 @@
             <div class="alert alert-info">
                 The filter search for arrivals in the selected range of time.
             </div>
-            <div class="form-inline">
+            <div class="form-inline hidden-print">
                 <div class="row">
                     <div class="form-group col-md-5">
                         @Html.LabelFor(model => visitFilter.TimePeriod.startDate)
@@ -115,7 +115,7 @@
                 No visits have been notified in selected period.
             </div>
 
-            <table class="table table-hover table-striped">
+            <table class="table table-hover table-striped" v-if="visits.length">
                 <thead>
                     <tr>
                         <th>
@@ -128,7 +128,12 @@
                             @Html.DisplayNameFor(model => visit.departureDate)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(ProcessModelInfo => visit.typeOfVisit)
+                            @Html.DisplayNameFor(model => visit.typeOfVisit)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => visit.totalPaid)
+                            <span>/</span>
+                            @Html.DisplayNameFor(model => visit.totalCost)
                         </th>
                         <th></th>
                     </tr>
@@ -146,6 +151,9 @@
                         </td>
                         <td>
                             {{visit.typeOfVisit | typeOfVisit}}
+                        </td>
+                        <td>
+                            {{visit.paid | currency}} / {{visit.totalCost | currency}}
                         </td>
                         <td>
                             <a v-bind:href="setUrlOfVisit(visit.visitID)">
@@ -168,12 +176,6 @@
 
 @section Scripts{ 
     <script>
-        //initListVisits()
-        //Vue.filter('formatDate', function(value) {
-        //    if (value) {
-        //        return moment(String(value)).format('MM/DD/YYYY hh:mm')
-        //    }
-        //}
         Vue.filter('formatDate', (value) => {
             if (value) {
                 return moment(String(value)).format('dddd, MMMM Do, YYYY')
@@ -182,6 +184,11 @@
         Vue.filter('typeOfVisit', (value) => {
             if (value === 0) { return 'Visit of friends and family' }
             if (value === 1) { return 'Visit by rent' }
+        })
+        Vue.filter('currency', (value) => {
+            if ($.isNumeric(value)) {
+                return numeral(value).format("$0,000.00")
+            }
         })
         Vue.mixin({
             methods: {

@@ -97,6 +97,34 @@ namespace CostaDiamante_HOA {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The requested address its not recognized by the system, check if its correct..
+        /// </summary>
+        public static string HTTP_ERROR_BADREQUEST {
+            get {
+                return ResourceManager.GetString("HTTP_ERROR_BADREQUEST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are not allowed to request this resource. This is because your user doesn&apos;t have enough permissions.
+        ///If you think you have to get access to this information, contact your administrator..
+        /// </summary>
+        public static string HTTP_ERROR_FORBIDDEN {
+            get {
+                return ResourceManager.GetString("HTTP_ERROR_FORBIDDEN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The requested resource was not found in the database. Use functions that the system give to list the item you are looking for, if it exists but you are not able to request it, report the error to the administrator..
+        /// </summary>
+        public static string HTTP_ERROR_NOTFOUND {
+            get {
+                return ResourceManager.GetString("HTTP_ERROR_NOTFOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;strong&gt;No visits&lt;/strong&gt; have been registered this year.
         /// </summary>
         public static string NO_VISITS {

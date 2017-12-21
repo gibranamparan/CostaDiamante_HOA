@@ -63,16 +63,16 @@
                     <ul>
                         @if (Context.User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                         {
-                            <li><a href="~/Owners">Owners and Users List</a></li>
-                            <li><a href="~/Condo">Condos</a></li>
-                            <li><a href="~/Visits">Visits History</a></li>
-                            <li><a href="~/Reports/HOAFeesByYear">HOA Fees Report</a></li>
+                            <li><a href="~/Owners"><i class="fa fa-users"></i> Owners and Users</a></li>
+                            <li><a href="~/Condo"><i class="fa fa-home"></i> Condos</a></li>
+                            <li><a href="~/Visits"><i class="fa fa-history"></i> Visits History</a></li>
+                            <li><a href="~/Reports/HOAFeesByYear"><i class="fa fa-money"></i> HOA Fees Report</a></li>
                         }
-                        else if (Context.User.IsInRole(ApplicationUser.RoleNames.OWNER))
+                        else //For Owners or Landlords
                         {
-                            <li><a href="@Url.Action("Index","Permissions",new { id = User.Identity.GetUserId() })">Check in List</a></li>
-                            <li><a href="@Url.Action("Details","Owners",new { id = User.Identity.GetUserId() })">Notify New Visit</a></li>
-                            <li><a href="~/Visits/">Your Visits History</a></li>
+                            <li>
+                                <a href="@Url.Action("Details","Owners")"> <i class="glyphicon glyphicon-home"></i> My Condos </a>
+                            </li>
                         }
                         @*if (User.Identity.IsAuthenticated) {
                             <li><a href="@Url.Action("UserManual","Home")">Owner User Manual</a></li>

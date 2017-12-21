@@ -73,9 +73,11 @@
                     @if (!selectionMode)
                     {
                         <td>
+                            @if(User.IsInRole(ApplicationUser.RoleNames.ADMIN) || User.IsInRole(ApplicationUser.RoleNames.LANDLORD)) { 
                             <a href="@Url.Action("Create", "Visits", new { id = item.condoID })">
                                 <i class="fa fa-book"></i> Notify New Visit
                             </a> <span> | </span>
+                            }
                             <a href="@Url.Action("HOAFees", "Condo", new { id = item.condoID })">
                                 <i class="fa fa-money"></i> HOA Fees
                             </a>  <span> | </span>

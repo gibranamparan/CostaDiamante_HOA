@@ -7,13 +7,23 @@
     Payment_RentImpact payment = new Payment_RentImpact() { date = DateTime.Today, visitID = Model.visitID, visit = Model };
 }
 
-<nav>
-    <a href="@Url.Action("Index")">
-        <i class="glyphicon glyphicon-arrow-left"></i><span>Back to List</span>
-    </a> |
-    <a href="@Url.Action("Edit", new { id = Model.visitID })">
-        <i class="glyphicon glyphicon-edit"></i><span>Edit Visit</span>
-    </a>
+<nav class="hidden-print">
+    @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+    {
+        <a href="@Url.Action("Index","Visits")">
+            <i class="glyphicon glyphicon-arrow-left"></i> <span>Back to List</span>
+        </a>
+        <span> | </span>
+        <a href="@Url.Action("Edit", new { id = Model.visitID })">
+            <i class="glyphicon glyphicon-edit"></i> <span>Edit Visit</span>
+        </a>
+    }
+    else
+    {
+        <a href="@Url.Action("Details","Owners")">
+            <i class="glyphicon glyphicon-arrow-left"></i> <span>Back to your Condos</span>
+        </a>
+    }
 </nav>
 
 <h2>Visit Information and Payments</h2>

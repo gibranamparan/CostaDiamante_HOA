@@ -129,6 +129,16 @@
   <data name="HOAFEE_COMPLETE_PAID" xml:space="preserve">
     <value>This quarter was &lt;Strong&gt;paid completely&lt;/Strong&gt;.</value>
   </data>
+  <data name="HTTP_ERROR_BADREQUEST" xml:space="preserve">
+    <value>The requested address its not recognized by the system, check if its correct.</value>
+  </data>
+  <data name="HTTP_ERROR_FORBIDDEN" xml:space="preserve">
+    <value>You are not allowed to request this resource. This is because your user doesn't have enough permissions.
+If you think you have to get access to this information, contact your administrator.</value>
+  </data>
+  <data name="HTTP_ERROR_NOTFOUND" xml:space="preserve">
+    <value>The requested resource was not found in the database. Use functions that the system give to list the item you are looking for, if it exists but you are not able to request it, report the error to the administrator.</value>
+  </data>
   <data name="NO_VISITS" xml:space="preserve">
     <value>&lt;strong&gt;No visits&lt;/strong&gt; have been registered this year</value>
   </data>

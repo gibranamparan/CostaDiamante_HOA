@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace CostaDiamante_HOA.Models
 {
@@ -95,8 +96,9 @@ namespace CostaDiamante_HOA.Models
         [DisplayName("Last Name")]
         public string lastname { get; set; }
 
-        [DisplayName("Register as Administrator")]
-        public bool registerAsAdmin { get; set; }
+        [DisplayName("User Permissions As")]
+        [Required]
+        public string roleName { get; set; }
 
         [DisplayName("Registration Date")]
         [DataType(DataType.Date)]
@@ -106,7 +108,18 @@ namespace CostaDiamante_HOA.Models
 
         public string hash { get; set; }
         public string stamp { get; set; }
-        
+
+        /// <summary>
+        /// Generates a list to select in a GUI form.
+        /// </summary>
+        /// <returns>List of items with "Value" and "Text" attributes</returns>
+        public static System.Web.Mvc.SelectList selectListUserRoles() {
+            var values = new List<string>(ApplicationUser.RoleNames.ROLES_ARRAY);
+            var items = from it in values
+                        select new { Text = it, Value = it };
+            return new System.Web.Mvc.SelectList(items,"Value","Text");
+        }
+
 
         public RegisterViewModel() { }
         public RegisterViewModel(ApplicationUser owner)

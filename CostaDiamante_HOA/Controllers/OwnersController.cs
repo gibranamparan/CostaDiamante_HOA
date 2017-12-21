@@ -13,10 +13,25 @@ using CostaDiamante_HOA.GeneralTools;
 
 namespace CostaDiamante_HOA.Controllers
 {
-    [Authorize]
     public class OwnersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+
+        private Owner filterOwner(string id)
+        {
+            Owner owner = null;
+            //If owner, show only his details
+            if (User.IsInRole(ApplicationUser.RoleNames.OWNER)) {
+                var iden = User.Identity;
+                var userID = iden.GetUserId();
+                owner = db.Owners.Find(userID);
+            }
+            //If admin, get the requested owner
+            else if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                owner = db.Owners.Find(id);
+
+            return owner;
+        }
 
         // GET: Owners
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
@@ -33,28 +48,23 @@ namespace CostaDiamante_HOA.Controllers
         // GET: Owners/Details/5
         public ActionResult Details(string id, int year = 0,bool errorGuest=false)
         {
+
             year = year == 0 ? DateTime.Today.Year : year;
+            
+            Owner owner = null;
+            owner = filterOwner(id);
 
-            Owner owners = null;
-            //If owner, show only his details
-            if (User.IsInRole(ApplicationUser.RoleNames.OWNER))
-                owners = db.Owners.Find(User.Identity.GetUserId());
-            else if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //If admin, get the requested owner
-            else if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
-                owners = db.Owners.Find(id);
-
-            if (owners == null)
+            if (owner == null)
                 return HttpNotFound();
 
-            ViewBag.notAssociatedCondos = db.Condoes.Where(con =>
-                String.IsNullOrEmpty(con.ownerID)).ToList();
+            //Select all condoes not associated to be listed as options to associate
+            ViewBag.notAssociatedCondos = db.Condoes.Where(con => String.IsNullOrEmpty(con.ownerID))
+                .ToList();
 
             ViewBag.errorGuest = errorGuest;
             ViewBag.year = year;
 
-            return View(owners);
+            return View(owner);
         }
 
         [HttpGet]
@@ -62,18 +72,23 @@ namespace CostaDiamante_HOA.Controllers
         { 
             TimePeriod periodReported = new TimePeriod(startdate, enddate);
             List<Visit> visits = new List<Visit>();
+            
+            Owner owner = null;
+            owner = filterOwner(id);
+            if (owner != null)
+            {
+                visits = owner.visitsHistory.ToList();
 
-            Owner owner = db.Owners.Find(id);
-            visits = owner.visitsHistory.ToList();
+                //Visits are filtered and prepared to be returned as JSON array creating a ViewModel List
+                var listVisits = visits.Where(vis => periodReported
+                                 .hasInside(vis.timePeriod.startDate))
+                                 .OrderBy(vis => vis.timePeriod.startDate)
+                                 .Select(vis => new Visit.VMVisits(vis));
 
-            // Se filtran visitas
-            var listVisits = visits.Where(vis => periodReported
-                             .hasInside(vis.timePeriod.startDate))
-                             .OrderBy(vis => vis.timePeriod.startDate)
-                             .Select(vis => new Visit.VMVisits(vis));
-
-            return Json(listVisits, JsonRequestBehavior.AllowGet);
-            //return Json(listVisits);
+                return Json(listVisits, JsonRequestBehavior.AllowGet);
+            }
+            else
+                return Json(new { });
         }
 
         // GET: Payments
@@ -85,12 +100,18 @@ namespace CostaDiamante_HOA.Controllers
             string errorMsg = string.Empty;
             try
             {
-                var condos = db.Owners.Find(id).Condos;
+                var owner = filterOwner(id);
+                if (owner != null)
+                {
+                    var condos = owner.Condos;
 
-                var res = from condo in condos
-                          select new { condoID = condo.condoID, condoName = condo.name, status = condo.getHOAStatusByYear(year) };
+                    var res = from condo in condos
+                              select new { condoID = condo.condoID, condoName = condo.name, status = condo.getHOAStatusByYear(year) };
 
-                return Json(new { res = res, numReg = res.Count() }, JsonRequestBehavior.AllowGet);
+                    return Json(new { res = res, numReg = res.Count() }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                    errorMsg = "Owner not found by given ID";
             }
             catch (Exception e)
             {

@@ -13,6 +13,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.Security.Principal;
 using System.Net;
 using System.Data.Entity;
+using System.Collections.Generic;
 
 namespace CostaDiamante_HOA.Controllers
 {
@@ -55,6 +56,26 @@ namespace CostaDiamante_HOA.Controllers
             {
                 _userManager = value;
             }
+        }
+
+        public JsonResult refreshRoles()
+        {
+            List<string> agregados = new List<string>();
+            //Se crean los roles que se manejaran en el sistema inicialmente
+            string[] roles = ApplicationUser.RoleNames.ROLES_ARRAY;
+            foreach (string rol in roles)
+            {
+                if (!db.Roles.Any(r => r.Name == rol))
+                {
+                    var store = new RoleStore<IdentityRole>(db);
+                    var manager = new RoleManager<IdentityRole>(store);
+                    var role = new IdentityRole { Name = rol };
+
+                    manager.Create(role);
+                    agregados.Add(rol);
+                }
+            }
+            return Json(agregados, JsonRequestBehavior.AllowGet);
         }
 
         //
@@ -172,22 +193,24 @@ namespace CostaDiamante_HOA.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = model.registerAsAdmin? new ApplicationUser(model): new Owner(model);
+                var user = model.roleName == ApplicationUser.RoleNames.ADMIN ? new ApplicationUser(model): new Owner(model);
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    string rolName = model.registerAsAdmin ? 
-                        CostaDiamante_HOA.Models.ApplicationUser.RoleNames.ADMIN:
-                         CostaDiamante_HOA.Models.ApplicationUser.RoleNames.OWNER;
+                    string rolName = model.roleName;
                     UserManager.AddToRole(user.Id, rolName);
-                    //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    //If its a landlord, the user has owner permissions too
+                    if (rolName == ApplicationUser.RoleNames.LANDLORD)
+                        UserManager.AddToRole(user.Id, ApplicationUser.RoleNames.OWNER);
 
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
+                    /*await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                     
+                     For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                     Send an email with this link
+                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                     */
                     return RedirectToAction("Index", "Owners");
                 }
                 AddErrors(result);

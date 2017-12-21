@@ -6,17 +6,38 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using CostaDiamante_HOA.Models;
 using static CostaDiamante_HOA.GeneralTools.FiltrosDeSolicitudes;
 
 namespace CostaDiamante_HOA.Controllers
 {
-    [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+    [Authorize]
     public class CondoController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        /// <summary>
+        /// Check if the user is allowed to access
+        /// </summary>
+        /// <param name="userIDToCheck"></param>
+        /// <returns></returns>
+        public bool isAllowedToAccess(string userIDToCheck)
+        {
+            bool res = false;
+            if (!User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+            {
+                var userID = User.Identity.GetUserId();
+                res = userIDToCheck == userID;
+            }
+            else
+                res = true;
+            return res;
+        }
+
         // GET: Condo
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Index()
         {
             var condoes = db.Condoes.Include(c => c.owner);
@@ -24,6 +45,7 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         // GET: Condo/Create
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Create()
         {
             ViewBag.ownerID = new SelectList(db.Owners.ToList(), "Id", "fullName");
@@ -35,6 +57,7 @@ namespace CostaDiamante_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Create([Bind(Include = "num,name,ownerID")] Condo condo, Boolean fromIndex=false)
         {
             if (ModelState.IsValid)
@@ -49,6 +72,7 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         // GET: Condo/Edit/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -69,6 +93,7 @@ namespace CostaDiamante_HOA.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Edit([Bind(Include = "condoID,name,ownerID")] Condo condo)
         {
             if (ModelState.IsValid)
@@ -82,6 +107,7 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         // GET: Condo/Delete/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -99,6 +125,7 @@ namespace CostaDiamante_HOA.Controllers
         // POST: Condo/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult DeleteConfirmed(int id)
         {
             Condo condo = db.Condoes.Find(id);
@@ -111,6 +138,7 @@ namespace CostaDiamante_HOA.Controllers
         // POST: Condo/Delete/5
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public JsonResult RemoveFromOwner(int id=0)
         {
             int num = 0;
@@ -125,6 +153,10 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         private class AreaCondo { public string prefix = ""; public int limit = 0; }
+        /// <summary>
+        /// Action to generate automatically every condo acording to the standar format for names in the HOA Office
+        /// </summary>
+        /// <returns>Json HTTP Response reporting how many condos were created</returns>
         public JsonResult generateCondos()
         {
             var registeredCondos = db.Condoes;
@@ -167,6 +199,7 @@ namespace CostaDiamante_HOA.Controllers
 
         [HttpPost]
         [ValidateHeaderAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public JsonResult AssociateCondo(List<Condo> condosToAssociate, string ownerID)
         {
             //Associating condos in the array to owner
@@ -177,7 +210,7 @@ namespace CostaDiamante_HOA.Controllers
 
             return Json(numRegChanged);
         }
-
+        /*
         public JsonResult removeAllCondoes()
         {
             int numReg = 0;
@@ -188,8 +221,8 @@ namespace CostaDiamante_HOA.Controllers
             });
             numReg = db.SaveChanges();
             return Json(numReg, JsonRequestBehavior.AllowGet);
-        }
-
+        }*/
+        [HandleError]
         public ActionResult HOAFees(int? id, int? year)
         {
             if (id == null)
@@ -198,6 +231,9 @@ namespace CostaDiamante_HOA.Controllers
             Condo condo = db.Condoes.Find(id);
             if (condo == null)
                 return HttpNotFound();
+
+            if(!isAllowedToAccess(condo.ownerID))
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
             if (year.HasValue) ViewBag.year = year;
             return View(condo);

@@ -132,12 +132,18 @@ namespace CostaDiamante_HOA.Models
 
             public typeOfVisit typeOfVisit { get; set; }
 
+            public decimal paid { get; set; }
+
+            public decimal totalCost { get; set; }
+
             public VMVisits(Visit visit)
             {
                 this.visitID = visit.visitID;
                 this.arrivalDate = visit.arrivalDate;
                 this.departureDate = visit.departureDate;
                 this.typeOfVisit = visit.typeOfVisit;
+                this.paid = visit.totalPaid;
+                this.totalCost = visit.totalCost;
             }
         }
 

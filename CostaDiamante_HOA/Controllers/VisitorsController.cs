@@ -19,37 +19,15 @@ namespace CostaDiamante_HOA.Controllers
         {
             //var payments = db.Payments.Include(p => p.owner).Include(p => p.visit);
             var visitors = db.Visitor.Where(a => a.visitID == id)
-                                        .Select(a => new
-                                        {
-                                            visitorID = a.visitorID,
-                                            name = a.name,
-                                            lastName = a.lastName,
-                                            isYounger = a.isYounger,
-                                            visitID = a.visitID
-                                         });
+                        .Select(a => new
+                        {
+                            visitorID = a.visitorID,
+                            name = a.name,
+                            lastName = a.lastName,
+                            isYounger = a.isYounger,
+                            visitID = a.visitID
+                            });
             return Json(visitors);
-            //return Json(payments, JsonRequestBehavior.AllowGet);
-        }
-
-        // GET: Visitors/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Visitor visitor = db.Visitor.Find(id);
-            if (visitor == null)
-            {
-                return HttpNotFound();
-            }
-            return View(visitor);
-        }
-
-        // GET: Visitors/Create
-        public ActionResult Create()
-        {
-            return View();
         }
 
         // POST: Visitors/Create
@@ -57,6 +35,7 @@ namespace CostaDiamante_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN+","+ApplicationUser.RoleNames.LANDLORD)]
         public JsonResult Create(Visitor visitor)
         {
             int numReg = 0;
@@ -78,55 +57,10 @@ namespace CostaDiamante_HOA.Controllers
             return Json(new { numReg = numReg, errorMsg = errorMsg });
         }
 
-        // GET: Visitors/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Visitor visitor = db.Visitor.Find(id);
-            if (visitor == null)
-            {
-                return HttpNotFound();
-            }
-            return View(visitor);
-        }
-
-        // POST: Visitors/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "visitorID,name,lastName,isYounger,visitID")] Visitor visitor)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(visitor).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(visitor);
-        }
-
-        // GET: Visitors/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Visitor visitor = db.Visitor.Find(id);
-            if (visitor == null)
-            {
-                return HttpNotFound();
-            }
-            return View(visitor);
-        }
-
         // POST: Visitors/Delete/5
         [HttpPost, ActionName("Delete")]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public JsonResult DeleteConfirmed(int id)
         {
             int numReg = 0;

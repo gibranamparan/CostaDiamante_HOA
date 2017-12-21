@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CostaDiamante_HOA.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -13,6 +14,15 @@ namespace CostaDiamante_HOA.Controllers
         public ActionResult UserManual()
         {
             return View();
+        }
+
+        [Authorize]
+        public ActionResult Index()
+        {
+            if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                return RedirectToAction("Index", "Visits");
+            else
+                return RedirectToAction("Details", "Owners");
         }
 
         public ActionResult About()

@@ -70,7 +70,8 @@ namespace CostaDiamante_HOA.Models
         {
             public const string OWNER = "Owner";
             public const string ADMIN = "Admin";
-            public static string[] ROLES_ARRAY = new string[] { OWNER, ADMIN };
+            public const string LANDLORD = "Landlord";
+            public static string[] ROLES_ARRAY = new string[] { OWNER, LANDLORD, ADMIN };
         }
 
     }

@@ -29,7 +29,7 @@
             </div>
         </div>
         <div class="panel-body">
-            <form class="row form-inline" v-on:submit.prevent="createNewPayment()">
+            <form class="row form-inline" v-on:submit.prevent="createNewPayment()" v-if="@(User.IsInRole(ApplicationUser.RoleNames.ADMIN)?"true":"false")">
                 @Html.AntiForgeryToken()
                 <div class="form-group col-md-2">
                     @Html.LabelFor(model => Model.isDiscount)
@@ -104,7 +104,9 @@
                 <table id="tblPayments" class="table table-hover table-striped" v-if="payments.length > 0">
                     <thead>
                         <tr>
+                            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) {
                             <th style="width: 2em"></th>
+                            }
                             <th v-on:click="sortPayments('reference')" style="cursor:pointer">
                                 @Html.DisplayNameFor(model => Model.reference)
                             </th>
@@ -118,9 +120,10 @@
                     </thead>
                     <tbody>
                         <tr v-for="(payment, i) in payments" :class="{isDiscount:payment.isDiscount}">
-                            <td>
-                                <i class="fa fa-remove option remove" v-on:click="removePayment(payment)"></i>
-                            </td>
+                            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+                            {
+                            <td><i class="fa fa-remove option remove" v-on:click="removePayment(payment)"></i></td>
+                            }
                             <td>{{payment.reference?payment.reference:'0000'}}{{payment.isDiscount?' (Discount)':''}}</td>
                             <td>{{numeral(payment.amount).format('$0,000.00')}}</td>
                             <td>{{moment(payment.date).format('LL')}}</td>
@@ -310,16 +313,17 @@
                             $.notify("@(GlobalMessages.PAY_NEW)",
                                 { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
 
-                            this.loading = false;
                         } else if (response.errorMsg) {
                             notifyError('@GlobalMessages.ERROR_OCURRED' + response.errorMsg)
                         } else { //Unknown error
                             notifyError(response)
                         }
+                        this.loading = false;
                     })
                     .catch(e => {
                         exception = e
                         notifyError(e.message)
+                        this.loading = false;
                     })
                 },
                 //Remove payment async from server after confirmation

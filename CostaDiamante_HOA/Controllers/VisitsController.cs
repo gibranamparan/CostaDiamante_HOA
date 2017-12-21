@@ -14,12 +14,29 @@ using System.Web.Script.Serialization;
 
 namespace CostaDiamante_HOA.Controllers
 {
-    [Authorize]
     public class VisitsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-        
+        /// <summary>
+        /// Check if the user is allowed to access
+        /// </summary>
+        /// <param name="userIDToCheck"></param>
+        /// <returns></returns>
+        public bool isAllowedToAccess(string userIDToCheck)
+        {
+            bool res = false;
+            if (!User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+            {
+                var userID = User.Identity.GetUserId();
+                res = userIDToCheck == userID;
+            }
+            else
+                res = true;
+            return res;
+        }
+
         // GET: Visits
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Index(Visit.VMVisitsFilter visitsFilter)
         {
             TimePeriod periodReported = visitsFilter.TimePeriod;
@@ -57,21 +74,24 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         // GET: Visits/Details/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN + "," + ApplicationUser.RoleNames.OWNER)]
         public ActionResult Details(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Visit visits = db.Visits.Find(id);
             if (visits == null)
-            {
                 return HttpNotFound();
-            }
+
+            if (!isAllowedToAccess(visits.ownerID))
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+
             return View(visits);
         }
 
         // GET: Visits/Create
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN+","+ApplicationUser.RoleNames.LANDLORD)]
         public ActionResult Create(int? id)
         {
             if (id == null)
@@ -80,6 +100,9 @@ namespace CostaDiamante_HOA.Controllers
             Condo condo = db.Condoes.Find(id);
             if (condo == null)
                 return HttpNotFound();
+
+            if(!isAllowedToAccess(condo.ownerID))
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
             Visit visit = new Visit();
             visit.condoID = id.Value;
@@ -93,12 +116,17 @@ namespace CostaDiamante_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN + "," + ApplicationUser.RoleNames.LANDLORD)]
         public JsonResult Create(Visit visit)
         {
             int numReg = 0;
             string errorMsg = string.Empty;
             string errorMailer = string.Empty;
             visit.date = DateTime.Now;
+
+            if (!isAllowedToAccess(visit.ownerID))
+                return Json(new { numReg = numReg, errorMsg = GlobalMessages.HTTP_ERROR_FORBIDDEN, errorMailer = errorMailer });
+
             try { 
                 if (ModelState.IsValid)
                 {
@@ -123,6 +151,7 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         // GET: Visits/Edit/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -144,6 +173,7 @@ namespace CostaDiamante_HOA.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public JsonResult Edit(Visit visit)
         {
             int numReg = 0;
@@ -166,6 +196,7 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         // GET: Visits/Delete/5
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -183,6 +214,7 @@ namespace CostaDiamante_HOA.Controllers
         // POST: Visits/Delete/5
         [HttpPost, ActionName("Delete")]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public JsonResult DeleteConfirmed(int id)
         {
             int numReg = 0;

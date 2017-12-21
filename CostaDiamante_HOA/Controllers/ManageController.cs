@@ -10,7 +10,6 @@ using CostaDiamante_HOA.Models;
 
 namespace CostaDiamante_HOA.Controllers
 {
-    [Authorize]
     public class ManageController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -52,7 +51,6 @@ namespace CostaDiamante_HOA.Controllers
 
         //
         // GET: /Manage/Index
-        [Authorize]
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
