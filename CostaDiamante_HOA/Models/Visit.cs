@@ -52,8 +52,11 @@ namespace CostaDiamante_HOA.Models
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal totalCost { get; set; }
 
-        [Display(Name = "Payment omitted")]
+        [Display(Name = "Payment Omitted")]
         public bool paymentOmitted { get; set; }
+
+        [Display(Name = "With the Owner")]
+        public bool withTheOwner { get; set; }
 
         //A visits is for one condo
         [Display(Name = "Condo Number")]

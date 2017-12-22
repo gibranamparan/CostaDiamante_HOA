@@ -68,20 +68,20 @@
                     <div class="form-group col-md-8">
                         <div v-if="visit.typeOfVisit === 0" class="col-md-6">
                             <label>Owner is accompanying</label>
-                            <input class="form-control" type="checkbox" v-model="withTheOwner">
+                            <input class="form-control" type="checkbox" v-model="visit.withTheOwner">
                         </div>
 
-                        <div v-if="visit.typeOfVisit === 0 && !withTheOwner" class="col-md-6">
+                        <div v-if="visit.typeOfVisit === 0 && !visit.withTheOwner" class="col-md-6">
                             <label>Skip Payment for Friends and Family</label>
-                            <input class="form-control" type="checkbox" v-model="skipPayment">
+                            <input class="form-control" type="checkbox" v-model="visit.paymentOmitted">
                         </div>
                     </div>
                     <div class="clearfix"></div>
 
                     <div class="form-group col-md-12">
                         <div v-if="visit.typeOfVisit === 0" class="alert alert-info" role="alert">
-                            <span v-if="visit.typeOfVisit === 0 && withTheOwner === true || skipPayment === true">Visit without payment.</span>
-                            <span v-if="visit.typeOfVisit === 0 && withTheOwner === false && skipPayment === false">5 dollars per person if under 6 years does not apply.</span>
+                            <span v-if="visit.typeOfVisit === 0 && visit.withTheOwner === true || visit.paymentOmitted === true">Visit without payment.</span>
+                            <span v-if="visit.typeOfVisit === 0 && visit.withTheOwner === false && visit.paymentOmitted === false">5 dollars per person if under 6 years does not apply.</span>
                         </div>
                         <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
                             For renting, every <strong>extra person</strong> more than <strong>12 guests</strong> cost 50dlls for bracelet. <br>
@@ -179,6 +179,7 @@
                 typeOfVisit: '',
                 date: '@Model.date',
                 paymentOmitted: '',
+                withTheOwner: '',
                 visitors: []
             },
             newVisitor:{ //Model to save a new visitor
@@ -274,10 +275,10 @@
                 })
             },
             sendDataToServer: function () { //Async call to save the new visit in DB
-                debugger
+                //debugger
                 var self = this
-                self.visit.paymentOmitted = self.skipPayment
-                console.log(self.visit)
+                //self.visit.paymentOmitted = self.skipPayment
+                //console.log(self.visit)
                 api.post("Edit",{
                     visit : self.visit
                 })
@@ -299,24 +300,24 @@
             calculateTotalPerVisit: function () {
                 //cuando una visita se pretende editar, donde atributo visit.paymentOmitted tiene el valor de true por defecto,
                 //esto evitaría seguir conservando el mismo valor del atributo cuando se seleccione la casilla 'withTheOwner'.
-                if(this.withTheOwner) {
-                    this.skipPayment = false
+                if(this.visit.withTheOwner) {
+                    this.visit.paymentOmitted = false
                 }
-                if(this.skipPayment) {
-                    this.withTheOwner = false
+                if(this.visit.paymentOmitted) {
+                    this.visit.withTheOwner = false
                 }
 
                 if(this.visit.typeOfVisit === 1) {
-                    this.withTheOwner = false
-                    this.skipPayment = false
+                    this.visit.withTheOwner = false
+                    this.this.paymentOmitted = false
                 }
 
                 var visitorCount = 0
 
-                if(this.visit.typeOfVisit === 0 && this.withTheOwner || this.skipPayment) {
+                if(this.visit.typeOfVisit === 0 && this.visit.withTheOwner || this.visit.paymentOmitted) {
                     return this.visit.totalCost = 0.00
                 }
-                if(this.visit.typeOfVisit === 0 && !this.withTheOwner) {
+                if(this.visit.typeOfVisit === 0 && !this.visit.withTheOwner) {
                     let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
                     return this.visit.totalCost = visitorIsNotYounger.length * 5
                 }
@@ -343,7 +344,7 @@
             }
         },
         created: function () {
-            if('@Model.typeOfVisit' === '@(typeOfVisit.FRIENDS_AND_FAMILY)' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' === '0.00') {
+            @*if('@Model.typeOfVisit' === '@(typeOfVisit.FRIENDS_AND_FAMILY)' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' === '0.00') {
                 this.withTheOwner = true
             }
 
@@ -353,7 +354,7 @@
 
             if('@Model.typeOfVisit' === '@(typeOfVisit.FRIENDS_AND_FAMILY)' && '@Model.paymentOmitted' === 'True') {
                 this.skipPayment = '@Model.paymentOmitted'
-            }
+            }*@
 
             if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY') {
                 this.visit.typeOfVisit = 0
@@ -362,7 +363,7 @@
             }
             this.getVisitors()
             this.watchCollection(
-                ['visit.typeOfVisit','withTheOwner','skipPayment','visit.arrivalDate','visit.departureDate'],
+                ['visit.typeOfVisit','visit.withTheOwner','visit.paymentOmitted','visit.arrivalDate','visit.departureDate'],
                 this.calculateTotalPerVisit)
         },
         computed: {

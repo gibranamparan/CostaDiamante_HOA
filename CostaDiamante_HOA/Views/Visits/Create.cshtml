@@ -64,20 +64,20 @@
             </div>
             <div v-if="visit.typeOfVisit === 0" class="form-group col-md-4">
                 <label>Owner is accompanying</label>
-                <input class="form-control" type="checkbox" v-model="withTheOwner">
+                <input class="form-control" type="checkbox" v-model="visit.withTheOwner">
             </div>
             @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) {
-            <div v-if="visit.typeOfVisit === 0 && !withTheOwner" class="form-group col-md-4">
+            <div v-if="visit.typeOfVisit === 0 && !visit.withTheOwner" class="form-group col-md-4">
                 <label>Skip Payment for Friends and Family</label>
-                <input class="form-control" type="checkbox" v-model="skipPayment">
+                <input class="form-control" type="checkbox" v-model="visit.paymentOmitted">
             </div>
             }
         </form>
 
         @*Informative Legend*@
         <div v-if="visit.typeOfVisit === 0" class="alert alert-info" role="alert">
-            <span v-if="visit.typeOfVisit === 0 && withTheOwner === true || skipPayment === true">Visit without payment.</span>
-            <span v-if="visit.typeOfVisit === 0 && withTheOwner === false && skipPayment === false">5 dollars per person if under 6 years does not apply.</span>
+            <span v-if="visit.typeOfVisit === 0 && visit.withTheOwner === true || visit.paymentOmitted === true">Visit without payment.</span>
+            <span v-if="visit.typeOfVisit === 0 && visit.withTheOwner === false && visit.paymentOmitted === false">5 dollars per person if under 6 years does not apply.</span>
         </div>
 
         @*Informative Legend*@
@@ -178,6 +178,7 @@
                 totalCost : 0.00,
                 typeOfVisit: 0,
                 paymentOmitted: false,
+                withTheOwner: false,
                 visitors: []
             },
             newVisitor:{ //Model to save a new visitor
@@ -196,8 +197,8 @@
               { text: 'Visit of friends and family', value: 0 },
               { text: 'Visit by rent', value: 1 }
             ],
-            withTheOwner: false,
-            skipPayment: false,
+            //withTheOwner: false,
+            //skipPayment: false,
             priceByDay: 25
         },
         methods: {
@@ -224,8 +225,8 @@
             },
             sendDataToServer: function () { //Async call to save the new visit in DB
                 var self = this
-                if(self.skipPayment) {
-                    self.visit.paymentOmitted = self.skipPayment
+                if(self.visit.paymentOmitted) {
+                    self.visit.paymentOmitted = self.visit.paymentOmitted
                 }
                 axios.post("create",{
                     visit : self.visit
@@ -247,17 +248,17 @@
             calculateTotalPerVisit: function () {
                 
                 // Comprueba que solo se active un checkbox al momento de seleccionar el tipo de visita 'Visit of friends and family'
-                if(this.withTheOwner) {
-                    this.skipPayment = false
+                if(this.visit.withTheOwner) {
+                    this.visit.paymentOmitted = false
                 }
-                if(this.skipPayment) {
-                    this.withTheOwner = false
+                if(this.visit.paymentOmitted) {
+                    this.visit.withTheOwner = false
                 }
                 var visitorCount = 0
-                if(this.visit.typeOfVisit === 0 && this.withTheOwner || this.skipPayment) {
+                if(this.visit.typeOfVisit === 0 && this.visit.withTheOwner || this.visit.paymentOmitted) {
                     return this.visit.totalCost = 0.00
                 }
-                if(this.visit.typeOfVisit === 0 && !this.withTheOwner) {
+                if(this.visit.typeOfVisit === 0 && !this.visit.withTheOwner) {
                     let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
                     return this.visit.totalCost = visitorIsNotYounger.length * 5
                 }
@@ -286,7 +287,7 @@
         created: function () {
             //this.isVisitValid()
             this.watchCollection(
-                ['visit.typeOfVisit','visit.visitors','withTheOwner','visit.arrivalDate','visit.departureDate'],
+                ['visit.typeOfVisit','visit.visitors','visit.withTheOwner','visit.arrivalDate','visit.departureDate'],
                 this.calculateTotalPerVisit)
         },
         computed: {

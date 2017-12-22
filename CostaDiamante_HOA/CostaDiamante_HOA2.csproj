@@ -249,6 +249,10 @@
     <Compile Include="Migrations\201712060331006_payments_discountAndReference.Designer.cs">
       <DependentUpon>201712060331006_payments_discountAndReference.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201712220407594_update_visit.cs" />
+    <Compile Include="Migrations\201712220407594_update_visit.Designer.cs">
+      <DependentUpon>201712220407594_update_visit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condo.cs" />
@@ -534,6 +538,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712060331006_payments_discountAndReference.resx">
       <DependentUpon>201712060331006_payments_discountAndReference.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712220407594_update_visit.resx">
+      <DependentUpon>201712220407594_update_visit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

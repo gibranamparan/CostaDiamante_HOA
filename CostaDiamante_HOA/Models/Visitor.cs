@@ -44,13 +44,13 @@ namespace CostaDiamante_HOA.Models
             public bool isYounger { get; set; }
             public int visitID { get; set; }
 
-            public VMVisitor(Visitor a)
+            public VMVisitor(Visitor visit)
             {
-                this.visitorID = a.visitorID;
-                this.name = a.name;
-                this.lastName = a.lastName;
-                this.isYounger = a.isYounger;
-                this.visitID = a.visitID;
+                this.visitorID = visit.visitorID;
+                this.name = visit.name;
+                this.lastName = visit.lastName;
+                this.isYounger = visit.isYounger;
+                this.visitID = visit.visitID;
             }
         }
     }
