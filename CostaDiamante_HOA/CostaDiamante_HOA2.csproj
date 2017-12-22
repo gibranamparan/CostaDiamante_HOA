@@ -418,10 +418,8 @@
     <Content Include="Scripts\util.js" />
     <Content Include="Scripts\vfs_fonts.js" />
     <Content Include="Scripts\vue-resource.min.js" />
-    <Content Include="Scripts\vue-table.min.js" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vue.min.js" />
-    <Content Include="Scripts\vuetable-2.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

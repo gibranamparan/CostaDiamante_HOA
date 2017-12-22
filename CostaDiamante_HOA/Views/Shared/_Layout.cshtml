@@ -68,7 +68,8 @@
                             <li><a href="~/Visits"><i class="fa fa-history"></i> Visits History</a></li>
                             <li><a href="~/Reports/HOAFeesByYear"><i class="fa fa-money"></i> HOA Fees Report</a></li>
                         }
-                        else //For Owners or Landlords
+                        //For Owners or Landlords
+                        else if (User.IsInRole(ApplicationUser.RoleNames.OWNER) || User.IsInRole(ApplicationUser.RoleNames.LANDLORD))
                         {
                             <li>
                                 <a href="@Url.Action("Details","Owners")"> <i class="glyphicon glyphicon-home"></i> My Condos </a>

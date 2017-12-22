@@ -43,7 +43,7 @@ namespace CostaDiamante_HOA.Controllers
         /// <param name="id">Visit ID</param>
         /// <returns>HTTP Json response with numReg, errorMsg and if successful, res as the payments list</returns>
         [HttpGet]
-        //[ValidateHeaderAntiForgeryToken]
+        [ValidateHeaderAntiForgeryToken]
         public JsonResult IndexPaymentsRentImpact(int id)
         {
             int numReg = 0;
@@ -54,6 +54,7 @@ namespace CostaDiamante_HOA.Controllers
                 var visit = db.Visits.Find(id);
                 if(!isAllowedToAccess(visit.ownerID))
                     return Json(new { numReg = numReg, errorMsg = GlobalMessages.HTTP_ERROR_FORBIDDEN });
+
                 //Get all the payments related to the visit
                 var payments = visit.payments.OrderByDescending(pay => pay.date).ToList()
                     .Select(pay => new Payment.VMPayment(pay));

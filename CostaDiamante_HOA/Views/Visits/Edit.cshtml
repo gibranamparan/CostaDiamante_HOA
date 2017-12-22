@@ -45,9 +45,7 @@
                 <div class="form-group col-md-2">
                     <br />
                     <button v-bind:disabled="isVisitValid()"
-                            type="submit" class="btn btn-primary pull-right btn-block">
-                        Update
-                    </button>
+                            type="submit" class="btn btn-primary pull-right btn-block">Update</button>
                     <button />
                 </div>
             </form>
@@ -105,13 +103,10 @@
                             @Html.LabelFor(model => visitor.isYounger)
                             @Html.EditorFor(model => visitor.isYounger, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.isYounger" } })
                         </div>
-
+                        <br />
                         <div class="form-group col-md-2">
-                            <br />
                             <button type="button" value="Add" class="btn btn-success btn-block pull-right" v-on:click="saveNewVisitorDB()"
-                                    v-bind:disabled="(newVisitor.name === '' && newVisitor.lastName === '')">
-                                Add
-                            </button>
+                                    v-bind:disabled="(newVisitor.name === '' && newVisitor.lastName === '')">Add</button>
                         </div>
                     </div>
                     <!-- Visitors table -->
@@ -128,8 +123,8 @@
                         <tbody>
                             <tr v-for="(visitor, i) in visit.visitors">
                                 <td>{{ i + 1 }}</td>
-                                <td>{{ visitor.name }}</td>
-                                <td>{{ visitor.lastName }}</td>
+                                <td>{{ visitor.name.toUpperCase() }}</td>
+                                <td>{{ visitor.lastName.toUpperCase() }}</td>
                                 <td>{{ visitor.isYounger | isYoungerFormat }}</td>
                                 <td>
                                     <label v-on:click="removeVisitorToTable(i)" class="removeLabel">
@@ -154,7 +149,7 @@
         baseURL: "/Visits",
         timeout: 100000,
         headers: {
-            Authorization: token
+            "__RequestVerificationToken": token
         }
     });
     Vue.filter('isYoungerFormat', (value) => {
@@ -215,10 +210,9 @@
                 })
                 .then(function (response) {
                     ws.visit.visitors = response.data
-                    console.log(ws.visit.visitors)
                 })
                 .catch(function (error) {
-                    console.log(error)
+                    notifyError(error)
                 })
             },
             saveNewVisitorDB: function () {
@@ -229,10 +223,13 @@
                 .then(function (response) {
                     ws.lastVisitorIDFromDB = response.data.numReg
                     ws.addVisitorToTable()
-
+                    
+                    //Notify successfull registration
+                    $.notify("@(GlobalMessages.VISITOR_NEW)",
+                        { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
                 })
                 .catch(function (error) {
-                    console.log(error)
+                    notifyError(error)
                 })
             },
             removeVisitorDB: function (visitorID) {
@@ -241,10 +238,11 @@
                     id: visitorID
                 })
                 .then(function (response) {
-                    console.log(response)
+                    //Notify successfully done operation
+                    $.notify('@GlobalMessages.VISITOR_REMOVED', { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
                 })
                 .catch(function (error) {
-                    console.log(error)
+                    notifyError(error);
                 })
             },
             isVisitValid: function () {
@@ -270,14 +268,17 @@
                 this.visit.visitors.splice(index, 1)
             },
             redirectToOwnerDetails: function(){
-                setTimeout(function(){window.location.replace("/Visits/")}, 2000)
                 swal("Done!","Your visit was scheduled succesfully","success")
+                .then(res=>{
+                    window.location.replace("/Owners/Details/"+this.visit.ownerID)
+                })
             },
             sendDataToServer: function () { //Async call to save the new visit in DB
+                debugger
                 var self = this
                 self.visit.paymentOmitted = self.skipPayment
                 console.log(self.visit)
-                axios.post("Edit",{
+                api.post("Edit",{
                     visit : self.visit
                 })
                 .then(response => {
@@ -287,12 +288,12 @@
                     }else if(response.errorMsg){
                         swal("Oops!","An error ocurred, plase try again. If error persists, plase send this to the system administrator: "+response.errorMsg,"error")
                     }else{ //Unknown error
-                        console.log(response)
+                        notifyError(response)
                     }
                 })
                 .catch(e => {
                     //debugger
-                    console.log(e)
+                    notifyError(e)
                 })
             },
             calculateTotalPerVisit: function () {

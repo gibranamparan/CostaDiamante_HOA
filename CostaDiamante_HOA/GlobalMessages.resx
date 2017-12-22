@@ -166,6 +166,12 @@ If you think you have to get access to this information, contact your administra
   <data name="PAY_NOT_FOUND" xml:space="preserve">
     <value>The payment was not found.</value>
   </data>
+  <data name="VISITOR_NEW" xml:space="preserve">
+    <value>New visitor added.</value>
+  </data>
+  <data name="VISITOR_REMOVED" xml:space="preserve">
+    <value>The selected visitor was removed.</value>
+  </data>
   <data name="VISIT_COMPLETE_PAID" xml:space="preserve">
     <value>This visit was &lt;Strong&gt;paid completely&lt;/Strong&gt;.</value>
   </data>

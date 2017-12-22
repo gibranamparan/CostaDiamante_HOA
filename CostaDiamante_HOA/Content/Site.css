@@ -308,7 +308,7 @@ ul.usrPanel li a {
     color: white !important;
 }
 .selected.payed, td.payed{
-    background: #94ff83 !important;
+    background: #bbfacc !important;
     color: black !important;
 }
 .selected.delayed, td.delayed{

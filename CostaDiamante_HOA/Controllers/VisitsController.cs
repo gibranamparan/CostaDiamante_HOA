@@ -115,7 +115,7 @@ namespace CostaDiamante_HOA.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateHeaderAntiForgeryToken]
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN + "," + ApplicationUser.RoleNames.LANDLORD)]
         public JsonResult Create(Visit visit)
         {
@@ -172,7 +172,7 @@ namespace CostaDiamante_HOA.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateHeaderAntiForgeryToken]
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public JsonResult Edit(Visit visit)
         {
@@ -200,20 +200,21 @@ namespace CostaDiamante_HOA.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Visit visits = db.Visits.Find(id);
             if (visits == null)
-            {
                 return HttpNotFound();
-            }
+
+            if (!isAllowedToAccess(visits.ownerID))
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+
             return View(visits);
         }
 
         // POST: Visits/Delete/5
         [HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
+        [ValidateHeaderAntiForgeryToken]
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public JsonResult DeleteConfirmed(int id)
         {
@@ -223,6 +224,9 @@ namespace CostaDiamante_HOA.Controllers
             try
             {
                 Visit visits = db.Visits.Find(id);
+                if(!isAllowedToAccess(visits.ownerID))
+                    return Json(new { numReg = numReg, errorMsg = GlobalMessages.HTTP_ERROR_FORBIDDEN });
+
                 db.Visits.Remove(visits);
                 numReg = db.SaveChanges();
             }

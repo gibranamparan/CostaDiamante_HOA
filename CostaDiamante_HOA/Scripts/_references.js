@@ -35,5 +35,3 @@
 /// <reference path="vfs_fonts.js" />
 /// <reference path="vue.min.js" />
 /// <reference path="vue-resource.min.js" />
-/// <reference path="vue-table.min.js" />
-/// <reference path="vuetable-2.js" />

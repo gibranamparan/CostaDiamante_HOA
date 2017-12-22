@@ -213,5 +213,23 @@ namespace CostaDiamante_HOA {
                 return ResourceManager.GetString("VISIT_COMPLETE_PAID", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New visitor added..
+        /// </summary>
+        public static string VISITOR_NEW {
+            get {
+                return ResourceManager.GetString("VISITOR_NEW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected visitor was removed..
+        /// </summary>
+        public static string VISITOR_REMOVED {
+            get {
+                return ResourceManager.GetString("VISITOR_REMOVED", resourceCulture);
+            }
+        }
     }
 }

@@ -139,7 +139,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="visit in visits">
+                    <tr v-for="visit in visits" :class="{paid:(visit.paid>=visit.totalCost)}">
                         <td>
                             {{visit.visitID}}
                         </td>
@@ -173,7 +173,14 @@
         </div>
    </div>
 </div>
-
+<style>
+    tr.paid td{
+        background-color: #bbfacc !important
+    }
+    tr:hover.paid td{
+        background-color: #81ffa2 !important
+    }
+</style>
 @section Scripts{ 
     <script>
         Vue.filter('formatDate', (value) => {
