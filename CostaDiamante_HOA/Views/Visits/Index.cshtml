@@ -126,7 +126,7 @@
                         </a>
                         @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                         {
-                            @(" | ")
+                            <br />
                             <a href="" v-on:click="deleteVisit(@item.visitID)" data-toggle="modal">
                                 <i class="glyphicon glyphicon-remove"></i> Cancel
                             </a>

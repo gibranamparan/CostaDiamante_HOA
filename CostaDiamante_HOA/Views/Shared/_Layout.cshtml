@@ -44,7 +44,7 @@
         </div>
 
         <!-- Sidebar -->
-        <div id="sidebar" class="hidden-print">
+        <div id="sidebar" class="hidden-print inactive">
             <div class="inner">
                 <!-- Menu -->
                 <nav id="menu" >
@@ -99,8 +99,13 @@
         function autoHideShowMenu() {
             if ($(this).width() <= 1024)
                 $("#sidebar").addClass("inactive")
-            else
-                $("#sidebar").removeClass("inactive")
+            else {
+                var hideSidebar = boolParse(localStorage.getItem("costadiamante_menuToggle"));
+                if (hideSidebar)
+                    $("#sidebar").addClass("inactive")
+                else
+                    $("#sidebar").removeClass("inactive")
+            }
         }
     </script>
 </body>

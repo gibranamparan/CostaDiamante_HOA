@@ -114,6 +114,13 @@
 
 							// Toggle.
 								$sidebar.toggleClass('inactive');
+								var hideSidebar
+								if (typeof (Storage) !== "undefined") {
+								    hideSidebar = $sidebar.hasClass("inactive")
+								    localStorage.setItem("costadiamante_menuToggle", hideSidebar);
+								} else {
+                                    console.log("no local storage support")
+								}
 
 						});
 
