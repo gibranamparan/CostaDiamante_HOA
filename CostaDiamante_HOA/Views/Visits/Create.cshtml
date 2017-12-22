@@ -149,7 +149,7 @@
         baseURL: "/Visits",
         timeout: 100000,
         headers: {
-            Authorization: token
+            "__RequestVerificationToken": token
         }
     });
     Vue.filter('isYoungerFormat', (value) => {
@@ -228,7 +228,7 @@
                 if(self.visit.paymentOmitted) {
                     self.visit.paymentOmitted = self.visit.paymentOmitted
                 }
-                axios.post("create",{
+                api.post("create",{
                     visit : self.visit
                 })
                 .then(response => {
