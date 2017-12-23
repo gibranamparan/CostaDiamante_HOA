@@ -80,8 +80,8 @@
 
                     <div class="form-group col-md-12">
                         <div v-if="visit.typeOfVisit === 0" class="alert alert-info" role="alert">
-                            <span v-if="visit.typeOfVisit === 0 && visit.withTheOwner === true || visit.paymentOmitted === true">Visit without payment.</span>
-                            <span v-if="visit.typeOfVisit === 0 && visit.withTheOwner === false && visit.paymentOmitted === false">5 dollars per person if under 6 years does not apply.</span>
+                            <span v-if="visit.typeOfVisit === 0 && (visit.withTheOwner === true || visit.withTheOwner === 'True') || (visit.paymentOmitted === true || visit.paymentOmitted === 'True')">Visit without payment.</span>
+                            <span v-if="visit.typeOfVisit === 0 && (visit.withTheOwner === false || visit.withTheOwner === 'False') && (visit.paymentOmitted === false || visit.paymentOmitted === 'alse')">5 dollars per person if under 6 years does not apply.</span>
                         </div>
                         <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
                             For renting, every <strong>extra person</strong> more than <strong>12 guests</strong> cost 50dlls for bracelet. <br>
@@ -178,8 +178,8 @@
                 totalCost : '@Model.totalCost',
                 typeOfVisit: '',
                 date: '@Model.date',
-                paymentOmitted: '',
-                withTheOwner: '',
+                paymentOmitted: '@Model.paymentOmitted',
+                withTheOwner: '@Model.withTheOwner',
                 visitors: []
             },
             newVisitor:{ //Model to save a new visitor
@@ -224,7 +224,7 @@
                 .then(function (response) {
                     ws.lastVisitorIDFromDB = response.data.numReg
                     ws.addVisitorToTable()
-                    
+
                     //Notify successfull registration
                     $.notify("@(GlobalMessages.VISITOR_NEW)",
                         { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
@@ -300,24 +300,24 @@
             calculateTotalPerVisit: function () {
                 //cuando una visita se pretende editar, donde atributo visit.paymentOmitted tiene el valor de true por defecto,
                 //esto evitaría seguir conservando el mismo valor del atributo cuando se seleccione la casilla 'withTheOwner'.
-                if(this.visit.withTheOwner) {
+                if(this.visit.withTheOwner === 'True' || this.visit.withTheOwner === true) {
                     this.visit.paymentOmitted = false
                 }
-                if(this.visit.paymentOmitted) {
+                if(this.visit.paymentOmitted === 'True' || this.visit.paymentOmitted === true) {
                     this.visit.withTheOwner = false
                 }
 
                 if(this.visit.typeOfVisit === 1) {
                     this.visit.withTheOwner = false
-                    this.this.paymentOmitted = false
+                    this.visit.paymentOmitted = false
                 }
 
                 var visitorCount = 0
 
-                if(this.visit.typeOfVisit === 0 && this.visit.withTheOwner || this.visit.paymentOmitted) {
+                if(this.visit.typeOfVisit === 0 && (this.visit.withTheOwner === true || this.visit.withTheOwner === 'True') || (this.visit.paymentOmitted === true || this.visit.paymentOmitted === 'True')) {
                     return this.visit.totalCost = 0.00
                 }
-                if(this.visit.typeOfVisit === 0 && !this.visit.withTheOwner) {
+                if(this.visit.typeOfVisit === 0 && (!this.visit.withTheOwner || this.visit.withTheOwner === 'False')) {
                     let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
                     return this.visit.totalCost = visitorIsNotYounger.length * 5
                 }
