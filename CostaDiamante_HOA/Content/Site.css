@@ -343,6 +343,10 @@ i.errorLogo{
     text-align: center;
 }
 
+.panel-heading[data-target] {
+    cursor: pointer;
+}
+
 @media print{
     #main > .inner {
         padding: 0;

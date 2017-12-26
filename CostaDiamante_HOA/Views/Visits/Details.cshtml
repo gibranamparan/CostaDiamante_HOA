@@ -41,19 +41,19 @@
         <h3 class="panel-title">Details</h3>
     </div>
     <div class="panel-body">
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-3">
             @Html.LabelFor(model => model.arrivalDate)
             <p class="form-control-static">@Model.arrivalDate.ToString("D")</p>
         </div>
-        <div class="form-group col-md-8">
+        <div class="form-group col-md-3">
             @Html.LabelFor(model => model.departureDate)
             <p class="form-control-static">@Model.departureDate.ToString("D")</p>
         </div>
-        <div class="form-group col-md-4">
-            <strong>@Html.DisplayNameFor(model => model.totalCost): </strong>
-            <span class="form-control-static">@Html.DisplayFor(model => model.totalCost)</span>
+        <div class="form-group col-md-3">
+            @Html.LabelFor(model => model.totalCost)
+            <p class="form-control-static">@Html.DisplayFor(model => model.totalCost)</p>
         </div>
-        <div class="form-group col-md-4">
+        <div class="form-group col-md-3">
             @Html.LabelFor(model => model.date)
             <p class="form-control-static">@Model.date.ToString("D")</p>
         </div>
@@ -76,6 +76,11 @@
         <div class="panel-heading">
             <h3 class="panel-title">Guests</h3>
         </div>
+        @if (Model.withTheOwner) { //A notification is shown in guest table if the owner is coming with the visitors.
+        <div class="alert alert-success" style="margin-bottom: 10px">
+            The <strong>Owner @Model.owner.fullName.ToUpper() is coming</strong> in this visit.
+        </div>
+        }
         <div class="panel-body">
             <table class="table table-striped table-hover">
                 <thead>

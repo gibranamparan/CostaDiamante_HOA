@@ -8,7 +8,10 @@
 
 <nav>
     <a href="@Url.Action("Details","Owners",new { id = Model.ownerID })">
-        <i class="glyphicon glyphicon-arrow-left"></i> <span>Back to Owner Details</span>
+        <i class="fa fa-user"></i> <span>Back to Owner Details</span>
+    </a><span> | </span>
+    <a href="@Url.Action("Details","Visits",new { id = Model.visitID })">
+        <i class="glyphicon glyphicon-arrow-left"></i> <span>Back to Visit Details</span>
     </a>
 </nav>
 
@@ -70,11 +73,12 @@
                             <label>Owner is accompanying</label>
                             <input class="form-control" type="checkbox" v-model="visit.withTheOwner">
                         </div>
-
+                        @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) {
                         <div v-if="visit.typeOfVisit === 0 && !visit.withTheOwner" class="col-md-6">
                             <label>Skip Payment for Friends and Family</label>
                             <input class="form-control" type="checkbox" v-model="visit.paymentOmitted">
                         </div>
+                        }
                     </div>
                     <div class="clearfix"></div>
 
@@ -179,8 +183,8 @@
                 totalCost : '@Model.totalCost',
                 typeOfVisit: '',
                 date: '@Model.date',
-                paymentOmitted: '@Model.paymentOmitted',
-                withTheOwner: '@Model.withTheOwner',
+                paymentOmitted: boolParse('@Model.paymentOmitted'),
+                withTheOwner: boolParse('@Model.withTheOwner'),
                 visitors: []
             },
             newVisitor:{ //Model to save a new visitor
@@ -280,7 +284,7 @@
             redirectToOwnerDetails: function(){
                 swal("Done!","Your visit was scheduled succesfully","success")
                 .then(res=>{
-                    window.location.replace("/Owners/Details/"+this.visit.ownerID)
+                    window.location.replace("/Visits/Details/"+this.visit.visitID)
                 })
             },
             sendDataToServer: function () { //Async call to save the new visit in DB
