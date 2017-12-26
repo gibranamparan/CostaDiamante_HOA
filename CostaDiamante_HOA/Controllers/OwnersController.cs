@@ -10,12 +10,26 @@ using CostaDiamante_HOA.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using CostaDiamante_HOA.GeneralTools;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace CostaDiamante_HOA.Controllers
 {
     public class OwnersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+
+        private ApplicationUserManager _userManager;
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
 
         private Owner filterOwner(string id)
         {
@@ -37,9 +51,14 @@ namespace CostaDiamante_HOA.Controllers
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Index()
         {
-            var owners = db.Owners.ToList();
-            var admins = db.Users.ToList().Where((adm) => owners
+            var ownersTemp = db.Owners.ToList();
+
+            var admins = db.Users.ToList().Where((adm) => ownersTemp
                 .Find(own => own.Id == adm.Id) == null).ToList();
+
+            var owners = (from user in ownersTemp
+                      select new RegisterViewModel(user, UserManager)).ToList();
+
             ViewBag.admins = admins;
 
             return View(owners);

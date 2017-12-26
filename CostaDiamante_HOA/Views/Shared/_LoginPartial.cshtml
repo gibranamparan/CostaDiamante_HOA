@@ -6,7 +6,7 @@
     {
     @Html.AntiForgeryToken()
 
-    <ul class="nav navbar-nav navbar-right usrPanel">
+    <ul class="nav navbar-nav navbar-right usrPanel placeInCorner">
         @{ 
             string userName = (new ApplicationDbContext()).Users.Find(User.Identity.GetUserId()).name;
         <li>
@@ -20,7 +20,7 @@
 }
 else
 {
-    <ul class="nav navbar-nav navbar-right usrPanel">
+    <ul class="nav navbar-nav navbar-right usrPanel placeInCorner">
         <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, 
            htmlAttributes: new { id = "loginLink" })</li>
     </ul>

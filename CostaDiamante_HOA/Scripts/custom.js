@@ -50,8 +50,11 @@ Date.prototype.dateISOFormat = function (days) {
     return dat.toISOString().slice(0, 10);
 }
 
-boolParse = function (myStr){
-    return myStr.toLowerCase()=='true';
+boolParse = function (myStr) {
+    if(myStr)
+        return myStr.toLowerCase() == 'true';
+    else
+        return false
 }
 
 sortBy = function (arr, field, direction) {

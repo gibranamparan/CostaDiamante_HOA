@@ -238,11 +238,13 @@ namespace CostaDiamante_HOA.Controllers
         private RegisterViewModel prepareView(ApplicationUser user)
         {
             RegisterViewModel vmOwner = new RegisterViewModel(user);
-            string roleName = UserManager.GetRoles(user.Id).FirstOrDefault();
+            var roles = UserManager.GetRoles(user.Id);
+            string roleName = roles.FirstOrDefault();
+            if (roles.Count() > 1)
+                roleName = roles[1];
 
-            ViewBag.userID = user.Id;
+            vmOwner.roleName = roleName;
             ViewBag.editMode = true;
-            ViewBag.roleName = roleName;
 
             return vmOwner;
         }
@@ -274,9 +276,26 @@ namespace CostaDiamante_HOA.Controllers
             if (ModelState.IsValid || updateWithPasswordInvariable)
             {
                 //Remaininig fields are updated
-                //db.Entry(userEdited).State = EntityState.Modified;
                 await store.UpdateAsync(userEdited);
                 var updatedRegs = db.SaveChangesAsync();
+                
+                //Change the role if the edited user is not admin
+                if (!UserManager.IsInRole(userEdited.Id, ApplicationUser.RoleNames.ADMIN))
+                { 
+                    //If its already landlord
+                    bool isLandLord = UserManager.IsInRole(userEdited.Id, ApplicationUser.RoleNames.LANDLORD);
+                    //Gets if Owner or Landlord was selected in the form
+                    bool selOwner = vmOwner.roleName == ApplicationUser.RoleNames.OWNER;
+                    bool selLandlord = vmOwner.roleName == ApplicationUser.RoleNames.LANDLORD;
+
+                    //If landlord was selected to a user that was Owner, add Landlord Role
+                    if (!selOwner && selLandlord && !isLandLord)
+                        UserManager.AddToRole(userEdited.Id, ApplicationUser.RoleNames.LANDLORD);
+                    //If orwer was selected to a user that was Landlord, remove Landlord Role
+                    if (selOwner && !selLandlord && isLandLord)
+                        UserManager.RemoveFromRole(userEdited.Id, ApplicationUser.RoleNames.LANDLORD);
+                }
+
                 return RedirectToAction("Index", "Owners");
             }
 
@@ -325,6 +344,7 @@ namespace CostaDiamante_HOA.Controllers
                 foreach (var visit in visits)
                     db.Visits.Remove(visit);
 
+                db.Users.Remove(owner);
                 numReg = db.SaveChanges();
             } else if (roleName == ApplicationUser.RoleNames.ADMIN)
             {

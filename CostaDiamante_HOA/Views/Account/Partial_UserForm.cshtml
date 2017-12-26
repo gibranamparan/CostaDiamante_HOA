@@ -51,12 +51,16 @@
                 @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
             </div>
         </div>
-        if (!editMode)
+        if (Model.roleName != ApplicationUser.RoleNames.ADMIN) //SHOW Role Dropdown
         {
             <div class="row">
                 <div class="form-group col-md-6">
                     @Html.LabelFor(m => m.roleName)
-                    @Html.DropDownListFor(m => m.roleName, RegisterViewModel.selectListUserRoles(), new { v_model = "rolName" })
+                    @*//TODO: Validate the role to be removed from the list*@
+                    @{
+                        string roleToIgnore = editMode ? ApplicationUser.RoleNames.ADMIN: null; // Cannot change to Admin Role in edit form
+                        @Html.DropDownListFor(m => m.roleName, RegisterViewModel.selectListUserRoles(roleToIgnore), new { v_model = "rolName" });
+                    }
                     @Html.ValidationMessageFor(m => m.roleName, "", new { @class = "text-danger" })
                 </div>
             </div>

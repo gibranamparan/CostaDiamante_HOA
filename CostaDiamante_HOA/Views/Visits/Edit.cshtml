@@ -165,7 +165,8 @@
                 arr.forEach((val) => this.$watch(val, cb))
             }
         }
-    })
+    });
+    var response
     const v = new Vue({
         el: '#app',
         data: {
@@ -218,7 +219,14 @@
             },
             saveNewVisitorDB: function () {
                 var ws = this
-                axios.post('/Visitors/Create', {
+                apiVisitor = axios.create({
+                    baseURL: "/Visitors",
+                    timeout: 100000,
+                    headers: {
+                        "__RequestVerificationToken": token
+                    }
+                });
+                apiVisitor.post('/Create', {
                     visitor: ws.newVisitor.clone()
                 })
                 .then(function (response) {
@@ -230,7 +238,8 @@
                         { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
                 })
                 .catch(function (error) {
-                    notifyError(error)
+                    response = error
+                    notifyError(error.message)
                 })
             },
             removeVisitorDB: function (visitorID) {

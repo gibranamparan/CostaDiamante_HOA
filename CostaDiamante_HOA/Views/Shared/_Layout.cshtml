@@ -1,6 +1,10 @@
-﻿@using Microsoft.AspNet.Identity
+﻿@using Microsoft.AspNet.Identity;
+@using System.Configuration;
 @using CostaDiamante_HOA.Models
-
+@{ 
+    string envMode = ConfigurationManager.AppSettings["env"];
+    envMode = envMode == null ? "dev" : envMode;
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,6 +19,9 @@
 <body>
     <!-- Wrapper -->
     <div id="wrapper">
+        @if(envMode == "stg") {
+            <div class="alert alert-warning pnlTitleMode" style="text-align: center">TEST MODE</div>
+        }
         <!-- Main -->
         <div id="main">
             <div class="hidden-print">
@@ -22,7 +29,8 @@
             </div>
             <div class="inner">
                 <!-- Header -->
-                <header id="header" class="hidden-print"></header>
+                <header id="header" class="hidden-print">
+                </header>
 
                 <!-- Banner -->
                 <section id="container banner">
@@ -82,6 +90,7 @@
                 </nav>
             </div>
         </div>
+
     </div>
 
     @Scripts.Render("~/bundles/jquery")

@@ -17,14 +17,14 @@
     Visit visit = new Visit();
 }
 
+@if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
+{
 <nav class="hidden-print">
-    @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
-    {
         <a href="@Url.Action("Index","Owners")">
             <i class="glyphicon glyphicon-arrow-left"></i><span>Back to Owners List</span>
         </a>
-    }
 </nav>
+}
 
 <div class="visible-print">
     @Html.Partial("ReportHeader")

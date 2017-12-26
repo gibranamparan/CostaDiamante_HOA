@@ -97,7 +97,6 @@ namespace CostaDiamante_HOA.Models
         public string lastname { get; set; }
 
         [DisplayName("User Permissions As")]
-        [Required]
         public string roleName { get; set; }
 
         [DisplayName("Registration Date")]
@@ -109,12 +108,23 @@ namespace CostaDiamante_HOA.Models
         public string hash { get; set; }
         public string stamp { get; set; }
 
+        [DisplayName("Full Name")]
+        public string fullName { get {
+                return this.name + " " + this.lastname;
+            } }
+
         /// <summary>
         /// Generates a list to select in a GUI form.
         /// </summary>
-        /// <returns>List of items with "Value" and "Text" attributes</returns>
-        public static System.Web.Mvc.SelectList selectListUserRoles() {
+        /// <param name="valueToRemove">Rolename to remove from the select list, leave null no role has to be removed.</param>
+        /// <returns>Select List ready to be rendered with HTML Helper, listing the roles available in the application.</returns>
+        public static System.Web.Mvc.SelectList selectListUserRoles(String valueToRemove) {
             var values = new List<string>(ApplicationUser.RoleNames.ROLES_ARRAY);
+
+            //Removes an specific role from the loaded list.
+            if (!string.IsNullOrEmpty(valueToRemove))
+                values.Remove(valueToRemove);
+
             var items = from it in values
                         select new { Text = it, Value = it };
             return new System.Web.Mvc.SelectList(items,"Value","Text");
@@ -132,6 +142,12 @@ namespace CostaDiamante_HOA.Models
             this.hash = owner.PasswordHash;
             this.stamp = owner.SecurityStamp;
             this.registrationDate = owner.registrationDate.HasValue ? owner.registrationDate.Value : DateTime.Today;
+        }
+
+        public RegisterViewModel(ApplicationUser owner, ApplicationUserManager userManager) : this(owner)
+        {
+            var roles = userManager.GetRolesAsync(owner.Id).Result;
+            this.roleName = roles.LastOrDefault();
         }
     }
 
