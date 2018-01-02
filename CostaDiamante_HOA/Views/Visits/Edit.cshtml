@@ -84,8 +84,8 @@
 
                     <div class="form-group col-md-12">
                         <div v-if="visit.typeOfVisit === 0" class="alert alert-info" role="alert">
-                            <span v-if="visit.typeOfVisit === 0 && (visit.withTheOwner === true || visit.withTheOwner === 'True') || (visit.paymentOmitted === true || visit.paymentOmitted === 'True')">Visit without payment.</span>
-                            <span v-if="visit.typeOfVisit === 0 && (visit.withTheOwner === false || visit.withTheOwner === 'False') && (visit.paymentOmitted === false || visit.paymentOmitted === 'alse')">5 dollars per person if under 6 years does not apply.</span>
+                            <span v-if="visit.typeOfVisit === 0 && visit.withTheOwner || visit.paymentOmitted">Visit without payment.</span>
+                            <span v-if="visit.typeOfVisit === 0 && !visit.withTheOwner && !visit.paymentOmitted">5 dollars per person if under 6 years does not apply.</span>
                         </div>
                         <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
                             For renting, every <strong>extra person</strong> more than <strong>12 guests</strong> cost 50dlls for bracelet. <br>
@@ -199,7 +199,6 @@
                 }
             },
             lastVisitorIDFromDB: '',
-            //typeOfVisit: 0,
             optionsTypeOfVisit: [
                 { text: 'Visit of friends and family', value: 0 },
                 { text: 'Visit by rent', value: 1 }
@@ -262,16 +261,6 @@
             isVisitValid: function () {
                 return this.visit.visitors.length === 0 || this.typeOfVisit === 0
             },
-            //selectTypeOfVisit: function (value) {
-            //    if(value == 0) {
-            //        this.withTheOwner = true
-            //        this.withoutTheOwner = false
-            //    }
-            //    if(value == 1) {
-            //        this.withoutTheOwner = true
-            //        this.withTheOwner = false
-            //    }
-            //},
             addVisitorToTable: function () {
                 this.visit.visitors.push(this.newVisitor.clone()) //The model is clone a pushed into the list of visitors in the visit
                 this.newVisitor.clear() //The model for a new visitor is clared to enter a new one
@@ -288,10 +277,7 @@
                 })
             },
             sendDataToServer: function () { //Async call to save the new visit in DB
-                //debugger
                 var self = this
-                //self.visit.paymentOmitted = self.skipPayment
-                //console.log(self.visit)
                 api.post("Edit",{
                     visit : self.visit
                 })
@@ -306,17 +292,16 @@
                     }
                 })
                 .catch(e => {
-                    //debugger
                     notifyError(e)
                 })
             },
             calculateTotalPerVisit: function () {
-                //cuando una visita se pretende editar, donde atributo visit.paymentOmitted tiene el valor de true por defecto,
-                //esto evitaría seguir conservando el mismo valor del atributo cuando se seleccione la casilla 'withTheOwner'.
-                if(this.visit.withTheOwner === 'True' || this.visit.withTheOwner === true) {
+                // Cuando una visita se pretende editar, donde atributo visit.paymentOmitted tiene el valor de true por defecto,
+                // esto evitaría seguir conservando el mismo valor del atributo cuando se seleccione la casilla 'withTheOwner'.
+                if(this.visit.withTheOwner) {
                     this.visit.paymentOmitted = false
                 }
-                if(this.visit.paymentOmitted === 'True' || this.visit.paymentOmitted === true) {
+                if(this.visit.paymentOmitted) {
                     this.visit.withTheOwner = false
                 }
 
@@ -327,10 +312,10 @@
 
                 var visitorCount = 0
 
-                if(this.visit.typeOfVisit === 0 && (this.visit.withTheOwner === true || this.visit.withTheOwner === 'True') || (this.visit.paymentOmitted === true || this.visit.paymentOmitted === 'True')) {
+                if(this.visit.typeOfVisit === 0 && this.visit.withTheOwner || this.visit.paymentOmitted) {
                     return this.visit.totalCost = 0.00
                 }
-                if(this.visit.typeOfVisit === 0 && (!this.visit.withTheOwner || this.visit.withTheOwner === 'False')) {
+                if(this.visit.typeOfVisit === 0 && !this.visit.withTheOwner) {
                     let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
                     return this.visit.totalCost = visitorIsNotYounger.length * 5
                 }
@@ -348,7 +333,6 @@
                     });
 
                     if(visitorNotYounger.length > 12) {
-                        //var visitorExtra = this.visit.visitors.length - 12
                         var visitorExtra = visitorNotYounger.length - 12
                         return this.visit.totalCost + (visitorExtra * 50)
                     }
@@ -357,18 +341,6 @@
             }
         },
         created: function () {
-            @*if('@Model.typeOfVisit' === '@(typeOfVisit.FRIENDS_AND_FAMILY)' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' === '0.00') {
-                this.withTheOwner = true
-            }
-
-            if('@Model.typeOfVisit' === '@(typeOfVisit.FRIENDS_AND_FAMILY)' && '@Model.paymentOmitted' === 'False' && '@Model.totalCost' != '0.00') {
-                this.withTheOwner = false
-            }
-
-            if('@Model.typeOfVisit' === '@(typeOfVisit.FRIENDS_AND_FAMILY)' && '@Model.paymentOmitted' === 'True') {
-                this.skipPayment = '@Model.paymentOmitted'
-            }*@
-
             if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY') {
                 this.visit.typeOfVisit = 0
             } else {
