@@ -152,6 +152,7 @@
             "__RequestVerificationToken": token
         }
     });
+    // Init Filters
     Vue.filter('isYoungerFormat', (value) => {
         if(value) {
             return 'Si'
@@ -192,24 +193,21 @@
                     this.name = ''; this.lastName= ''; this.isYounger = false;
                 }
             },
-            //typeOfVisit: 1,
-            optionsTypeOfVisit: [
+            optionsTypeOfVisit: [ //Options of type of visits
               { text: 'Visit of friends and family', value: 0 },
               { text: 'Visit by rent', value: 1 }
             ],
-            //withTheOwner: false,
-            //skipPayment: false,
             priceByDay: 25
         },
         methods: {
-            isVisitValid: function () {
+            isVisitValid: function () { // Verifica que la visita cumpla con ciertos riquisitos para poder registrarse en el sistema
                 if (Object.keys(this.visit.visitors).length > 0 && this.visit.arrivalDate < this.visit.departureDate && this.visit.arrivalDate != '' && this.visit.departureDate != '') { // && this.visit.typeOfVisit === 0 && this.withTheOwner || this.visit.typeOfVisit === 0 && this.skipPayment || this.visit.typeOfVisit === 1) { 
                     return false
                 } else {
                     return true 
                 }
             },
-            addVisitorToTable: function () {
+            addVisitorToTable: function () { // Se registra un nuevo visitante y se agrega en la tabla
                 this.visit.visitors.push(this.newVisitor.clone()) //The model is clone a pushed into the list of visitors in the visit
                 this.newVisitor.clear() //The model for a new visitor is clared to enter a new one
                 $("#visitor_name").focus()
@@ -245,10 +243,8 @@
                     console.log(e)
                 })
             },
-            calculateTotalPerVisit: function () {
-                
-                // Comprueba que solo se active un checkbox al momento de seleccionar el tipo de visita 'Visit of friends and family'
-                if(this.visit.withTheOwner) {
+            calculateTotalPerVisit: function () { // Calcula el precio total de la visita al momento de registrarse
+                if(this.visit.withTheOwner) { // Comprueba que solo se active un checkbox al momento de seleccionar el tipo de visita 'Visit of friends and family'
                     this.visit.paymentOmitted = false
                 }
                 if(this.visit.paymentOmitted) {
@@ -276,7 +272,6 @@
                     });
                     
                     if(visitorNotYounger.length > 12) {
-                        //var visitorExtra = this.visit.visitors.length - 12
                         var visitorExtra = visitorNotYounger.length - 12
                         return this.visit.totalCost + (visitorExtra * 50) 
                     }
@@ -285,7 +280,6 @@
             }
         },
         created: function () {
-            //this.isVisitValid()
             this.watchCollection(
                 ['visit.typeOfVisit','visit.visitors','visit.withTheOwner','visit.arrivalDate','visit.departureDate'],
                 this.calculateTotalPerVisit)
