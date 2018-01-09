@@ -295,3 +295,5 @@ __pycache__/
 /CostaDiamante_HOA/Properties/Settings.Designer.cs
 /CostaDiamante_HOA/Properties/Settings.settings
 /CostaDiamante_HOA/Web.config
+
+*.config

@@ -134,6 +134,15 @@ namespace CostaDiamante_HOA {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No visits have been notified in selected period..
+        /// </summary>
+        public static string NO_VISITS_FOUND {
+            get {
+                return ResourceManager.GetString("NO_VISITS_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The &lt;strong&gt;owner was not registered&lt;/strong&gt; int this whole year..
         /// </summary>
         public static string OWNER_OUTOFYEAR {
@@ -206,11 +215,38 @@ namespace CostaDiamante_HOA {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rents By Year Report.
+        /// </summary>
+        public static string RENTS_BY_YEAR_REPORT {
+            get {
+                return ResourceManager.GetString("RENTS_BY_YEAR_REPORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This visit was &lt;Strong&gt;paid completely&lt;/Strong&gt;..
         /// </summary>
         public static string VISIT_COMPLETE_PAID {
             get {
                 return ResourceManager.GetString("VISIT_COMPLETE_PAID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visit History.
+        /// </summary>
+        public static string VISIT_HISTORY {
+            get {
+                return ResourceManager.GetString("VISIT_HISTORY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The filter search for arrivals in the selected range of time..
+        /// </summary>
+        public static string VISIT_HISTORY_LEGEND1 {
+            get {
+                return ResourceManager.GetString("VISIT_HISTORY_LEGEND1", resourceCulture);
             }
         }
         

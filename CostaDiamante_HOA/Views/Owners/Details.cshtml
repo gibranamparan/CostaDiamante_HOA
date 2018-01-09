@@ -80,12 +80,12 @@
    <div class="panel panel-primary">
         <div class="panel-heading">
             <div class="row">
-                <h3 class="panel-title col-md-12">List of visits</h3>
+                <h3 class="panel-title col-md-12">@GlobalMessages.VISIT_HISTORY</h3>
             </div>
         </div>
         <div class="panel-body">
             <div class="alert alert-info hidden-print">
-                The filter search for arrivals in the selected range of time.
+                @GlobalMessages.VISIT_HISTORY_LEGEND1
             </div>
             <div class="form-inline">
                 <div class="row">
@@ -112,7 +112,7 @@
             <br>
 
             <div v-if="visits.length === 0" class="alert alert-info">
-                No visits have been notified in selected period.
+                @GlobalMessages.NO_VISITS_FOUND
             </div>
 
             <table class="table table-hover table-striped" v-if="visits.length">

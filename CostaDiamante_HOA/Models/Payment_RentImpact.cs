@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -40,8 +41,10 @@ namespace CostaDiamante_HOA.Models
             emailMessage += $" condo {this.visit.condo.name }, property of {this.visit.condo.owner.fullName} related to visit from {this.visit.timePeriod}";
             emailMessage += $" for {this.visit.visitors.Count()} guests.";
 
+            //Generate attachments for email
             List<Attachment> attachments = null;
-            if (this.visit.typeOfVisit == typeOfVisit.BY_RENT) { //Add link to see report if its a visit that cause Impact of Rent
+            if (this.visit.typeOfVisit == typeOfVisit.BY_RENT || (this.visit.typeOfVisit == typeOfVisit.FRIENDS_AND_FAMILY && !this.visit.withTheOwner))
+            { //Add link to see report if its a visit that cause Impact of Rent
                 emailMessage += $" <span>See attached PDF or click this link to go to your Impact of Rent status report for year {year}:</span>";
                 emailMessage += " <a href='" + detailsURL + "'>Download Impact of Rent Report Year .</a>";
 
@@ -60,10 +63,10 @@ namespace CostaDiamante_HOA.Models
                     attachments = new List<Attachment>() { attach };
                 }
             }
-
             //Async sending of email
             Task.Run(() =>
             {
+                //Compose destination
                 var ownerAdress = new List<SendGrid.Helpers.Mail.EmailAddress>
                 { new SendGrid.Helpers.Mail.EmailAddress(this.visit.owner.Email, this.visit.owner.fullName) };
                 //Email is sent just to the admin

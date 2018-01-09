@@ -8,7 +8,7 @@
 <div class="pull-right">
     <strong>Report At: </strong><span>@DateTime.Today.ToLongDateString()</span>
 </div>
-<h2>Rents By Year</h2>
+<h2>@GlobalMessages.RENTS_BY_YEAR_REPORT</h2>
 <!-- YEAR SELECTION -->
 <div id="pnlYearSelection" style="text-align: center">
     <a href="?year=@(year - 1)" class="notShowIfOutOfTime hidden-print @(pdfMode?"hidden":"")">

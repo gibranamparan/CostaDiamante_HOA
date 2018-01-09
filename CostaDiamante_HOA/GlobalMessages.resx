@@ -142,6 +142,9 @@ If you think you have to get access to this information, contact your administra
   <data name="NO_VISITS" xml:space="preserve">
     <value>&lt;strong&gt;No visits&lt;/strong&gt; have been registered this year</value>
   </data>
+  <data name="NO_VISITS_FOUND" xml:space="preserve">
+    <value>No visits have been notified in selected period.</value>
+  </data>
   <data name="OWNER_OUTOFYEAR" xml:space="preserve">
     <value>The &lt;strong&gt;owner was not registered&lt;/strong&gt; int this whole year.</value>
   </data>
@@ -166,6 +169,9 @@ If you think you have to get access to this information, contact your administra
   <data name="PAY_NOT_FOUND" xml:space="preserve">
     <value>The payment was not found.</value>
   </data>
+  <data name="RENTS_BY_YEAR_REPORT" xml:space="preserve">
+    <value>Rents By Year Report</value>
+  </data>
   <data name="VISITOR_NEW" xml:space="preserve">
     <value>New visitor added.</value>
   </data>
@@ -174,5 +180,11 @@ If you think you have to get access to this information, contact your administra
   </data>
   <data name="VISIT_COMPLETE_PAID" xml:space="preserve">
     <value>This visit was &lt;Strong&gt;paid completely&lt;/Strong&gt;.</value>
+  </data>
+  <data name="VISIT_HISTORY" xml:space="preserve">
+    <value>Visit History</value>
+  </data>
+  <data name="VISIT_HISTORY_LEGEND1" xml:space="preserve">
+    <value>The filter search for arrivals in the selected range of time.</value>
   </data>
 </root>

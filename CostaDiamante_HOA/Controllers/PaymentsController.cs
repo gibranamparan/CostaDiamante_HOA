@@ -185,7 +185,8 @@ namespace CostaDiamante_HOA.Controllers
             }
             catch (Exception e)
             {
-                errorMsg = String.Format("{0}. Details: {1}", e.Message, e.InnerException.Message);
+                string innerErrorMsg = e.InnerException.Message == null ? "No Inner Exception" : e.InnerException.Message;
+                errorMsg = String.Format("{0}. Details: {1}", e.Message, innerErrorMsg);
             }
 
             return Json(new { numReg = numReg, errorMsg = errorMsg });
