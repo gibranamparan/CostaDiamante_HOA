@@ -25,7 +25,7 @@ namespace CostaDiamante_HOA.Models
             }
         }
 
-        [Display(Name = "IsYounger")]
+        [Display(Name = "Is less than 6 years old")]
         public Boolean isYounger { get; set; }
 
         //A visitor is for one visit

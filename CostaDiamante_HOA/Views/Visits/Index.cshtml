@@ -24,6 +24,7 @@
 
     @using (Html.BeginForm("Index", "Visits", FormMethod.Get, null))
     {
+        @Html.AntiForgeryToken()
         <div class="alert alert-info">
             The filter search for arrivals in the selected range of time.
         </div>
@@ -141,6 +142,14 @@
 
 @section Scripts{
     <script>
+        var token = $('input[name=__RequestVerificationToken]').val()
+        var api = axios.create({
+            baseURL: "/Visits",
+            timeout: 100000,
+            headers: {
+                "__RequestVerificationToken": token
+            }
+        });
         Vue.mixin({
             methods: {
                 watchCollection(arr, cb) {
@@ -173,7 +182,7 @@
                     });
                 },
                 confirmVisitCancelation: function (visitID) {
-                    axios.post('/Visits/Delete', {
+                    api.post('/Delete', {
                         id: visitID
                     })
                     .then(function (response) {
