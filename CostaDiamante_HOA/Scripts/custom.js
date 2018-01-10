@@ -76,3 +76,16 @@ compareItems = function (dir, a, b) {
 function notifyError(message) {
     swal("Error!", message, "error")
 }
+
+
+function currencyToNumber(numStr) {
+    var num = 0
+    if (numStr) {
+        if (isNaN(numStr)) {
+            numStr = numStr.trim().replace("$", "").replace(",", "");
+            var num = isNaN(numStr) ? 0 : Number(numStr);
+        } else
+            num = Number(numStr)
+    }
+    return num;
+}
