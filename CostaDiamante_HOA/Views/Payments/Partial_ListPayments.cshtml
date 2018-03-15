@@ -29,7 +29,8 @@
             </div>
         </div>
         <div class="panel-body">
-            <form class="row form-inline" v-on:submit.prevent="createNewPayment()" v-if="@(User.IsInRole(ApplicationUser.RoleNames.ADMIN)?"true":"false")">
+            <form class="row form-inline" v-on:submit.prevent="createNewPayment()" 
+                  v-if="@(User.IsInRole(ApplicationUser.RoleNames.ADMIN)?"true":"false")">
                 @Html.AntiForgeryToken()
                 <div class="form-group col-md-2">
                     @Html.LabelFor(model => Model.isDiscount)
@@ -41,9 +42,11 @@
                 </div>
                 <div class="form-group col-md-2">
                     @Html.LabelFor(model => Model.amount) (USD)
-                    <input id="amount" class="form-control" type="number"
-                           v-bind:min="0" v-model.number="newPayment.amount"
-                           v-bind:max="currentDebt" />
+                    @*<input id="amount" class="form-control" v-bind="moneyMask"
+                    v-bind:min="0" v-bind:max="currentDebt"
+                    v-model.number="newPayment.amount"/>*@
+                    <money class="form-control" v-model="newPayment.amount" 
+                           v-bind="moneyMask"></money>
                 </div>
 
                 <div class="form-group col-md-4">
@@ -187,6 +190,7 @@
     }
 
     function initListPayments(){
+        installVueMask()
         var antiForgeryToken = $("input[name=__RequestVerificationToken]").val(); //Token
         const v = Vue.component('payments-list',{
             props: ['year', 'quarter','condoid','status'],
@@ -212,6 +216,14 @@
                     currentDebt: 0,
 
                     api: {},
+                    moneyMask: {
+                        decimal: '.',
+                        thousands: ',',
+                        prefix: '$ ',
+                        precision: 2,
+                        min: 0,
+                        masked: false
+                    }
                 }
             },
             watch:{
@@ -433,6 +445,9 @@
             },
             updated(){
                 this.updateAmounts() //Recalculate
+            },
+            mounted(){
+                this.moneyMask.max = this.currentDebt
             }
         })
         return v;

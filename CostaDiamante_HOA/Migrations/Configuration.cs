@@ -47,7 +47,7 @@ namespace CostaDiamante_HOA.Migrations
             //Se crea el usuario admin por defecto
             //Username : admin@admin.com
             //password: admin123*
-            var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+            /*var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             var PasswordHash = new PasswordHasher();
             if (!context.Users.Any(u => u.UserName == "admin@admin.com"))
             {
@@ -55,14 +55,12 @@ namespace CostaDiamante_HOA.Migrations
                 {
                     Email = "admin@admin.com",
                     PasswordHash = PasswordHash.HashPassword("admin123*"),
-                    UserName = "admin@admin.com",
-                    name = "Netcode",
-                    lastName = "Test User",
+                    UserName = "Netcode",
                     SecurityStamp = Guid.NewGuid().ToString("D")
                 };
                 UserManager.Create(newUser);
                 UserManager.AddToRole(newUser.Id, ApplicationUser.RoleNames.ADMIN);
-            }
+            }*/
         }
     }
 }

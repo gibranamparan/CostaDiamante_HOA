@@ -12,11 +12,18 @@
 <a href="@Url.Action("Register","Account")">
     <i class="fa fa-plus-circle"></i> Register New Owner / User
 </a>
+@*
+    <div class="pull-right">
+        <form method="post" action="@Url.Action("importOwnerFromDB","Owners")">
+            <input type="hidden" name="registrationDate" value="@((new DateTime(2018,1,1)).ToString("yyyy-MM-dd"))"/>
+            <button type="submit" class="btn btn-warning" href="@Url.Action("importOwnerFromDB","Owners")">Import Owners</button>
+        </form>
+    </div>*@
 <table class="table table-hover table-striped datatable">
     <thead>
         <tr>
             <th>
-                User Name
+                @Html.DisplayNameFor(model => model.UserName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.fullName)
@@ -33,7 +40,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Email)
+                    @Html.DisplayFor(modelItem => item.UserName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.fullName)

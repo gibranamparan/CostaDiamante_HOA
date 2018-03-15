@@ -35,6 +35,8 @@
     @Html.Partial("Partial_infoOwner", Model)
 }
 
+@Html.Partial("Partial_ContactInformation", Model)
+
 <div class="panel panel-primary hidden-print">
     <div class="panel-heading">
         <h2 class="panel-title"></h2>
@@ -293,5 +295,7 @@
                    this.validDateFunc)
             }
         })
+
+        const appOwnersContact = initOwnerContactApp()
     </script>
 }

@@ -38,7 +38,7 @@ namespace CostaDiamante_HOA.Models
             string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
             emailMessage += $"<h3>Notification of a New {this.TypeOfPaymentName}</h3>";
             emailMessage += $"<span>A new payment of {this.amount.ToString("C")} USD to";
-            emailMessage += $" condo {this.visit.condo.name }, property of {this.visit.condo.owner.fullName} related to visit from {this.visit.timePeriod}";
+            emailMessage += $" condo {this.visit.condo.name }, property of {this.visit.condo.owner.name} related to visit from {this.visit.timePeriod}";
             emailMessage += $" for {this.visit.visitors.Count()} guests.";
 
             //Generate attachments for email
@@ -68,7 +68,7 @@ namespace CostaDiamante_HOA.Models
             {
                 //Compose destination
                 var ownerAdress = new List<SendGrid.Helpers.Mail.EmailAddress>
-                { new SendGrid.Helpers.Mail.EmailAddress(this.visit.owner.Email, this.visit.owner.fullName) };
+                { new SendGrid.Helpers.Mail.EmailAddress(this.visit.owner.Email, this.visit.owner.name) };
                 //Email is sent just to the admin
                 var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, ownerAdress, attachments);
                 errorMessage = response.Result;

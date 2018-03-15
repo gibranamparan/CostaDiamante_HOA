@@ -2119,7 +2119,7 @@ Css pesonalizado
 
 		a:hover {
 			border-bottom-color: #8a9835;
-			color: #8a9835 !important;/*letras del menu*/
+			/*color: #8a9835 !important;*//*letras del menu*/
 		}
 
 			a:hover strong {
@@ -2403,7 +2403,7 @@ Css pesonalizado
 	input[type="date"],
 	input[type="number"],
 	select {
-		height: 2.75em;
+		/*height: 2.75em;*/
 	}
 
 	textarea {

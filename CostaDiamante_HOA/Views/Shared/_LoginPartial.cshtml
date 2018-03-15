@@ -8,7 +8,8 @@
 
     <ul class="nav navbar-nav navbar-right usrPanel placeInCorner">
         @{ 
-            string userName = (new ApplicationDbContext()).Users.Find(User.Identity.GetUserId()).name;
+            var user = (new ApplicationDbContext()).Users.Find(User.Identity.GetUserId());
+            string userName = user == null ? string.Empty : user.UserName;
         <li>
             @Html.ActionLink(String.Format("Hello {0}!", userName),
     "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Change your password" })

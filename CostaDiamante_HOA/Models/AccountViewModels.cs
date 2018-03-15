@@ -52,17 +52,13 @@ namespace CostaDiamante_HOA.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Display(Name = "User Name")]
+        public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
-
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
     }
 
     public class RegisterViewModel
@@ -86,15 +82,15 @@ namespace CostaDiamante_HOA.Models
         public string ConfirmPassword { get; set; }
 
         [Required]
-        [DisplayName("Name")]
+        [DisplayName("Owner Name")]
         public string name { get; set; }
+
+        [Required]
+        [DisplayName("User Name")]
+        public string UserName { get; set; }
 
         [DisplayName("Phone")]
         public string phone { get; set; }
-
-        [Required]
-        [DisplayName("Last Name")]
-        public string lastname { get; set; }
 
         [DisplayName("User Permissions As")]
         public string roleName { get; set; }
@@ -110,7 +106,8 @@ namespace CostaDiamante_HOA.Models
 
         [DisplayName("Full Name")]
         public string fullName { get {
-                return this.name + " " + this.lastname;
+                //return this.name + " " + this.lastname;
+                return this.name;
             } }
 
         /// <summary>
@@ -135,9 +132,9 @@ namespace CostaDiamante_HOA.Models
         public RegisterViewModel(ApplicationUser owner)
         {
             this.Email = owner.Email;
-            this.name = owner.name;
+            this.UserName = owner.UserName;
+            this.name = owner is Owner ? ((Owner)owner).name: string.Empty;
             this.phone = owner.PhoneNumber;
-            this.lastname = owner.lastName;
             this.userID = owner.Id;
             this.hash = owner.PasswordHash;
             this.stamp = owner.SecurityStamp;

@@ -25,7 +25,6 @@ namespace CostaDiamante_HOA.Controllers
                             visitorID = a.visitorID,
                             name = a.name,
                             lastName = a.lastName,
-                            isYounger = a.isYounger,
                             visitID = a.visitID
                             });
             return Json(visitors);
@@ -46,7 +45,7 @@ namespace CostaDiamante_HOA.Controllers
                 if (ModelState.IsValid)
                 {
                     db.Visitor.Add(visitor);
-                    db.SaveChanges();
+                    numReg = db.SaveChanges();
                     numReg = visitor.visitorID;
                     return Json(new { numReg = numReg });
                 }

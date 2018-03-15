@@ -1,10 +1,15 @@
-﻿using System;
+﻿using CostaDiamante_HOA.GeneralTools;
+using SendGrid.Helpers.Mail;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 
 namespace CostaDiamante_HOA.Models
 {
@@ -14,7 +19,7 @@ namespace CostaDiamante_HOA.Models
         public int condoID { get; set; }
         [Display(Name = "Condo Number")]
         public string name { get; set; }
-
+        
         //A condo has one owner
         [ForeignKey("owner")]
         [Display(Name = "Owner")]
@@ -72,6 +77,70 @@ namespace CostaDiamante_HOA.Models
         public VMOwnerHOAQuartersRow ReportHOAFeeByYear(int year)
         {
             return new VMOwnerHOAQuartersRow(this, year);
+        }
+
+        /// <summary>
+        /// Sends by email a PDF of "Impact of Rent Report" of a the current instance given a specific year.
+        /// </summary>
+        /// <param name="Request"></param>
+        /// <param name="controllerContext"></param>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        public async Task<string> sendEmail_ImpactOfRentReport(HttpRequestBase Request, ControllerContext controllerContext, int year = 0)
+        {
+            string errorMessage = string.Empty;
+            year = year == 0 ? DateTime.Today.Year : year;
+            string strDate = DateTime.Today.ToString("dd MMMM yyyy");
+
+            //Subject
+            string subject = $"Impact of Rent report to {strDate} in condo {this.name}";
+
+            //URL To see Details
+            string detailsURL = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
+            detailsURL += $"/Condo/HOAFees/{this.condoID}?year={year}";
+
+            //Email Body
+            string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
+            emailMessage += $"<h3>HOA Fee Report</h3>";
+            emailMessage += $"<span>In this email is attached the Impact of Rent status report to { strDate } for";
+            emailMessage += $" condo {this.name }, property of {this.owner.name}";
+
+            //Generate attachments for email
+            List<Attachment> attachments = null;
+            //Add link to see report if its a visit that cause Impact of Rent
+            emailMessage += $" <span>See attached PDF or click this link to go to your Impact of Rent status report for year {year}:</span>";
+            emailMessage += " <a href='" + detailsURL + "'>Download Impact of Rent Report Year .</a>";
+
+            //Is mailer enabled
+            bool emailEnabled = true;
+            Boolean.TryParse(ConfigurationManager.AppSettings["enableEmail"], out emailEnabled);
+            //Just send Impact of Rent report for paid visits marked as that.
+            if (controllerContext != null && emailEnabled)
+            {
+                //Generate the report to be send
+                var fileView = this.generateRotativaPDF_RentsByYearReport(year, Request);
+                //Converts report to PDF file
+                var fileBytes = fileView.BuildPdf(controllerContext);
+                //Add PDF file to attachments
+                Attachment attach = new Attachment() { Filename = fileView.FileName, Content = Convert.ToBase64String(fileBytes), Type = "application/pdf" };
+                attachments = new List<Attachment>() { attach };
+            }
+
+            //Async sending of email
+            //Compose destination
+            var ownerAdress = new List<SendGrid.Helpers.Mail.EmailAddress>
+                { new SendGrid.Helpers.Mail.EmailAddress(this.owner.Email, this.owner.name) };
+            var contacts = owner.condosInfoContact;
+            foreach(var con in contacts) //For each related contact, an email is added to receipts
+            {
+                if (MailerSendGrid.IsValid(con.email))
+                    ownerAdress.Add(new SendGrid.Helpers.Mail.EmailAddress(con.email, con.ownerName));
+            }
+
+            //Email is sent just to the admin
+            errorMessage = await MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, ownerAdress, attachments);
+
+            return errorMessage;
         }
     }
 }

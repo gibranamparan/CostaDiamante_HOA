@@ -43,7 +43,7 @@ namespace CostaDiamante_HOA.Models
             string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
             emailMessage += "<h3>New HOA Fee Payment</h3>";
             emailMessage += $"<span>A new payment of {this.amount.ToString("C")} USD to";
-            emailMessage += $" condo {this.condo.name }, property of {this.condo.owner.fullName}.";
+            emailMessage += $" condo {this.condo.name }, property of {this.condo.owner.name}.";
             emailMessage += " <span>Click this link to see the details:</span>";
             emailMessage += " <a href='" + detailsURL + "'>Go to visit notification details.</a>";
             Task.Run(() =>
@@ -329,7 +329,7 @@ namespace CostaDiamante_HOA.Models
             this.condoID = condo.condoID;
             this.condoName = condo.name;
             this.ownerID = condo.ownerID;
-            this.ownerFullName = condo.owner.fullName;
+            this.ownerFullName = condo.owner.name;
             this.year = year;
             this.quarters = condo.getHOAStatusByYear(year);
             this.total = this.quarters.Sum(q => q.TotalRealPaid);

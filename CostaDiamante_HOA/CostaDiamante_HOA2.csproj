@@ -47,6 +47,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EPPlus, Version=4.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Bin\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.6\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -213,8 +217,10 @@
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\VisitorsController.cs" />
     <Compile Include="Controllers\VisitsController.cs" />
+    <Compile Include="GeneralTools\ExcelTools.cs" />
     <Compile Include="GeneralTools\FiltrosDeSolicitudes.cs" />
     <Compile Include="GeneralTools\MailerSendGrid.cs" />
+    <Compile Include="GeneralTools\RandomGenerator.cs" />
     <Compile Include="GeneralTools\TimePeriod.cs" />
     <Compile Include="GeneralTools\VMConfirmModalAttributes.cs" />
     <Compile Include="Global.asax.cs">
@@ -253,12 +259,58 @@
     <Compile Include="Migrations\201712220407594_update_visit.Designer.cs">
       <DependentUpon>201712220407594_update_visit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802160451583_OwnersToImport_Table.cs" />
+    <Compile Include="Migrations\201802160451583_OwnersToImport_Table.Designer.cs">
+      <DependentUpon>201802160451583_OwnersToImport_Table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802162144434_newField_Email_OwnerExcelCclass.cs" />
+    <Compile Include="Migrations\201802162144434_newField_Email_OwnerExcelCclass.Designer.cs">
+      <DependentUpon>201802162144434_newField_Email_OwnerExcelCclass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802162147456_changed_StringFields_OwnerExcelCclass.cs" />
+    <Compile Include="Migrations\201802162147456_changed_StringFields_OwnerExcelCclass.Designer.cs">
+      <DependentUpon>201802162147456_changed_StringFields_OwnerExcelCclass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802162351514_password_OwnersExcelClass.cs" />
+    <Compile Include="Migrations\201802162351514_password_OwnersExcelClass.Designer.cs">
+      <DependentUpon>201802162351514_password_OwnersExcelClass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802170017589_newFields_user.cs" />
+    <Compile Include="Migrations\201802170017589_newFields_user.Designer.cs">
+      <DependentUpon>201802170017589_newFields_user.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802170148500_newField_username_password_ExcelClass.cs" />
+    <Compile Include="Migrations\201802170148500_newField_username_password_ExcelClass.Designer.cs">
+      <DependentUpon>201802170148500_newField_username_password_ExcelClass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802170200193_removedField_lastname_Owner.cs" />
+    <Compile Include="Migrations\201802170200193_removedField_lastname_Owner.Designer.cs">
+      <DependentUpon>201802170200193_removedField_lastname_Owner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802172242104_other_emails.cs" />
+    <Compile Include="Migrations\201802172242104_other_emails.Designer.cs">
+      <DependentUpon>201802172242104_other_emails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802172302466_changedFields_UserToOwner.cs" />
+    <Compile Include="Migrations\201802172302466_changedFields_UserToOwner.Designer.cs">
+      <DependentUpon>201802172302466_changedFields_UserToOwner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802200447279_newTable_ownerInfoTable.cs" />
+    <Compile Include="Migrations\201802200447279_newTable_ownerInfoTable.Designer.cs">
+      <DependentUpon>201802200447279_newTable_ownerInfoTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802271847508_numberOfVisitors_Visit.cs" />
+    <Compile Include="Migrations\201802271847508_numberOfVisitors_Visit.Designer.cs">
+      <DependentUpon>201802271847508_numberOfVisitors_Visit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condo.cs" />
+    <Compile Include="Models\OwnersInfoContact.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Owner.cs" />
+    <Compile Include="Models\Owners_ExcelClass.cs" />
     <Compile Include="Models\Payment.cs" />
     <Compile Include="Models\Payment_RentImpact.cs" />
     <Compile Include="Models\Payment_HOAFee.cs" />
@@ -419,8 +471,10 @@
     <Content Include="Scripts\skel.min.js" />
     <Content Include="Scripts\sweetalert.min.js" />
     <Content Include="Scripts\util.js" />
+    <Content Include="Scripts\v-money.js" />
     <Content Include="Scripts\vfs_fonts.js" />
     <Content Include="Scripts\vue-resource.min.js" />
+    <Content Include="Scripts\vue-tables-2.min.js" />
     <Content Include="Scripts\vue.js" />
     <Content Include="Scripts\vue.min.js" />
     <Content Include="Scripts\_references.js" />
@@ -478,7 +532,7 @@
     <Content Include="Views\Account\Partial_UserForm.cshtml" />
     <Content Include="Views\Guest\Partial_ListPermissions.cshtml" />
     <Content Include="Views\Home\UserManual.cshtml" />
-    <Content Include="Views\Visits\Create.cshtml" />
+    <Content Include="Views\Visits\Form_Visit.cshtml" />
     <Content Include="Views\Visits\Delete.cshtml" />
     <Content Include="Views\Visits\Details.cshtml" />
     <Content Include="Views\Payments\Delete.cshtml" />
@@ -499,6 +553,7 @@
     <Content Include="Views\Shared\NotFound.cshtml" />
     <Content Include="Views\Shared\BadRequest.cshtml" />
     <Content Include="Views\Shared\Forbidden.cshtml" />
+    <Content Include="Views\Owners\Partial_ContactInformation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -540,6 +595,39 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201712220407594_update_visit.resx">
       <DependentUpon>201712220407594_update_visit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802160451583_OwnersToImport_Table.resx">
+      <DependentUpon>201802160451583_OwnersToImport_Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802162144434_newField_Email_OwnerExcelCclass.resx">
+      <DependentUpon>201802162144434_newField_Email_OwnerExcelCclass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802162147456_changed_StringFields_OwnerExcelCclass.resx">
+      <DependentUpon>201802162147456_changed_StringFields_OwnerExcelCclass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802162351514_password_OwnersExcelClass.resx">
+      <DependentUpon>201802162351514_password_OwnersExcelClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802170017589_newFields_user.resx">
+      <DependentUpon>201802170017589_newFields_user.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802170148500_newField_username_password_ExcelClass.resx">
+      <DependentUpon>201802170148500_newField_username_password_ExcelClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802170200193_removedField_lastname_Owner.resx">
+      <DependentUpon>201802170200193_removedField_lastname_Owner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802172242104_other_emails.resx">
+      <DependentUpon>201802172242104_other_emails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802172302466_changedFields_UserToOwner.resx">
+      <DependentUpon>201802172302466_changedFields_UserToOwner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802200447279_newTable_ownerInfoTable.resx">
+      <DependentUpon>201802200447279_newTable_ownerInfoTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802271847508_numberOfVisitors_Visit.resx">
+      <DependentUpon>201802271847508_numberOfVisitors_Visit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

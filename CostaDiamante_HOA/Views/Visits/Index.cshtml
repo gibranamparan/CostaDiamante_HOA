@@ -79,7 +79,7 @@
                 @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                 {
                     <th>
-                        @Html.DisplayNameFor(model => result.FirstOrDefault().owner.fullName)
+                        @Html.DisplayNameFor(model => result.FirstOrDefault().owner.name)
                     </th>
                 }
                 <th>
@@ -87,6 +87,9 @@
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => result.FirstOrDefault().departureDate)
+                </th>
+                <th>
+                    Num. of Visitors / Bracelets
                 </th>
                 <th>
                     Paid / Total
@@ -107,7 +110,7 @@
                     @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
                     {
                         <td>
-                            @Html.DisplayFor(model => item.owner.fullName)
+                            @Html.DisplayFor(model => item.owner.name)
                         </td>
                     }
                     <td>
@@ -115,6 +118,11 @@
                     </td>
                     <td>
                         @item.departureDate.ToLongDateString()
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.cantidadVisitantes)
+                        <span>/</span>
+                        @Html.DisplayFor(model => item.numBrazaletes)
                     </td>
                     <td>
                         @Html.DisplayFor(model => item.totalPaid)

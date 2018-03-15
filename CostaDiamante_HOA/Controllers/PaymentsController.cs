@@ -178,7 +178,7 @@ namespace CostaDiamante_HOA.Controllers
 
                     //Load the visit reference to compose the email notification
                     db.Entry(payment).Reference(p => p.visit).Load();
-                    payment.sendEmailNotification_NewRentPayment(Request,ControllerContext);
+                    //payment.sendEmailNotification_NewRentPayment(Request,ControllerContext);
 
                     return Json(new { numReg = numReg, result = new { payment = new Payment.VMPayment(payment) } });
                 }
@@ -211,7 +211,7 @@ namespace CostaDiamante_HOA.Controllers
                     numReg = db.SaveChanges();
                     db.Entry(payment).Reference(p => p.condo).Load();
                     if (numReg > 0) {
-                        payment.sendNotificationEmail(Request);
+                        //payment.sendNotificationEmail(Request);
                     }
                     return Json(new { numReg = numReg, result = new { payment = new Payment.VMPayment(payment), status = payment.quarter.currentStatus } });
                 }

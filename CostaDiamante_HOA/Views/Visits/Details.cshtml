@@ -57,6 +57,14 @@
             @Html.LabelFor(model => model.date)
             <p class="form-control-static">@Model.date.ToString("D")</p>
         </div>
+        <div class="form-group col-md-3">
+            @Html.LabelFor(model => model.cantidadVisitantes)
+            <p class="form-control-static">@Html.DisplayFor(model => model.cantidadVisitantes)</p>
+        </div>
+        <div class="form-group col-md-3">
+            @Html.LabelFor(model => model.numBrazaletes)
+            <p class="form-control-static">@Html.DisplayFor(model => model.numBrazaletes)</p>
+        </div>
     </div>
 </div>
 <hr>
@@ -74,7 +82,7 @@
     <!-- GUESTS LIST -->
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">Guests</h3>
+            <h3 class="panel-title">Responsibles for the Visit</h3>
         </div>
         @if (Model.withTheOwner) { //A notification is shown in guest table if the owner is coming with the visitors.
         <div class="alert alert-success" style="margin-bottom: 10px">

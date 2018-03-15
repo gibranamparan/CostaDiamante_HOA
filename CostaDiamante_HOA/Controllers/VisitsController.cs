@@ -11,6 +11,7 @@ using CostaDiamante_HOA.GeneralTools;
 using static CostaDiamante_HOA.GeneralTools.FiltrosDeSolicitudes;
 using Microsoft.AspNet.Identity;
 using System.Web.Script.Serialization;
+using System.Configuration;
 
 namespace CostaDiamante_HOA.Controllers
 {
@@ -108,7 +109,10 @@ namespace CostaDiamante_HOA.Controllers
             visit.condoID = id.Value;
             visit.ownerID = condo.owner.Id;
             visit.owner = condo.owner;
-            return View(visit);
+            decimal costForBracelet = ConfigurationManager.AppSettings["CostForBracelet"] == null ? 
+                0 : decimal.Parse(ConfigurationManager.AppSettings["CostForBracelet"]);
+            ViewBag.costForBracelet = costForBracelet;
+            return View("Form_Visit", visit);
         }
 
         // POST: Visits/Create
@@ -147,7 +151,7 @@ namespace CostaDiamante_HOA.Controllers
                     errorMsg = String.Format("{0}. Details: {1}",e.Message,e.InnerException.Message);
             }
 
-            return Json(new { numReg = numReg, errorMsg = errorMsg, errorMailer = errorMailer });
+            return Json(new { numReg = numReg,visit = new Visit.VMVisits(visit), errorMsg = errorMsg, errorMailer = errorMailer });
         }
 
         // GET: Visits/Edit/5
@@ -165,7 +169,10 @@ namespace CostaDiamante_HOA.Controllers
             }
             ViewBag.condoID = new SelectList(db.Condoes, "condoID", "name", visits.condoID);
             ViewBag.ownerID = new SelectList(db.Users, "Id", "name", visits.ownerID);
-            return View(visits);
+            decimal costForBracelet = ConfigurationManager.AppSettings["CostForBracelet"] == null ?
+                0 : decimal.Parse(ConfigurationManager.AppSettings["CostForBracelet"]);
+            ViewBag.costForBracelet = costForBracelet;
+            return View("Form_Visit", visits);
         }
 
         // POST: Visits/Edit/5

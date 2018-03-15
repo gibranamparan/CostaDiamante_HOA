@@ -1,0 +1,183 @@
+﻿@using CostaDiamante_HOA.Models
+@model CostaDiamante_HOA.Models.Owner
+@{
+    OwnersInfoContact infoModel = new OwnersInfoContact();
+    string tableID = "tblContactOwner";
+    bool isAdmin = User.IsInRole(ApplicationUser.RoleNames.ADMIN);
+}
+
+<div id="ownerContactApp">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Owner Contact Information</h3>
+        </div>
+        <div class="panel-body">
+
+            <div class="panel panel-info" v-if="isAdmin">
+
+                <div class="panel-heading" onclick="changeIcon(this)"
+                     data-toggle="collapse" data-target="#formContactInfo">
+                    <span>Register Contact Info</span>
+                    <i class="pull-right fa fa-window-maximize"></i>
+                </div>
+                <div class="panel-body collapse" id="formContactInfo">
+                    <form v-on:submit.prevent="registerInfoContact">
+                        <div class="form-group col-md-6">
+                            <label for="ownerName">Contact Name</label>
+                            <input class="form-control" type="text" id="ownerName" name="ownerName"
+                                   v-model="newContactInfo.ownerName" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="address">Address</label>
+                            <input class="form-control" type="text" id="address" name="address"
+                                   v-model="newContactInfo.address">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="city">City</label>
+                            <input class="form-control" type="text" id="city" name="city"
+                                   v-model="newContactInfo.city">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="email">Email</label>
+                            <input class="form-control" type="email" id="email" name="email"
+                                   v-model="newContactInfo.email">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="mexnum">Mexican Phone Number</label>
+                            <input class="form-control" type="text" id="mexnum" name="mexnum"
+                                   v-model="newContactInfo.mexnum">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="mobile">Mobile</label>
+                            <input class="form-control" type="text" id="mobile" name="mobile"
+                                   v-model="newContactInfo.mobile">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="phone">Phone</label>
+                            <input class="form-control" type="text" id="phone" name="phone"
+                                   v-model="newContactInfo.phone">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="otherPhone">Other Phone</label>
+                            <input class="form-control" type="text" id="otherPhone" name="otherPhone"
+                                   v-model="newContactInfo.otherPhone">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="state">State</label>
+                            <input class="form-control" type="text" id="state" name="state"
+                                   v-model="newContactInfo.state">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="zip">Zip</label>
+                            <input class="form-control" type="text" id="zip" name="zip"
+                                   v-model="newContactInfo.zip">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <v-server-table ref="@(tableID)" v-bind:columns="colsTblContactInfo" v-bind:options="options">
+                <a slot="acciones" style="cursor:pointer" slot-scope="props" 
+                    v-if="isAdmin" @@click="removeContactInfo(props.row)">
+                    <i class="glyphicon glyphicon-remove"></i> <span>Remove</span>
+                </a>
+            </v-server-table>
+
+        </div>
+    </div>
+</div>
+@Html.AntiForgeryToken()
+
+<script>
+    function initOwnerContactApp() {
+        installVueTable()
+
+        var colsTblContactInfo = ['acciones','ownerName', 'address', 'city', 'email',
+            'mexnum', 'mobile', 'otherPhone', 'phone', 'state', 'zip' ]
+        var colsHeadings
+        var antiForgeryToken = document.getElementsByName("__RequestVerificationToken")[0].value; //Token
+        const api = axios.create({ //Init connection to server
+            timeout: 200000,
+            headers: { "__RequestVerificationToken": antiForgeryToken }
+        });
+        var ownerID = '@(Model.Id)'
+        const ownerContactApp = new Vue({
+            el: "#ownerContactApp",
+            data() {
+                return {
+                    isAdmin : boolParse('@(isAdmin)'),
+                    newContactInfo:{ ownerID : ownerID },
+                    colsTblContactInfo: colsTblContactInfo,
+                    options: {
+                        headings:{'ownerName':'Contact Name'},
+                        requestFunction: function () {
+                            return api.post("/Owners/ContactInfo", {
+                                id : ownerID,
+                            }).catch(function (e) {
+                                this.dispatch('error', e);
+                            }.bind(this));
+                        },
+                    }
+                }
+            },
+            methods: {
+                registerInfoContact() {
+                    api.post("/Owners/AddContactInfo", {
+                        newContact : this.newContactInfo,
+                    })
+                    .then(res=>{
+                        res = res.data
+                        if(res.count){
+                            smallNotify("New contact info. registered","success")
+                            this.newContactInfo = { ownerID : ownerID }
+                            this.$refs.@(tableID).refresh()
+                        }else if(res.data.errorMsg){
+                            notifyError(res.data.errorMsg)
+                        }else{console.log("Unknown error")}
+                    })
+                    .catch(function (e) {
+                        console.log(e)
+                    })
+                },
+                removeContactInfo(item){
+                    var id = item.ownerContactInfo
+                    swal({
+                        title: "Are you sure?",
+                        text: `Information contact of ${item.ownerName} its going to be removed. Are you sure?`,
+                        icon: "warning", buttons: true, dangerMode: true,
+                    }).then((willDelete) => {
+                        if (willDelete) {
+                            api.post("/Owners/RemoveContactInfo", {
+                                id : id,
+                            })
+                            .then(res=>{
+                                res = res.data
+                                if(res.count){
+                                    smallNotify("Contact info removed.","warning")
+                                    this.$refs.@(tableID).refresh()
+                                }else if(res.data.errorMsg){
+                                    notifyError(res.data.errorMsg)
+                                }else{console.log("Unknown error")}
+                            })
+                            .catch(function (e) {
+                                console.log(e)
+                            })
+                        } 
+                    });
+                },
+                dataForTest(){
+                    this.newContactInfo = {
+                        ownerID : ownerID, 'ownerName':'One Test', 'address':"Fasle Address", 'city':"Puerto Peñasco", 
+                        'email':'anemail@jotmail.com', 'mexnum':'456-4564444', 'mobile':'456-4564444', 
+                        'otherPhone':'456-4564444', 'phone':'456-4564444', 'state':'Sonora', 'zip':'83550',
+                    }
+                }
+            }
+        })
+
+        return ownerContactApp
+    }
+</script>

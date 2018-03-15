@@ -1,14 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using CostaDiamante_HOA.GeneralTools;
+using CampanasDelDesierto_v1.GeneralTools;
+using OfficeOpenXml;
+using System.ComponentModel;
 
 namespace CostaDiamante_HOA.Models
 {
     public class Owner:ApplicationUser
     {
+        [DisplayName("Name")]
+        public string name { get; set; }
+
+        public string fullName { get {
+                return name;
+            } }
+
+        public virtual ICollection<OwnersInfoContact> condosInfoContact { get; set; }
+        
         public Owner() { }
         
         /// <summary>
@@ -19,12 +30,20 @@ namespace CostaDiamante_HOA.Models
         public Owner(RegisterViewModel model) {
             if (!String.IsNullOrEmpty(model.userID))
                 this.Id = model.userID;
-            this.UserName = model.Email;
+            this.UserName = model.UserName;
             this.Email = model.Email;
             this.name = model.name;
-            this.lastName = model.lastname;
             this.PhoneNumber = model.phone;
             this.registrationDate = model.registrationDate;
+        }
+
+        public Owner(Owners_ExcelClass model, DateTime registrationDate)
+        {
+            this.UserName = model.username;
+            this.Email = model.EMAIL;
+            this.name = model.NAME;
+            this.PhoneNumber = model.PHONE;
+            this.registrationDate = registrationDate;
         }
 
         /// <summary>
@@ -45,5 +64,7 @@ namespace CostaDiamante_HOA.Models
         //An owner can register many Guests and has many Condos
         public virtual ICollection<Condo> Condos { get; set; }
         public virtual ICollection<Visit> visitsHistory { get; set; }
+        
+
     }
 }

@@ -7,9 +7,12 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Threading.Tasks;
+using CostaDiamante_HOA.GeneralTools;
 
 namespace CostaDiamante_HOA.Controllers
 {
+    [Authorize]
     public class ReportsController : Controller
     {
         ApplicationDbContext db = new ApplicationDbContext();
@@ -103,6 +106,29 @@ namespace CostaDiamante_HOA.Controllers
 
             //Code to get content
             return fileView;
+        }
+
+        [HttpPost]
+        [FiltrosDeSolicitudes.ValidateHeaderAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        public async Task<JsonResult> SendEmailImpactRentsReport(int condoID, int year = 0)
+        {
+            var condo = db.Condoes.Find(condoID);
+            if (condo == null)
+            {
+                var error = HttpNotFound();
+                return Json(new { count = 0,errorCode = error.StatusCode, errorMessage = error.StatusDescription});
+            }
+
+            if (!isAllowedToAccess(condo.ownerID))
+            {
+                var error = new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
+            }
+
+            string errorMessage = await condo.sendEmail_ImpactOfRentReport(Request, ControllerContext, year);
+
+            return Json(errorMessage);
         }
     }
 }

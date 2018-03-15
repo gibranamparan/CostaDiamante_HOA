@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using CostaDiamante_HOA.GeneralTools;
 using Microsoft.AspNet.Identity.Owin;
+using System.Threading.Tasks;
 
 namespace CostaDiamante_HOA.Controllers
 {
@@ -139,6 +140,142 @@ namespace CostaDiamante_HOA.Controllers
 
             return Json(new { numReg = numReg, errorMsg = errorMsg }, JsonRequestBehavior.AllowGet);
 
+        }
+        
+        [HttpPost]
+        [FiltrosDeSolicitudes.ValidateHeaderAntiForgeryToken]
+        public JsonResult ContactInfo(string id)
+        {
+            try { 
+                var ownersInfo = db.Owners.Find(id).condosInfoContact.ToList();
+                ownersInfo.ForEach(ow => ow.owner = null);
+                return Json(new { data = ownersInfo, count = ownersInfo.Count() });
+            }
+            catch(Exception exc)
+            {
+                return Json(
+                    new {
+                        count = 0,
+                        data = new { errorMsg = $"{exc.Message}. {(exc.InnerException != null ? exc.InnerException.Message : string.Empty)}" }
+                    });
+            }
+        }
+
+        [HttpPost]
+        [FiltrosDeSolicitudes.ValidateHeaderAntiForgeryToken]
+        public JsonResult AddContactInfo(OwnersInfoContact newContact)
+        {
+            int count = 0;
+            try
+            {
+                db.OwnersInfoContact.Add(newContact);
+                count = db.SaveChanges();
+                newContact.owner = null;
+                return Json(new { data = newContact, count });
+            }
+            catch (Exception exc)
+            {
+                return Json(
+                    new
+                    {
+                        count = 0,
+                        data = new { errorMsg = $"{exc.Message}. {(exc.InnerException != null ? exc.InnerException.Message : string.Empty)}" }
+                    });
+            }
+        }
+
+        [HttpPost]
+        [FiltrosDeSolicitudes.ValidateHeaderAntiForgeryToken]
+        public JsonResult RemoveContactInfo(int id)
+        {
+            int count = 0;
+            try
+            {
+                var contactInfo = db.OwnersInfoContact.Find(id);
+                db.OwnersInfoContact.Remove(contactInfo);
+                count = db.SaveChanges();
+                return Json(new { data = contactInfo, count });
+            }
+            catch (Exception exc)
+            {
+                return Json(
+                    new
+                    {
+                        count = 0,
+                        data = new { errorMsg = $"{exc.Message}. {(exc.InnerException != null ? exc.InnerException.Message : string.Empty)}" }
+                    });
+            }
+        }
+
+        public async Task<JsonResult> importOwnerFromDB(DateTime registrationDate)
+        {
+
+            int numReg = 0;
+            //Get all the different usernames in data to import (they are grouped by OwnerName and Condo)
+            var usernames = db.OwnersToImport.ToList().GroupBy(ow => ow.username).Select(grp => grp.FirstOrDefault().username).ToList();
+            foreach (var username in usernames)
+            {
+                //var username = "JosephElli";
+                //Check for the first owner in a group of usernames that has email
+                var modelToimport = db.OwnersToImport.ToList().FirstOrDefault(ow => ow.username == username && !string.IsNullOrEmpty(ow.EMAIL!=null?ow.EMAIL.Trim(): ow.EMAIL));
+                if (modelToimport == null) //If not found
+                {
+                    //Take the firsone and assing a null email
+                    modelToimport = db.OwnersToImport.ToList().FirstOrDefault(ow => ow.username == username);
+                    modelToimport.EMAIL = ApplicationUser.NULL_EMAIL;
+                }
+
+                //Create owner instance
+                var owner = new Owner(modelToimport, registrationDate);
+                var result = await UserManager.CreateAsync(owner, modelToimport.password);
+                if (result.Succeeded)
+                {
+                    //Assign role
+                    string rolName = ApplicationUser.RoleNames.OWNER;
+                    result = UserManager.AddToRole(owner.Id, rolName);
+
+                    if (result.Succeeded)
+                    {
+                        //Look for user by unique generated username in table
+                        var regsToImport = db.OwnersToImport
+                            .Where(reg => reg.username == modelToimport.username).ToList();
+
+                        //For register to import
+                        OwnersInfoContact ownerInfo;
+                        List<OwnersInfoContact> ownersInfoToImport = new List<OwnersInfoContact>();
+                        foreach (var reg in regsToImport)
+                        {
+                            //A contact info owner is created and added to a temp list
+                            ownerInfo = new OwnersInfoContact(owner.Id, reg);
+                            ownersInfoToImport.Add(ownerInfo);
+                        }
+
+                        //Make the relationship condo-owner
+                        if (regsToImport.Count() > 0)
+                        {
+                            var condoNames = regsToImport.SelectMany(reg => reg.condoNames).Distinct().ToArray();
+                            //var condoNames = regsToImport.First().condoNames;
+                            foreach (string condoName in condoNames)
+                            {
+                                var condo = db.Condoes.FirstOrDefault(c => c.name.Equals(condoName, StringComparison.InvariantCultureIgnoreCase));
+                                int condoID = condo == null ? 0 : condo.condoID;
+
+                                if (condoID > 0)
+                                { //If condo bame was found in database
+                                    condo.ownerID = owner.Id;
+                                    db.Entry(condo).State = EntityState.Modified;
+                                }
+                            }
+                        }
+
+                        //Al the list is added to be saved
+                        if (ownersInfoToImport.Count() > 0)
+                            db.OwnersInfoContact.AddRange(ownersInfoToImport);
+                    }
+                }
+            }
+            numReg = db.SaveChanges();
+            return Json(new { numReg });
         }
 
         protected override void Dispose(bool disposing)

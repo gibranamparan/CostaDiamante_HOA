@@ -33,5 +33,7 @@
 /// <reference path="sweetalert.min.js" />
 /// <reference path="util.js" />
 /// <reference path="vfs_fonts.js" />
+/// <reference path="v-money.js" />
 /// <reference path="vue.min.js" />
 /// <reference path="vue-resource.min.js" />
+/// <reference path="vue-tables-2.min.js" />

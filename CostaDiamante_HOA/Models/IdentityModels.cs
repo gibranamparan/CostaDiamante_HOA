@@ -21,8 +21,6 @@ namespace CostaDiamante_HOA.Models
             this.UserName = model.Email;
             this.Email = model.Email;
             this.PhoneNumber = model.phone;
-            this.name = model.name;
-            this.lastName= model.lastname;
             this.PasswordHash = model.hash;
             this.SecurityStamp = model.stamp;
             this.registrationDate = model.registrationDate;
@@ -41,6 +39,7 @@ namespace CostaDiamante_HOA.Models
             this.PhoneNumberConfirmed = this.PhoneNumberConfirmed;
             this.TwoFactorEnabled = this.TwoFactorEnabled;
             this.LockoutEnabled = this.LockoutEnabled;
+            
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -49,17 +48,6 @@ namespace CostaDiamante_HOA.Models
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
             return userIdentity;
-        }
-
-        [DisplayName("Name")]
-        public string name { get; set; }
-        [DisplayName("Last Name")]
-        public string lastName { get; set; }
-
-        [DisplayName("Owner")]
-        public string fullName
-        {
-            get { return this.name + " " + this.lastName; }
         }
 
         [DisplayName("Registered At")]
@@ -74,6 +62,7 @@ namespace CostaDiamante_HOA.Models
             public static string[] ROLES_ARRAY = new string[] { OWNER, LANDLORD, ADMIN };
         }
 
+        public const string NULL_EMAIL = "null@null";
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -102,5 +91,9 @@ namespace CostaDiamante_HOA.Models
         public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Payment_HOAFee> Payment_HOAFee { get; set; }
 
         public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Payment_RentImpact> Payment_RentImpact { get; set; }
+
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.Owners_ExcelClass> OwnersToImport { get; set; }
+
+        public System.Data.Entity.DbSet<CostaDiamante_HOA.Models.OwnersInfoContact> OwnersInfoContact { get; set; }
     }
 }

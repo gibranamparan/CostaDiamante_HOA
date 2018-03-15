@@ -37,7 +37,9 @@ namespace CostaDiamante_HOA
 
             bundles.Add(new ScriptBundle("~/bundles/vue-axios").Include(
                         "~/Scripts/vue.min.js",
-                        "~/Scripts/axios.min.js"));
+                        "~/Scripts/axios.min.js",
+                        "~/Scripts/vue-tables-2.min.js",
+                        "~/Scripts/v-money.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));

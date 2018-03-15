@@ -101,7 +101,8 @@ namespace CostaDiamante_HOA.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            //var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, false, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -109,7 +110,8 @@ namespace CostaDiamante_HOA.Controllers
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
+                //return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
@@ -119,7 +121,7 @@ namespace CostaDiamante_HOA.Controllers
 
         private ActionResult RedireccionarSegunRol(LoginViewModel model)
         {
-            var user = UserManager.FindByName(model.Email);
+            var user = UserManager.FindByName(model.UserName);
             if (UserManager.IsInRole(user.Id, ApplicationUser.RoleNames.ADMIN))
             {
                 return RedirectToAction("Index", "Visits");
@@ -275,6 +277,8 @@ namespace CostaDiamante_HOA.Controllers
                 && ModelState["Password"].Errors.Count == 1;
             if (ModelState.IsValid || updateWithPasswordInvariable)
             {
+                //Change username
+                userEdited.UserName = vmOwner.UserName;
                 //Remaininig fields are updated
                 await store.UpdateAsync(userEdited);
                 var updatedRegs = db.SaveChangesAsync();

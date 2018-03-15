@@ -73,6 +73,7 @@ namespace CostaDiamante_HOA.GeneralTools
                 if(attachments!=null && attachments.Count() > 0)
                     msg.AddAttachments(attachments);
 
+                //Send email using sendgrid service
                 var response = await client.SendEmailAsync(msg);
 
                 //If an error ocurred
@@ -84,6 +85,25 @@ namespace CostaDiamante_HOA.GeneralTools
                     !emailEnabled?GlobalMessages.ERROR_MSG_EMAILS_DISABLED:string.Empty;
 
             return errorMessage;
+        }
+
+        /// <summary>
+        /// Validate a string for a valid email address.
+        /// </summary>
+        /// <param name="emailaddress">Email address</param>
+        /// <returns>A boolean, true for valid email address</returns>
+        public static bool IsValid(string emailaddress)
+        {
+            try
+            {
+                System.Net.Mail.MailAddress m = new System.Net.Mail.MailAddress(emailaddress);
+
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
     }
 }

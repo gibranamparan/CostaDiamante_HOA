@@ -1,0 +1,400 @@
+﻿@using CostaDiamante_HOA.Models
+@model CostaDiamante_HOA.Models.Visit
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    Visitor visitor = new Visitor();
+    decimal costForBracelet = ViewBag.costForBracelet;
+
+    bool editMode = Model.visitID > 0;
+    if (!editMode) {
+        Model.arrivalDate = DateTime.Today.AddDays(1);
+        Model.departureDate = DateTime.Today.AddDays(3);
+    }
+}
+
+<nav>
+    <a href="@Url.Action("Details","Owners",new { id = Model.ownerID })">
+        <i class="glyphicon glyphicon-arrow-left"></i> <span>Back to Owner Details</span>
+    </a>
+    @if (editMode)
+    {
+        <span> | </span>
+        <a href="@Url.Action("Details","Visits",new { id = Model.visitID })">
+            <i class="glyphicon glyphicon-arrow-left"></i> <span>Back to Visit Details</span>
+        </a>
+    }
+</nav>
+
+@Html.Partial("../Owners/Partial_infoOwner", Model.owner)
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">@(editMode? "Edit Visit" : "New Visit")</h3>
+    </div>
+    <div id="app" class="panel-body">
+        @*Visit form*@
+        <form v-on:submit.prevent="sendDataToServer()" class="row">
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => model.arrivalDate)
+                @Html.EditorFor(model => model.arrivalDate, new { htmlAttributes = new { @class = "form-control", v_model = "visit.arrivalDate" } })
+                @Html.ValidationMessageFor(model => model.arrivalDate, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => model.departureDate)
+                @Html.EditorFor(model => model.departureDate, new { htmlAttributes = new { @class = "form-control", v_model = "visit.departureDate" } })
+                @Html.ValidationMessageFor(model => model.departureDate, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group col-md-2">
+                @Html.LabelFor(model => model.totalCost)
+                @Html.EditorFor(model => model.totalCost, new { HtmlAttributes = new { @class = "form-control", @readonly = "readonly", v_model = "totalCostFunc" } })
+            </div>
+
+            <div class="form-group col-md-2">
+                <br />
+                <button v-bind:disabled="isVisitValid()"
+                        type="submit" class="btn btn-primary pull-right btn-block">
+                    @(editMode ? "Update" : "Register")
+                </button>
+                <button />
+            </div>
+
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => model.cantidadVisitantes)
+                @Html.EditorFor(model => model.cantidadVisitantes, new {
+                    htmlAttributes = new { @class = "form-control", v_model = "visit.cantidadVisitantes", min=0, required = "required" } })
+            </div>
+
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => model.numBrazaletes)
+                @Html.EditorFor(model => model.numBrazaletes, new { htmlAttributes =
+                    new { @class = "form-control", v_model = "visit.numBrazaletes", min = 0 } })
+            </div>
+
+            <div class="form-group col-md-4">
+                <label>Type of visit</label>
+                <select v-model="visit.typeOfVisit" class="form-control">
+                    <option v-for="option in optionsTypeOfVisit" v-bind:value="option.value" v-bind:selected="option.value == 0">
+                        {{ option.text }}
+                    </option>
+                </select>
+            </div>
+            <div v-if="visit.typeOfVisit === 0" class="form-group col-md-4">
+                <label>Owner is accompanying</label>
+                <input class="form-control" type="checkbox" v-model="visit.withTheOwner">
+            </div>
+            @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) {
+            <div v-if="visit.typeOfVisit === 0 && !visit.withTheOwner" class="form-group col-md-4">
+                <label>Skip Payment for Friends and Family</label>
+                <input class="form-control" type="checkbox" v-model="visit.paymentOmitted">
+            </div>
+            }
+        </form>
+
+        @*Informative Legend*@
+        <div v-if="visit.typeOfVisit === 0" class="alert alert-info" role="alert">
+            <span v-if="visit.typeOfVisit === 0 && visit.withTheOwner === true || visit.paymentOmitted === true">Visit without payment.</span>
+            <span v-if="visit.typeOfVisit === 0 && visit.withTheOwner === false && visit.paymentOmitted === false">@(costForBracelet) dollars per bracelet.</span>
+        </div>
+
+        @*Informative Legend*@
+        <div v-if="visit.typeOfVisit === 1" class="alert alert-info" role="alert">
+            For renting, every <strong>extra person</strong> more than <strong>12 guests</strong> cost <strong>$50 USD</strong> for bracelet. <br>
+            The <strong>Rental Impact Fee</strong> for the visit visit is <strong>${{priceByDay}} USD</strong> per day.
+        </div>
+
+        @*Visitor form*@
+        <fieldset>
+            <legend>Responsible for the Visit</legend>
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => visitor.name)
+                @Html.EditorFor(model => visitor.name, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.name" } })
+            </div>
+            <div class="form-group col-md-4">
+                @Html.LabelFor(model => visitor.lastName)
+                @Html.EditorFor(model => visitor.lastName, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.lastName" } })
+            </div>
+            @*
+            <div class="form-group col-md-2">
+                @Html.LabelFor(model => visitor.isYounger)
+                @Html.EditorFor(model => visitor.isYounger, new { htmlAttributes = new { @class = "form-control", v_model = "newVisitor.isYounger" } })
+            </div>*@
+
+            <div class="form-group col-md-2">
+                <br />
+                <button type="button" value="Add" class="btn btn-success btn-block pull-right" 
+                        v-on:click="saveVisitor()"
+                        v-bind:disabled="(newVisitor.name === '' && newVisitor.lastName === '')">
+                    Add
+                </button>
+            </div>
+        </fieldset>
+        <!-- Visitors table -->
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>@Html.DisplayNameFor(model => visitor.name)</th>
+                    <th>@Html.DisplayNameFor(model => visitor.lastName)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(visitor, i) in visit.visitors">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ visitor.name }}</td>
+                    <td>{{ visitor.lastName }}</td>
+                    <td>
+                        <label v-on:click="removeVisitorToTable(i)" class="removeLabel">
+                            <i class="glyphicon glyphicon-remove"></i>
+                            <span class="">Remove</span>
+                        </label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        var token = $('input[name=__RequestVerificationToken]').val()
+        var api = axios.create({
+            baseURL: "/Visits",
+            timeout: 100000,
+            headers: {
+                "__RequestVerificationToken": token
+            }
+        });
+        // Init Filters
+        Vue.filter('isYoungerFormat', (value) => {
+            if(value) {
+                return 'Si'
+            } else {
+                return 'No'
+            }
+        });
+        Vue.mixin({
+            methods: {
+                watchCollection(arr, cb) {
+                    arr.forEach((val) => this.$watch(val, cb))
+                }
+            }
+        })
+        const v = new Vue({
+            el: '#app',
+            data: {
+                visit: { //Main model to save what is going to be submited to the server
+                    visitID:  '@Model.visitID',
+                    arrivalDate: '@Model.arrivalDate.ToString("yyyy-MM-dd")',
+                    departureDate: '@Model.departureDate.ToString("yyyy-MM-dd")',
+                    condoID: @Model.condoID,
+                    ownerID: '@Model.ownerID',
+                    totalCost : @Model.totalCost,
+                    cantidadVisitantes : @Model.cantidadVisitantes,
+                    numBrazaletes : @Model.numBrazaletes,
+                    typeOfVisit: 0,
+                    date: '@Model.date.ToString("yyyy-MM-dd")',
+                    paymentOmitted: boolParse('@Model.paymentOmitted'),
+                    withTheOwner: boolParse('@Model.withTheOwner'),
+                    visitors: [],
+                    costForBracelet : @(costForBracelet),
+                },
+                newVisitor:{ //Model to save a new visitor
+                    name:'',
+                    lastName:'',
+                    isYounger:false,
+                    visitID : '@Model.visitID',
+                    clone: function (){
+                        return {name : this.name,lastName : this.lastName, isYounger : this.isYounger, visitID: '@Model.visitID'}
+                    },
+                    clear: function(){
+                        this.name = ''; this.lastName= ''; this.isYounger = false;
+                    }
+                },
+                optionsTypeOfVisit: [ //Options of type of visits
+                  { text: 'Visit of friends and family', value: 0 },
+                  { text: 'Visit by rent', value: 1 }
+                ],
+                priceByDay: 25
+            },
+            methods: {
+                isVisitValid: function () { // Verifica que la visita cumpla con ciertos riquisitos para poder registrarse en el sistema
+                    if (Object.keys(this.visit.visitors).length > 0 && this.visit.arrivalDate < this.visit.departureDate && this.visit.arrivalDate != '' && this.visit.departureDate != '') { // && this.visit.typeOfVisit === 0 && this.withTheOwner || this.visit.typeOfVisit === 0 && this.skipPayment || this.visit.typeOfVisit === 1) {
+                        return false
+                    } else {
+                        return true
+                    }
+                },
+                addVisitorToTable: function () { // Se registra un nuevo visitante y se agrega en la tabla
+                    this.visit.visitors.push(this.newVisitor.clone()) //The model is clone a pushed into the list of visitors in the visit
+                    this.newVisitor.clear() //The model for a new visitor is clared to enter a new one
+                    $("#visitor_name").focus()
+                },
+                removeVisitorToTable: function (index) { //Removing a selected visitor
+                    this.visit.visitors.splice(index, 1)
+                },
+                redirectToOwnerDetails: function(visitID){
+                    var self = this
+                    swal("Done!","Your visit was scheduled succesfully","success")
+                    .then(function(){
+                        window.location.replace("/Visits/Details/"+visitID)
+                    })
+                },
+                sendDataToServer: function () { //Async call to save the new visit in DB
+                    var self = this
+                    debugger
+                    var visitID = parseInt(self.visit.visitID)
+                    var action = visitID ? 'edit' : 'create' //If edit mode or create mode
+                    if(self.visit.paymentOmitted) {
+                        self.visit.paymentOmitted = self.visit.paymentOmitted
+                    }
+                    api.post(action,{
+                        visit : self.visit
+                    })
+                    .then(response => {
+                        var response = response.data
+                        if(response.numReg){
+                            visitID = action == "create" ? response.visit.visitID : visitID
+                            self.redirectToOwnerDetails(visitID)
+                        }else if(response.errorMsg){
+                            swal("Oops!","@GlobalMessages.ERROR_OCURRED"+response.errorMsg,"error")
+                        }else{ //Unknown error
+                            console.log(response)
+                        }
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    })
+                },
+                saveVisitor:function(){
+                    if(this.visit.visitID)
+                        this.saveNewVisitorDB()
+                    else
+                        this.addVisitorToTable()
+                },
+                // Calcula el precio total de la visita al momento de registrarse
+                calculateTotalPerVisit: function () {
+                    // Comprueba que solo se active un checkbox al momento de seleccionar el tipo de visita 'Visit of friends and family'
+                    if(this.visit.withTheOwner) {
+                        this.visit.paymentOmitted = false
+                    }
+                    if(this.visit.paymentOmitted) {
+                        this.visit.withTheOwner = false
+                    }
+
+                    var visitorCount = 0
+                    //Visita con amigos, con el propietarios o con pago omitido, no se cobra
+                    if(this.visit.typeOfVisit === 0 && this.visit.withTheOwner || this.visit.paymentOmitted) {
+                        return this.visit.totalCost = 0.00
+                    }
+                    //Visita con amigos sin propietario acompañando, se cobra
+                    if(this.visit.typeOfVisit === 0 && !this.visit.withTheOwner) {
+                        let visitorIsNotYounger = this.visit.visitors.filter(visitor => !visitor.isYounger)
+                        //return this.visit.totalCost = visitorIsNotYounger.length * this.costForBracelet
+                        return this.visit.totalCost = this.visit.numBrazaletes * this.visit.costForBracelet
+                    }
+                    //Visita de renta
+                    if(this.visit.typeOfVisit === 1) {
+                        var arrivalDate = new Date(this.visit.arrivalDate).getTime()
+                        var departureDate = new Date(this.visit.departureDate).getTime()
+                        var differenceDays = departureDate - arrivalDate
+                        //if(this.visit.visitors.length >= 1) {
+
+                        // (1000*60*60*24) --> milisegundos -> segundos -> minutos -> horas -> días
+                        var msPorDia = 1000*60*60*24
+                        var numDias = differenceDays / msPorDia
+                        this.visit.totalCost = this.priceByDay * numDias
+
+                        /*
+                        var visitorNotYounger = this.visit.visitors.filter(function (item) {
+                            return item.isYounger === false
+                        });*/
+
+                        //if(visitorNotYounger.length > 12) {
+                        if(this.visit.numBrazaletes > 12) {
+                            var visitorExtra = this.visit.numBrazaletes - 12
+                            return this.visit.totalCost + (visitorExtra * 50)
+                        }
+                        return this.visit.totalCost
+                    }
+                },
+                getVisitors: function () {
+                    var ws = this
+                    axios.post('/Visitors/Index', {
+                        id: '@Model.visitID'
+                    })
+                    .then(function (response) {
+                        ws.visit.visitors = response.data
+                    })
+                    .catch(function (error) {
+                        notifyError(error)
+                    })
+                },
+                saveNewVisitorDB: function () {
+                    var ws = this
+                    apiVisitor = axios.create({
+                        baseURL: "/Visitors",
+                        timeout: 100000,
+                        headers: {
+                            "__RequestVerificationToken": token
+                        }
+                    });
+                    apiVisitor.post('/Create', {
+                        visitor: ws.newVisitor.clone()
+                    })
+                    .then(function (response) {
+                        ws.lastVisitorIDFromDB = response.data.numReg
+                        ws.addVisitorToTable()
+
+                        //Notify successfull registration
+                        $.notify("@(GlobalMessages.VISITOR_NEW)",
+                            { autoHideDelay: 2000, className: 'success', globalPosition: 'bottom left' });
+                    })
+                    .catch(function (error) {
+                        response = error
+                        notifyError(error.message)
+                    })
+                },
+            },
+            created: function () {
+                //If edit mode
+                if(this.visit.visitID){
+                    if('@Model.typeOfVisit' === 'FRIENDS_AND_FAMILY') {
+                        this.visit.typeOfVisit = 0
+                    } else {
+                        this.visit.typeOfVisit = 1
+                    }
+                    this.getVisitors()
+                }
+
+                this.watchCollection(
+                    ['visit.typeOfVisit','visit.visitors','visit.withTheOwner','visit.arrivalDate','visit.departureDate'],
+                    this.calculateTotalPerVisit)
+            },
+            computed: {
+                totalCostFunc() {
+                    return this.calculateTotalPerVisit()
+                }
+            },
+            watch:{
+                'visit.cantidadVisitantes' : function(newVal, oldVal){
+                    if(parseInt(newVal) < this.visit.numBrazaletes)
+                        this.visit.numBrazaletes = parseInt(newVal)
+                },
+                'visit.numBrazaletes' : function(newVal, oldVal){
+                    if(parseInt(newVal) > this.visit.cantidadVisitantes)
+                        this.visit.cantidadVisitantes = parseInt(newVal)
+                }
+            }
+        })
+    </script>
+}

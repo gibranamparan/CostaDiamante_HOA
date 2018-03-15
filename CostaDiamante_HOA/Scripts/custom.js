@@ -77,6 +77,14 @@ function notifyError(message) {
     swal("Error!", message, "error")
 }
 
+function notifySuccess(title, message) {
+    swal(title, message, "success")
+}
+
+function smallNotify(mensaje, className) {
+    //Notificar eliminacion
+    $.notify(mensaje, { autoHideDelay: 2000, className: className, globalPosition: 'bottom left' });
+}
 
 function currencyToNumber(numStr) {
     var num = 0
@@ -88,4 +96,14 @@ function currencyToNumber(numStr) {
             num = Number(numStr)
     }
     return num;
+}
+
+function installVueTable() {
+    Vue.use(VueTables.ClientTable);
+    Vue.use(VueTables.ServerTable);
+}
+
+function installVueMask() {
+    //Vue.use(VueTheMask);
+    Vue.use(VMoney, { precision: 4 })
 }

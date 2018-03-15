@@ -58,6 +58,7 @@ namespace CostaDiamante_HOA.Models
         [Display(Name = "With the Owner")]
         public bool withTheOwner { get; set; }
 
+
         //A visits is for one condo
         [Display(Name = "Condo Number")]
         public int condoID { get; set; }
@@ -67,6 +68,13 @@ namespace CostaDiamante_HOA.Models
         [Display(Name = "Owner")]
         public string ownerID { get; set; }
         public virtual Owner owner { get; set; }
+
+        [Required]
+        [Display(Name = "Total Number of Visitors")]
+        public int cantidadVisitantes { get; set; }
+
+        [Display(Name = "Number of Bracelets")]
+        public int numBrazaletes { get; set; }
 
         //Every visits has a list of visitors
         public virtual ICollection<Visitor> visitors { get; set; }
@@ -104,6 +112,11 @@ namespace CostaDiamante_HOA.Models
         {
             return tp.hasPartInside(this.timePeriod) || this.timePeriod.hasPartInside(tp);
         }
+
+        public bool isImpactOfRentCost { get {
+                return this.typeOfVisit == typeOfVisit.BY_RENT 
+                    || (this.typeOfVisit == typeOfVisit.FRIENDS_AND_FAMILY && !this.withTheOwner);
+            } }
 
         public class VMVisitsFilter
         {
@@ -162,7 +175,7 @@ namespace CostaDiamante_HOA.Models
             string errorMessage = string.Empty;
 
             //Subject
-            string subject = "A visit was notified by " + this.owner.fullName;
+            string subject = "A visit was notified by " + this.owner.name;
 
             //URL To see Details
             string visitDetailsURL = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
@@ -172,7 +185,7 @@ namespace CostaDiamante_HOA.Models
             string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
             emailMessage += "<h3>New Visit Notified</h3>";
             emailMessage += "<span>A new visit of " + this.visitors.Count() + " guest(s) was notified by ";
-            emailMessage += this.owner.fullName + " in condo " + this.condo.name + ". ";
+            emailMessage += this.owner.name + " in condo " + this.condo.name + ". ";
             emailMessage += "<span>Click this link to see the details:</span>";
             emailMessage += " <a href='" + visitDetailsURL + "'>Go to visit notification details.</a>";
             Task.Run(() =>

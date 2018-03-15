@@ -25,8 +25,9 @@ namespace CostaDiamante_HOA.Models
             }
         }
 
+        /*
         [Display(Name = "Is less than 6 years old")]
-        public Boolean isYounger { get; set; }
+        public Boolean isYounger { get; set; }*/
 
         //A visitor is for one visit
         [Display(Name = "Visit #")]
@@ -49,7 +50,6 @@ namespace CostaDiamante_HOA.Models
                 this.visitorID = visit.visitorID;
                 this.name = visit.name;
                 this.lastName = visit.lastName;
-                this.isYounger = visit.isYounger;
                 this.visitID = visit.visitID;
             }
         }

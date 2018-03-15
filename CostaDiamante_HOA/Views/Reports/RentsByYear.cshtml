@@ -16,11 +16,21 @@
 <nav class="hidden-print @(pdfMode?"hidden":"")">
     <a href="@Url.Action("Details","Owners",new { id = condo.ownerID })">
         <i class="glyphicon glyphicon-arrow-left"></i><span>Back to Owner Details</span>
-    </a><span> | </span>
-    <a href="@Url.Action("DownloadPDfRentsByYear",new { id = condo.condoID, year=year })">
-        <i class="fa fa-print"></i><span>Download PDF</span>
     </a>
 </nav>
+
+@*Action buttons for report*@
+<div class="row @(pdfMode?"hidden":"")">
+    <a class="btn btn-info pull-right" href="@Url.Action("DownloadPDfRentsByYear",new { id = condo.condoID, year=year })">
+        <i class="fa fa-print"></i> <span>Download PDF</span>
+    </a>
+    @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) { 
+    <a class="btn btn-info pull-right" href="#" onclick="sendEmailRentsByYear()" style="margin-right: 1em">
+        <i class="fa fa-envelope"></i> <span>Send Email Report</span>
+    </a>
+    }
+</div>
+<br />
 
 @*Show owner general information*@
 @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
@@ -39,3 +49,26 @@
     vdd.Add("pdfMode", pdfMode);
 }
 @Html.Partial("Partial_RentsByYear",Model,vdd)
+
+@Html.AntiForgeryToken()
+@section Scripts{
+    <script>
+        //@Url.Action("SendEmailImpactRentsReport", new { id = condo.condoID, year = year })
+        var condoID = @condo.condoID;
+        var year = @year;
+        var token = $('input[name=__RequestVerificationToken]').val()
+        @*Ventana para confirmar envio de correo con reporte de rentas en el año a propietario y contactos relacionados*@
+        function sendEmailRentsByYear() {
+            swal("You are going to send Rents Report to the owner and related contacts by email. Are you sure?",{buttons:true})
+            .then((confirm)=>{
+                axios.post(`reports/SendEmailImpactRentsReport/${condoID}`,{year: year},{"__RequestVerificationToken": token})
+                .then(res=>{
+
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            })
+        }
+    </script>    
+}
