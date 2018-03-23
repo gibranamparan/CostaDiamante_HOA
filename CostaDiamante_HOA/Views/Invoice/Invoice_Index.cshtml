@@ -1,0 +1,125 @@
+﻿@using CostaDiamante_HOA.Models
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="appInvoices">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Invoices Generator</h3>
+        </div>
+        <div class="panel-body">
+            <form @@submit.prevent="sendInvoices()">
+                <div class="row">
+                    <div class="form-group col">
+                        <label>Type of Invoice</label>
+                        <select class="form-control" v-model="invoiceGeneratorForm.typeOfInvoice">
+                            <option value="@((int)Payment.TypeOfPayment.HOA_FEE)">HOA Fees</option>
+                            <option value="@((int)Payment.TypeOfPayment.RENTAL_IMPACT)">Impact of Rent</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label>Year</label>
+                        <input class="form-control" type="number" value="@(DateTime.Today.Year)" />
+                    </div>
+                    <div class="form-group col" v-if="invoiceGeneratorForm.typeOfInvoice == @((int)Payment.TypeOfPayment.HOA_FEE)">
+                        <label>Quarter</label>
+                        <select class="form-control" v-model="invoiceGeneratorForm.quarter">
+                            <option v-for="(quarter,idx) in quartersNames" v-bind:value="idx+1">{{quarter}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col">
+                        <label>Report Date</label>
+                        <input class="form-control" type="date" value="@(DateTime.Today.ToString("yyyy-MM-dd"))" 
+                               v-model="invoiceGeneratorForm.reportDate" />
+                    </div>
+
+                </div>
+                <button class="btn btn-primary" type="submit">Send Invoices</button>
+            </form>
+        </div>
+    </div>
+
+    <v-client-table v-bind:data="condos" v-bind:columns="cols" v-bind:options="options">
+        <input type="checkbox" slot="selected" slot-scope="props" 
+               v-model="condos.filter(con=>con.condoID == props.row.condoID)[0].selected" @@change="printSelected()">
+        <a target="_blank" slot-scope="props" slot="ownerName" v-bind:href="'/owners/details/'+props.row.ownerID">
+            {{props.row.ownerName}}
+        </a>
+    </v-client-table>
+</div>
+@Html.AntiForgeryToken()
+@section Scripts{
+<script>
+    var response
+    installVueTable()
+
+    var cols = ['selected', 'condoName', 'ownerName', "concatEmails"]
+    var colsHeadings
+    var antiForgeryToken = document.getElementsByName("__RequestVerificationToken")[0].value; //Token
+    const api = axios.create({ //Init connection to server
+        timeout: 200000,
+        headers: { "__RequestVerificationToken": antiForgeryToken }
+    });
+
+    var app = new Vue({
+        el: "#appInvoices",
+        data: {
+            condos: {},
+            selectedCondos: {},
+            options: {
+                headings: { 'condoName': 'Condo', 'ownerName': 'Owner', "concatEmails":"Emails"}
+            },
+            quartersNames: [ "Q1: January - March", "Q2: April - Jun", "Q3: July - September", "Q4: Octuber - December" ],
+            invoiceGeneratorForm: { typeOfInvoice : @((int)Payment.TypeOfPayment.HOA_FEE), quarter: 1}
+        },
+        methods: {
+            selectCondo(condoID) {
+                var condo = this.condos.filter(con=>con.condoID == condoID)[0]
+                condo.selected = !condo.selected
+                console.log(JSON.stringify(this.condos.filter(con=>con.selected)))
+            },
+            printSelected() {
+                console.log(JSON.stringify(this.condos.filter(con=>con.selected)))
+            },
+            sendInvoices() {
+                swal({ title: "Are your sure?", text: "You are going to send invoices to the selected owners, are your sure?", buttons: true })
+                .then(confirm=> {
+                    if(confirm){
+                        var selectedCondos = this.condos.filter(con=>con.selected)
+                        api.post("/invoice/SendInvoices", { selectedCondos, invoiceGeneratorForm })
+                        .then(res=> {
+                            res = res.data
+                            if (res.count > 0) {
+                                console.log(res.invoicesStatus)
+                                notifySuccess("All Invoices Sent", "All the selected invoices were sent to the owners and related contacts.")
+                            } else if (res.errorMessage) {
+                                notifyError(res.errorMessage)
+                            }
+                        }).catch(err => {
+                            response = err
+                            console.log(err)
+                        })
+                    }
+                })
+            }
+        },
+        beforeCreate() {
+            api.get("/condo/List")
+            .then(res=> {
+                res = res.data
+                if(res.count > 0){
+                    this.condos = res.condos
+                } else if (res.errorMessage) {
+                    notifyError(res.errorMessage)
+                }
+            }).catch(err => {
+                response = err
+                console.log(err)
+            })
+        }
+    })
+</script>
+}

@@ -24,10 +24,11 @@
     <a class="btn btn-info pull-right" href="@Url.Action("DownloadPDfRentsByYear",new { id = condo.condoID, year=year })">
         <i class="fa fa-print"></i> <span>Download PDF</span>
     </a>
-    @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) { 
-    <a class="btn btn-info pull-right" href="#" onclick="sendEmailRentsByYear()" style="margin-right: 1em">
+    @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN)) {
+    <a id="btnSendEmail" class="btn btn-info pull-right" href="#" onclick="sendEmailRentsByYear()" style="margin-right: 1em">
         <i class="fa fa-envelope"></i> <span>Send Email Report</span>
     </a>
+    <img id="imgLoading" class="pull-right" style="height: 2.5em; display: none" src="/images/loading1.gif" />
     }
 </div>
 <br />
@@ -50,25 +51,48 @@
 }
 @Html.Partial("Partial_RentsByYear",Model,vdd)
 
-@Html.AntiForgeryToken()
-@section Scripts{
-    <script>
-        //@Url.Action("SendEmailImpactRentsReport", new { id = condo.condoID, year = year })
-        var condoID = @condo.condoID;
-        var year = @year;
-        var token = $('input[name=__RequestVerificationToken]').val()
-        @*Ventana para confirmar envio de correo con reporte de rentas en el año a propietario y contactos relacionados*@
-        function sendEmailRentsByYear() {
-            swal("You are going to send Rents Report to the owner and related contacts by email. Are you sure?",{buttons:true})
-            .then((confirm)=>{
-                axios.post(`reports/SendEmailImpactRentsReport/${condoID}`,{year: year},{"__RequestVerificationToken": token})
-                .then(res=>{
-
-                })
-                .catch(error=>{
-                    console.log(error)
-                })
+@if (!pdfMode) { 
+    @Html.AntiForgeryToken()
+    @section Scripts{
+        <script>
+            //@Url.Action("SendEmailImpactRentsReport", new { id = condo.condoID, year = year })
+            var condoID = @condo.condoID;
+            var year = @year;
+            var token = $('input[name=__RequestVerificationToken]').val()
+            var api = axios.create({
+                headers:{
+                    "__RequestVerificationToken": token
+                }
             })
-        }
-    </script>    
+            @*Ventana para confirmar envio de correo con reporte de rentas en el año a propietario y contactos relacionados*@
+            function sendEmailRentsByYear() {
+                swal("You are going to send Rents Report to the owner and related contacts by email. Are you sure?",{buttons:true})
+                .then((confirm)=>{
+                    hideBtnSendEmail(true)
+                    api.post(`/Reports/SendEmailImpactRentsReport/`,{id:condoID, year: year})
+                    .then(res=>{
+                        hideBtnSendEmail(false)
+                        res = res.data
+                        if(res)
+                            notifyError("An error ocurred while trying to send the emails. Details: "+res)
+                        else
+                            smallNotify("Report Sent!","success")
+                    })
+                    .catch(error=>{
+                        console.log(error)
+                    })
+                })
+            }
+
+            function hideBtnSendEmail(hide){
+                if(hide){
+                    $("#btnSendEmail").hide()
+                    $("#imgLoading").show()
+                }else{
+                    $("#imgLoading").hide()
+                    $("#btnSendEmail").show()
+                }
+            }
+        </script>    
+    }
 }

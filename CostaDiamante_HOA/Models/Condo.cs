@@ -66,7 +66,7 @@ namespace CostaDiamante_HOA.Models
             var cookies = Request.Cookies.AllKeys.ToDictionary(k => k, k => Request.Cookies[k].Value);
             var fileView = new Rotativa.ActionAsPdf("../Reports/RentsByYear", rvd)
             {
-                FileName = $"Rent Imp {this.name}_{year}" + ".pdf",
+                FileName = $"Rent Imp {this.name}_{year}_{DateTime.Today.ToString("dd-MMM-yyyy")}" + ".pdf",
                 FormsAuthenticationCookieName = System.Web.Security.FormsAuthentication.FormsCookieName,
                 Cookies = cookies
             };
@@ -86,7 +86,7 @@ namespace CostaDiamante_HOA.Models
         /// <param name="controllerContext"></param>
         /// <param name="year"></param>
         /// <returns></returns>
-        public async Task<string> sendEmail_ImpactOfRentReport(HttpRequestBase Request, ControllerContext controllerContext, int year = 0)
+        public async Task<Payment.InvoiceSentStatus> sendEmail_ImpactOfRentReport(HttpRequestBase Request, ControllerContext controllerContext, int year = 0)
         {
             string errorMessage = string.Empty;
             year = year == 0 ? DateTime.Today.Year : year;
@@ -129,18 +129,54 @@ namespace CostaDiamante_HOA.Models
             //Async sending of email
             //Compose destination
             var ownerAdress = new List<SendGrid.Helpers.Mail.EmailAddress>
-                { new SendGrid.Helpers.Mail.EmailAddress(this.owner.Email, this.owner.name) };
+                { new SendGrid.Helpers.Mail.EmailAddress(this.owner.Email.Trim(), this.owner.name) };
             var contacts = owner.condosInfoContact;
             foreach(var con in contacts) //For each related contact, an email is added to receipts
             {
-                if (MailerSendGrid.IsValid(con.email))
-                    ownerAdress.Add(new SendGrid.Helpers.Mail.EmailAddress(con.email, con.ownerName));
+                //If its a valid email, different from the owner emails, its added as an aditional receipment
+                if (MailerSendGrid.IsValid(con.email) && con.email != ApplicationUser.NULL_EMAIL && con.email.Trim() != owner.Email.Trim())
+                    ownerAdress.Add(new SendGrid.Helpers.Mail.EmailAddress(con.email.Trim(), con.ownerName));
             }
 
             //Email is sent just to the admin
-            errorMessage = await MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, ownerAdress, attachments);
+            MailerSendGrid.MailerResult res = await MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, ownerAdress, attachments);
+            Payment.InvoiceSentStatus status = new Payment.InvoiceSentStatus { condoID = this.condoID, mailStatus = res, sendDate = DateTime.Today };
 
-            return errorMessage;
+            return status;
         }
+
+        /// <summary>
+        /// View Model for condo used for API
+        /// </summary>
+        public class VMCondo
+        {
+            public int condoID { get; set; }
+            public string condoName { get; set; }
+
+            public string ownerID { get; set; }
+            public string ownerName { get; set; }
+
+            public string[] emails{ get; set; }
+            public string primaryEmail { get; set; }
+
+            public string concatEmails { get
+                {
+                    string concat = emails.Count() > 0 ? string.Join(", ", this.emails) : string.Empty;
+                    return (string.IsNullOrEmpty(this.primaryEmail) ? string.Empty : (this.primaryEmail+", ")) + concat;
+                } }
+
+            public VMCondo() { }
+            public VMCondo(Condo condo)
+            {
+                this.condoID = condo.condoID;
+                this.condoName = condo.name;
+                this.ownerID = condo.ownerID;
+                this.ownerName = condo.owner != null ? condo.owner.fullName : string.Empty;
+                this.emails = condo.owner != null ? condo.owner.condosInfoContact.ToList().Select(info=>info.email).ToArray() : new string[0];
+                this.primaryEmail = condo.owner == null ? string.Empty : condo.owner.Email;
+            }
+
+        }
+
     }
 }

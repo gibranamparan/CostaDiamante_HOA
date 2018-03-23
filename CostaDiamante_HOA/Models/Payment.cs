@@ -91,6 +91,148 @@ namespace CostaDiamante_HOA.Models
         {
             HOA_FEE, RENTAL_IMPACT, NONE
         }
-        
+
+        public class InvoiceFactory
+        {
+            public Invoice generateInvoice(TypeOfPayment invoiceType, Condo condo, InvoiceFormGenerator invoiceForm)
+            {
+                if (invoiceType == TypeOfPayment.HOA_FEE)
+                    return new InvoiceHOA(condo, invoiceForm);
+                else if (invoiceType == TypeOfPayment.RENTAL_IMPACT)
+                    return new InvoiceRent(condo, invoiceForm);
+                else
+                    return null;
+            }
+        }
+
+        /// <summary>
+        /// Modelo para recibir la forma de solicitud de envios de correos masivos
+        /// </summary>
+        public class InvoiceFormGenerator
+        {
+            public DateTime sendDate { get; set; }
+            public TypeOfPayment typeOfInvoice { get; set; }
+            public int year { get; set; }
+            public int quarter { get; set; }
+        }
+
+        /// <summary>
+        /// Contiene toda la informacion basica que un invoice debe contener para generar un formato enviable
+        /// </summary>
+        public abstract class Invoice
+        {
+            public DateTime date { get; set; }
+            public int year { get; set; }
+            public decimal amount { get; set; }
+            public TypeOfPayment typeOfInvoice { get; set; }
+            public Condo condo { get; set; }
+
+            public abstract string description { get; }
+            public abstract decimal totalDue { get; }
+            public abstract InvoiceSentStatus sendInvoice();
+
+            public Invoice(Condo condo, InvoiceFormGenerator invoiceForm)
+            {
+                this.condo = condo;
+                this.year = invoiceForm.year;
+                this.typeOfInvoice = invoiceForm.typeOfInvoice;
+                this.date = invoiceForm.sendDate;
+            }
+        }
+
+        /// <summary>
+        /// Modelo de respuesta de invoi
+        /// </summary>
+        public class InvoiceSentStatus : InvoiceFormGenerator
+        {
+            public int condoID { get; set; }
+            public MailerSendGrid.MailerResult mailStatus { get; set; }
+        }
+
+        /// <summary>
+        /// Representa un Invoice de pago de HOAFee.
+        /// </summary>
+        public class InvoiceHOA : Invoice
+        {
+            public int quarter { get; set; }
+
+            public InvoiceHOA(Condo condo, InvoiceFormGenerator invoiceForm) 
+                : base(condo, invoiceForm)
+            {
+                this.quarter = invoiceForm.quarter;
+            }
+
+            public override string description
+            {
+                get
+                {
+                    return $"HOA Dues: {InvoiceHOA.ordinalize(this.quarter)} quarter {year} ({InvoiceHOA.quarterMonths(this.quarter)})";
+                }
+            }
+
+            public override decimal totalDue
+            {
+                get
+                {
+                    return this.amount;
+                }
+            }
+
+            private static string ordinalize(int num)
+            {
+                return num == 1 ? "1st" : num == 2 ? "2nd" : num == 3 ? "3th" : "";
+            }
+
+            private static string quarterMonths(int quarter)
+            {
+                string res = string.Empty;
+                if(quarter>=1 && quarter <= 4)
+                {
+                    for (int c = 0; c <= 2; c++) {
+                        var dt = new DateTime(DateTime.Today.Year,quarter + c,DateTime.Today.Day);
+                        var separator = c == 1 ? ", " : c == 2 ? " & " : "";
+                        res += dt.ToString("MMMM")+separator;
+                    }
+                }
+                return res;
+            }
+
+            public override InvoiceSentStatus sendInvoice()
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// Representa los datos de un invoice para impactom de renta
+        /// </summary>
+        public class InvoiceRent : Invoice
+        {
+            public InvoiceRent(Condo condo, InvoiceFormGenerator invoiceForm) 
+                : base(condo, invoiceForm)
+            {
+            }
+
+            public override string description
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override decimal totalDue
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override InvoiceSentStatus sendInvoice()
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

@@ -37,11 +37,29 @@ namespace CostaDiamante_HOA.Controllers
         }
 
         // GET: Condo
+        [HttpGet]
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult Index()
         {
             var condoes = db.Condoes.Include(c => c.owner);
             return View(condoes.ToList());
+        }
+
+        // GET: Condo
+        [HttpGet]
+        [ValidateHeaderAntiForgeryToken]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
+        public ActionResult List()
+        {
+            try { 
+                var condoes = db.Condoes.ToList().Select(con=>new Condo.VMCondo(con));
+                var res = condoes.ToList();
+                return Json(new { condos = res, count = res.Count }, JsonRequestBehavior.AllowGet);
+            }catch(Exception exc)
+            {
+                return Json(new { errorMessage = $"{exc.Message}." + 
+                    (exc.InnerException != null ? exc.InnerException.Message : string.Empty) }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // GET: Condo/Create

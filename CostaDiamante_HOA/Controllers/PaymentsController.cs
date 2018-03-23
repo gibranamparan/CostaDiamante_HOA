@@ -264,6 +264,14 @@ namespace CostaDiamante_HOA.Controllers
                 return Json(new { numReg, errorMsg});
         }
 
+        public ActionResult Invoice()
+        {
+            //Payment.VMInvoice invoice = new Payment.VMInvoice();
+
+
+            return View();
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

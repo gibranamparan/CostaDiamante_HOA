@@ -29,6 +29,9 @@
                 @Html.DisplayNameFor(model => model.fullName)
             </th>
             <th>
+                Properties
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.roleName)
             </th>
             <th></th>
@@ -44,6 +47,18 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.fullName)
+                </td>
+                <td>
+                    @if(item.condos != null && item.condos.Count() > 0)
+                    {
+                        foreach(var condo in item.condos) {
+                            <span>@condo.name</span>
+                            if(item.condos.ElementAt(item.condos.Count()-1) != condo)
+                            {
+                                <span>,</span>
+                            }
+                        }
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.roleName)

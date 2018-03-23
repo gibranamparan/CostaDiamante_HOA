@@ -111,9 +111,14 @@ namespace CostaDiamante_HOA.Controllers
         [HttpPost]
         [FiltrosDeSolicitudes.ValidateHeaderAntiForgeryToken]
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
-        public async Task<JsonResult> SendEmailImpactRentsReport(int condoID, int year = 0)
+        public async Task<JsonResult> SendEmailImpactRentsReport(int? id, int year = 0)
         {
-            var condo = db.Condoes.Find(condoID);
+            if (id == null)
+            {
+                var error = new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
+            }
+            var condo = db.Condoes.Find(id);
             if (condo == null)
             {
                 var error = HttpNotFound();
@@ -126,9 +131,9 @@ namespace CostaDiamante_HOA.Controllers
                 return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
             }
 
-            string errorMessage = await condo.sendEmail_ImpactOfRentReport(Request, ControllerContext, year);
+            Payment.InvoiceSentStatus errorMessage = await condo.sendEmail_ImpactOfRentReport(Request, ControllerContext, year);
 
-            return Json(errorMessage);
+            return Json(errorMessage.mailStatus.message);
         }
     }
 }

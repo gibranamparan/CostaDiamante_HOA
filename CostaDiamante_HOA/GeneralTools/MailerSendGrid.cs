@@ -21,9 +21,10 @@ namespace CostaDiamante_HOA.GeneralTools
         /// <param name="aditionalRecipients">Optional list to add additional recipients to the email</param>
         /// <param name="attachments">Optional list to add attachments to the email</param>
         /// <returns>A string with an error message, if its empty or null, everything worked OK.</returns>
-        public static async Task<String> sendEmailToMultipleRecipients(string subject, string bodyMessage, List<EmailAddress> aditionalRecipients, List<Attachment> attachments)
+        public static async Task<MailerResult> sendEmailToMultipleRecipients(string subject, string bodyMessage, List<EmailAddress> aditionalRecipients, List<Attachment> attachments)
         {
             string errorMessage = string.Empty;
+            MailerResult res = new MailerResult();
 
             //Get admin email and name by default from webconfig application settings
             string AdminMail = ConfigurationManager.AppSettings["AdminMail"];
@@ -75,16 +76,23 @@ namespace CostaDiamante_HOA.GeneralTools
 
                 //Send email using sendgrid service
                 var response = await client.SendEmailAsync(msg);
+                res = new MailerResult(response, to);
 
-                //If an error ocurred
-                if (response.StatusCode != System.Net.HttpStatusCode.Accepted)
-                    errorMessage = await response.Body.ReadAsStringAsync();
             }
-            else
-                errorMessage = to.Count()==0 ? GlobalMessages.ERROR_MSG_NO_RECEIPIENTS: 
-                    !emailEnabled?GlobalMessages.ERROR_MSG_EMAILS_DISABLED:string.Empty;
+            else {
+                if (to.Count() == 0)
+                {
+                    res = new MailerResult(GlobalMessages.ERROR_MSG_NO_RECEIPIENTS, System.Net.HttpStatusCode.BadRequest, to);
+                }else if (!emailEnabled)
+                {
+                    res = new MailerResult(GlobalMessages.ERROR_MSG_EMAILS_DISABLED, System.Net.HttpStatusCode.BadRequest, to);
+                }else
+                {
+                    res = new MailerResult("Unknown error", System.Net.HttpStatusCode.BadRequest, to);
+                }
+            }
 
-            return errorMessage;
+            return res;
         }
 
         /// <summary>
@@ -103,6 +111,36 @@ namespace CostaDiamante_HOA.GeneralTools
             catch (FormatException)
             {
                 return false;
+            }
+        }
+
+        public class MailerResult
+        {
+            public System.Net.HttpStatusCode httpCode { get; set; }
+            public string message { get; set; }
+            public List<EmailAddress> emails { get; set; }
+            
+            public string concatEmails
+            {
+                get
+                {
+                    string[] tempEmails = this.emails.Select(em => em.Email).ToArray();
+                    return tempEmails.Count() > 0 ? string.Join(", ", tempEmails) : string.Empty;
+                }
+            }
+
+            public MailerResult() { }
+            public MailerResult(SendGrid.Response res, List<EmailAddress> to)
+            {
+                this.httpCode = res.StatusCode;
+                this.message = res.Body.ReadAsStringAsync().Result;
+                this.emails = to;
+            }
+            public MailerResult(string customMessage, System.Net.HttpStatusCode httpCode, List<EmailAddress> to)
+            {
+                this.httpCode = httpCode;
+                this.message = customMessage;
+                this.emails = to;
             }
         }
     }

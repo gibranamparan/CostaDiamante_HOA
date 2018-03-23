@@ -110,6 +110,8 @@ namespace CostaDiamante_HOA.Models
                 return this.name;
             } }
 
+        public List<Condo> condos { get; set; }
+
         /// <summary>
         /// Generates a list to select in a GUI form.
         /// </summary>
@@ -139,6 +141,7 @@ namespace CostaDiamante_HOA.Models
             this.hash = owner.PasswordHash;
             this.stamp = owner.SecurityStamp;
             this.registrationDate = owner.registrationDate.HasValue ? owner.registrationDate.Value : DateTime.Today;
+            this.condos = owner is Owner ? ((Owner)owner).Condos.ToList() : null;
         }
 
         public RegisterViewModel(ApplicationUser owner, ApplicationUserManager userManager) : this(owner)

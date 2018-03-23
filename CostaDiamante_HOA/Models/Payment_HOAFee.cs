@@ -28,9 +28,9 @@ namespace CostaDiamante_HOA.Models
             }
         }
 
-        public string sendNotificationEmail(HttpRequestBase Request)
+        public InvoiceSentStatus sendNotificationEmail(HttpRequestBase Request)
         {
-            string errorMessage = string.Empty;
+            InvoiceSentStatus res = new InvoiceSentStatus();
 
             //Subject
             string subject = $"A HOA Fee payment was registered to condo {this.condo.name}";
@@ -46,14 +46,12 @@ namespace CostaDiamante_HOA.Models
             emailMessage += $" condo {this.condo.name }, property of {this.condo.owner.name}.";
             emailMessage += " <span>Click this link to see the details:</span>";
             emailMessage += " <a href='" + detailsURL + "'>Go to visit notification details.</a>";
-            Task.Run(() =>
-            {
-                //Email is sent just to the admin
-                var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, null,null);
-                errorMessage = response.Result;
-            });
 
-            return errorMessage;
+            //Email is sent just to the admin
+            var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, null,null).Result;
+            res = new InvoiceSentStatus() { condoID = this.condoID.Value, mailStatus = response, sendDate = this.date, typeOfInvoice = TypeOfPayment.HOA_FEE};
+
+            return res;
         }
 
     }
@@ -87,7 +85,6 @@ namespace CostaDiamante_HOA.Models
             this.HOAFee = VMHOAQuarter.StandarHOAFee;
         }
 
-
         /// <summary>
         /// Calculates the Number of months delayed to be payed given a date of reference.
         /// </summary>
@@ -107,8 +104,7 @@ namespace CostaDiamante_HOA.Models
             if ((ignoreIfDelayed || this.isDelayed) && date1 >= date2) {
                 res = 3 + ((date1.Year - date2.Year) * 12) + date1.Month - date2.Month;
             }
-
-
+            
             return res;
         }
 

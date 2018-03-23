@@ -192,7 +192,7 @@ namespace CostaDiamante_HOA.Models
             {
                 //Email is sent just to the admin
                 var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, null,null);
-                errorMessage = response.Result;
+                errorMessage = response.Result.message;
             });
 
             return errorMessage;

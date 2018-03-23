@@ -211,6 +211,7 @@
     <Compile Include="Controllers\CondoController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\InvoiceController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\OwnersController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
@@ -554,6 +555,8 @@
     <Content Include="Views\Shared\BadRequest.cshtml" />
     <Content Include="Views\Shared\Forbidden.cshtml" />
     <Content Include="Views\Owners\Partial_ContactInformation.cshtml" />
+    <Content Include="Views\Payments\Invoice.cshtml" />
+    <Content Include="Views\Invoice\Invoice_Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

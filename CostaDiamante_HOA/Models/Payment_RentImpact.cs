@@ -24,7 +24,7 @@ namespace CostaDiamante_HOA.Models
 
         public string sendEmailNotification_NewRentPayment(HttpRequestBase Request, ControllerContext controllerContext)
         {
-            string errorMessage = string.Empty;
+            InvoiceSentStatus errorMessage = new InvoiceSentStatus();
 
             //Subject
             string subject = $"A impact of rent payment was registered to visit from {this.visit.timePeriod} in condo {this.visit.condo.name}";
@@ -71,10 +71,10 @@ namespace CostaDiamante_HOA.Models
                 { new SendGrid.Helpers.Mail.EmailAddress(this.visit.owner.Email, this.visit.owner.name) };
                 //Email is sent just to the admin
                 var response = MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, ownerAdress, attachments);
-                errorMessage = response.Result;
+                errorMessage = new InvoiceSentStatus() { condoID = this.visit.condoID, mailStatus = response.Result, sendDate = this.date, typeOfInvoice = TypeOfPayment.HOA_FEE };
             });
 
-            return errorMessage;
+            return errorMessage.mailStatus.message;
         }
     }
 }
