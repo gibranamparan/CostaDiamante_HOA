@@ -6,6 +6,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Configuration;
 using System.Linq;
 using System.Web;
+using Rotativa;
+using System.Web.Mvc;
+using System.Threading.Tasks;
 
 namespace CostaDiamante_HOA.Models
 {
@@ -124,20 +127,32 @@ namespace CostaDiamante_HOA.Models
             public DateTime date { get; set; }
             public int year { get; set; }
             public decimal amount { get; set; }
-            public TypeOfPayment typeOfInvoice { get; set; }
             public Condo condo { get; set; }
 
-            public abstract string description { get; }
+            public TypeOfPayment typeOfInvoice
+            {
+                get
+                {
+                    if (this is InvoiceHOA)
+                        return TypeOfPayment.HOA_FEE;
+                    else if (this is InvoiceRent)
+                        return TypeOfPayment.RENTAL_IMPACT;
+                    else
+                        return TypeOfPayment.NONE;
+                }
+            }
+
             public abstract decimal totalDue { get; }
-            public abstract InvoiceSentStatus sendInvoice();
 
             public Invoice(Condo condo, InvoiceFormGenerator invoiceForm)
             {
                 this.condo = condo;
                 this.year = invoiceForm.year;
-                this.typeOfInvoice = invoiceForm.typeOfInvoice;
                 this.date = invoiceForm.sendDate;
             }
+
+            public abstract Rotativa.ActionAsPdf generateInvoicePDF(HttpRequestBase Request);
+            public abstract Task<Payment.InvoiceSentStatus> sendInvoice(HttpRequestBase Request, ControllerContext ControllerContext);
         }
 
         /// <summary>
@@ -162,7 +177,7 @@ namespace CostaDiamante_HOA.Models
                 this.quarter = invoiceForm.quarter;
             }
 
-            public override string description
+            public string description
             {
                 get
                 {
@@ -183,13 +198,15 @@ namespace CostaDiamante_HOA.Models
                 return num == 1 ? "1st" : num == 2 ? "2nd" : num == 3 ? "3th" : "";
             }
 
+
             private static string quarterMonths(int quarter)
             {
                 string res = string.Empty;
                 if(quarter>=1 && quarter <= 4)
                 {
                     for (int c = 0; c <= 2; c++) {
-                        var dt = new DateTime(DateTime.Today.Year,quarter + c,DateTime.Today.Day);
+                        //var dt = new DateTime(DateTime.Today.Year,quarter + c,DateTime.Today.Day);
+                        var dt = new DateTime(DateTime.Today.Year, quarter + c, 28);
                         var separator = c == 1 ? ", " : c == 2 ? " & " : "";
                         res += dt.ToString("MMMM")+separator;
                     }
@@ -197,9 +214,25 @@ namespace CostaDiamante_HOA.Models
                 return res;
             }
 
-            public override InvoiceSentStatus sendInvoice()
+            /// <summary>
+            /// Generates Rotativa PDF
+            /// </summary>
+            /// <param name="Request"></param>
+            /// <returns></returns>
+            public override ActionAsPdf generateInvoicePDF(HttpRequestBase Request)
             {
-                throw new NotImplementedException();
+                return this.condo.generateRotativaPDF_HOAFeeInvoice(this.year, this.quarter, Request);
+            }
+
+            /// <summary>
+            /// Send invoice by email to every related contact
+            /// </summary>
+            /// <param name="Request"></param>
+            /// <param name="ControllerContext"></param>
+            /// <returns></returns>
+            public override Task<Payment.InvoiceSentStatus> sendInvoice(HttpRequestBase Request, ControllerContext ControllerContext)
+            {
+                return this.condo.sendEmail_HOAFeeInvoice(Request, ControllerContext, this.quarter, this.year);
             }
         }
 
@@ -213,14 +246,6 @@ namespace CostaDiamante_HOA.Models
             {
             }
 
-            public override string description
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
             public override decimal totalDue
             {
                 get
@@ -229,9 +254,25 @@ namespace CostaDiamante_HOA.Models
                 }
             }
 
-            public override InvoiceSentStatus sendInvoice()
+            /// <summary>
+            /// Generates Rotativa PDF
+            /// </summary>
+            /// <param name="Request"></param>
+            /// <returns></returns>
+            public override ActionAsPdf generateInvoicePDF(HttpRequestBase Request)
             {
-                throw new NotImplementedException();
+                return this.condo.generateRotativaPDF_RentsByYearReport(this.year, Request);
+            }
+
+            /// <summary>
+            /// Send invoice by email to every related contact
+            /// </summary>
+            /// <param name="Request"></param>
+            /// <param name="ControllerContext"></param>
+            /// <returns></returns>
+            public override Task<Payment.InvoiceSentStatus> sendInvoice(HttpRequestBase Request, ControllerContext ControllerContext)
+            {
+                return this.condo.sendEmail_ImpactOfRentReport(Request, ControllerContext, this.year);
             }
         }
     }

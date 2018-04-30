@@ -21,10 +21,10 @@
                     </div>
                     <div class="form-group col">
                         <label>Year</label>
-                        <input class="form-control" type="number" value="@(DateTime.Today.Year)" />
+                        <input class="form-control" type="number" v-model="invoiceGeneratorForm.year" />
                     </div>
                     <div class="form-group col" v-if="invoiceGeneratorForm.typeOfInvoice == @((int)Payment.TypeOfPayment.HOA_FEE)">
-                        <label>Quarter</label>
+                        <label>Quarter</label><span>{{invoiceGeneratorForm.quarter}}</span>
                         <select class="form-control" v-model="invoiceGeneratorForm.quarter">
                             <option v-for="(quarter,idx) in quartersNames" v-bind:value="idx+1">{{quarter}}</option>
                         </select>
@@ -48,6 +48,15 @@
         <a target="_blank" slot-scope="props" slot="ownerName" v-bind:href="'/owners/details/'+props.row.ownerID">
             {{props.row.ownerName}}
         </a>
+        <span slot-scope="props" slot="actions" >
+            <a v-bind:href="'DownloadInvoice/'+props.row.condoID+params">
+                <i class="fa fa-download"></i> <span>Download</span>
+            </a>
+            <span> | </span>
+            <a @@click="sendInvoice(props.row.condoID)">
+                <i class="fa fa-envelope"></i> <span>Send Invoice</span>
+            </a>
+        </span>
     </v-client-table>
 </div>
 @Html.AntiForgeryToken()
@@ -56,7 +65,7 @@
     var response
     installVueTable()
 
-    var cols = ['selected', 'condoName', 'ownerName', "concatEmails"]
+    var cols = ['selected', 'condoName', 'ownerName', "concatEmails", 'actions']
     var colsHeadings
     var antiForgeryToken = document.getElementsByName("__RequestVerificationToken")[0].value; //Token
     const api = axios.create({ //Init connection to server
@@ -70,11 +79,17 @@
             condos: {},
             selectedCondos: {},
             options: {
-                headings: { 'condoName': 'Condo', 'ownerName': 'Owner', "concatEmails":"Emails"}
+                headings: { 'condoName': 'Condo', 'ownerName': 'Owner', "concatEmails":"Emails",'actions':''}
             },
             quartersNames: [ "Q1: January - March", "Q2: April - Jun", "Q3: July - September", "Q4: Octuber - December" ],
-            invoiceGeneratorForm: { typeOfInvoice : @((int)Payment.TypeOfPayment.HOA_FEE), quarter: 1}
+            invoiceGeneratorForm: { typeOfInvoice : @((int)Payment.TypeOfPayment.HOA_FEE), quarter: 1, year: @(DateTime.Today.Year)},
         },
+        computed:{
+            params(){
+                return `?year=${this.invoiceGeneratorForm.year}&quarter=${this.invoiceGeneratorForm.quarter}&typeOfInvoice=${this.invoiceGeneratorForm.typeOfInvoice}`
+            }
+        }
+        ,
         methods: {
             selectCondo(condoID) {
                 var condo = this.condos.filter(con=>con.condoID == condoID)[0]
@@ -89,7 +104,7 @@
                 .then(confirm=> {
                     if(confirm){
                         var selectedCondos = this.condos.filter(con=>con.selected)
-                        api.post("/invoice/SendInvoices", { selectedCondos, invoiceGeneratorForm })
+                        api.post("/invoice/SendInvoices", { selectedCondos, invoiceGeneratorForm:this.invoiceGeneratorForm })
                         .then(res=> {
                             res = res.data
                             if (res.count > 0) {
@@ -104,6 +119,28 @@
                         })
                     }
                 })
+            },
+            sendInvoice(condoID){
+                debugger
+                swal({ title: "Are your sure?", text: "You are going to send invoice to the selected owner, are your sure?", buttons: true })
+                .then(confirm=> {
+                    if(confirm){
+                        api.post("/invoice/SendEmail/"+condoID, { ifg:this.invoiceGeneratorForm })
+                        .then(res=> {
+                            res = res.data
+                            if (res.count > 0) {
+                                console.log(res.invoicesStatus)
+                                notifySuccess("Invoice Sent", "The invoice was sent")
+                            } else if (res.errorMessage) {
+                                notifyError(res.errorMessage)
+                            }
+                        }).catch(err => {
+                            response = err
+                            console.log(err)
+                        })
+                    }
+                })
+
             }
         },
         beforeCreate() {

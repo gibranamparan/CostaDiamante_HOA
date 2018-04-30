@@ -20,7 +20,7 @@
 </nav>
 
 @*Action buttons for report*@
-<div class="row @(pdfMode?"hidden":"")">
+<div class="row @(pdfMode?"hidden":"") hidden-print">
     <a class="btn btn-info pull-right" href="@Url.Action("DownloadPDfRentsByYear",new { id = condo.condoID, year=year })">
         <i class="fa fa-print"></i> <span>Download PDF</span>
     </a>
@@ -32,6 +32,7 @@
     }
 </div>
 <br />
+
 
 @*Show owner general information*@
 @if (User.IsInRole(ApplicationUser.RoleNames.ADMIN))
@@ -49,7 +50,12 @@
     vdd.Add("condo", condo);
     vdd.Add("pdfMode", pdfMode);
 }
-@Html.Partial("Partial_RentsByYear",Model,vdd)
+@Html.Partial("Partial_RentsByYear", Model, vdd)
+
+<div class="@(!pdfMode?"visible-print":"")">
+    @Html.Partial("ReportFooter")
+</div>
+
 
 @if (!pdfMode) { 
     @Html.AntiForgeryToken()

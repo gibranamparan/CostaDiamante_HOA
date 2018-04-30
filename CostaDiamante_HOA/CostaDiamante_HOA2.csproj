@@ -555,8 +555,9 @@
     <Content Include="Views\Shared\BadRequest.cshtml" />
     <Content Include="Views\Shared\Forbidden.cshtml" />
     <Content Include="Views\Owners\Partial_ContactInformation.cshtml" />
-    <Content Include="Views\Payments\Invoice.cshtml" />
+    <Content Include="Views\Invoice\Invoice_HOAFee.cshtml" />
     <Content Include="Views\Invoice\Invoice_Index.cshtml" />
+    <Content Include="Views\Shared\ReportFooter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

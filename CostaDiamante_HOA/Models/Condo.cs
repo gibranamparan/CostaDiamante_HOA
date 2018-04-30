@@ -57,6 +57,13 @@ namespace CostaDiamante_HOA.Models
             return quartersStatus;
         }
 
+        /// <summary>
+        /// Genera un PDF del reporte de todos los pagos de HOAFEe hechos en un trimestre de año
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="quarter">numero del 1 al 4 que representa un trimestre de año.</param>
+        /// <param name="Request">Contexto HTTP actual.</param>
+        /// <returns></returns>
         public Rotativa.ActionAsPdf generateRotativaPDF_RentsByYearReport(int? year, HttpRequestBase Request)
         {
             System.Web.Routing.RouteValueDictionary rvd = new System.Web.Routing.RouteValueDictionary();
@@ -67,6 +74,30 @@ namespace CostaDiamante_HOA.Models
             var fileView = new Rotativa.ActionAsPdf("../Reports/RentsByYear", rvd)
             {
                 FileName = $"Rent Imp {this.name}_{year}_{DateTime.Today.ToString("dd-MMM-yyyy")}" + ".pdf",
+                FormsAuthenticationCookieName = System.Web.Security.FormsAuthentication.FormsCookieName,
+                Cookies = cookies
+            };
+
+            return fileView;
+        }
+
+        /// <summary>
+        /// Genera un PDF del reporte de todos los pagos de impacto de renta en un año dado
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="Request">Contexto HTTP actual.</param>
+        /// <returns></returns>
+        public Rotativa.ActionAsPdf generateRotativaPDF_HOAFeeInvoice(int? year, int? quarter, HttpRequestBase Request)
+        {
+            System.Web.Routing.RouteValueDictionary rvd = new System.Web.Routing.RouteValueDictionary();
+            rvd.Add("id", this.condoID);
+            rvd.Add("year", year);
+            rvd.Add("quarter", quarter);
+            rvd.Add("pdfMode", true);
+            var cookies = Request.Cookies.AllKeys.ToDictionary(k => k, k => Request.Cookies[k].Value);
+            var fileView = new Rotativa.ActionAsPdf("../Invoice/Invoice_HOAFee", rvd)
+            {
+                FileName = $"HOAFee Invoice {this.name}_{year}_qrt{quarter}{DateTime.Today.ToString("dd-MMM-yyyy")}" + ".pdf",
                 FormsAuthenticationCookieName = System.Web.Security.FormsAuthentication.FormsCookieName,
                 Cookies = cookies
             };
@@ -101,7 +132,7 @@ namespace CostaDiamante_HOA.Models
 
             //Email Body
             string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
-            emailMessage += $"<h3>HOA Fee Report</h3>";
+            emailMessage += $"<h3>Impact of Rent</h3>";
             emailMessage += $"<span>In this email is attached the Impact of Rent status report to { strDate } for";
             emailMessage += $" condo {this.name }, property of {this.owner.name}";
 
@@ -132,6 +163,64 @@ namespace CostaDiamante_HOA.Models
                 { new SendGrid.Helpers.Mail.EmailAddress(this.owner.Email.Trim(), this.owner.name) };
             var contacts = owner.condosInfoContact;
             foreach(var con in contacts) //For each related contact, an email is added to receipts
+            {
+                //If its a valid email, different from the owner emails, its added as an aditional receipment
+                if (MailerSendGrid.IsValid(con.email) && con.email != ApplicationUser.NULL_EMAIL && con.email.Trim() != owner.Email.Trim())
+                    ownerAdress.Add(new SendGrid.Helpers.Mail.EmailAddress(con.email.Trim(), con.ownerName));
+            }
+
+            //Email is sent just to the admin
+            MailerSendGrid.MailerResult res = await MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, ownerAdress, attachments);
+            Payment.InvoiceSentStatus status = new Payment.InvoiceSentStatus { condoID = this.condoID, mailStatus = res, sendDate = DateTime.Today };
+
+            return status;
+        }
+
+        public async Task<Payment.InvoiceSentStatus> sendEmail_HOAFeeInvoice(HttpRequestBase Request, ControllerContext controllerContext, int quarter, int year = 0)
+        {
+            string errorMessage = string.Empty;
+            year = year == 0 ? DateTime.Today.Year : year;
+            string strDate = DateTime.Today.ToString("dd MMMM yyyy");
+
+            //Subject
+            string subject = $"Impact of Rent report to {strDate} in condo {this.name}";
+
+            //URL To see Details
+            string detailsURL = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
+            detailsURL += $"/Condo/HOAFees/{this.condoID}?year={year}";
+
+            //Email Body
+            string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
+            emailMessage += $"<h3>HOA Fee Invoice</h3>";
+            emailMessage += $"<span>In this email is attached the invoice for quarter {quarter} in year {year}";
+            emailMessage += $" condo {this.name }, property of {this.owner.name}";
+
+            //Generate attachments for email
+            List<Attachment> attachments = null;
+            //Add link to see report if its a visit that cause Impact of Rent
+            emailMessage += $" <span>See attached PDF.";
+
+            //Is mailer enabled
+            bool emailEnabled = true;
+            Boolean.TryParse(ConfigurationManager.AppSettings["enableEmail"], out emailEnabled);
+            //Just send Impact of Rent report for paid visits marked as that.
+            if (controllerContext != null && emailEnabled)
+            {
+                //Generate the report to be send
+                var fileView = this.generateRotativaPDF_HOAFeeInvoice(year,quarter, Request);
+                //Converts report to PDF file
+                var fileBytes = fileView.BuildPdf(controllerContext);
+                //Add PDF file to attachments
+                Attachment attach = new Attachment() { Filename = fileView.FileName, Content = Convert.ToBase64String(fileBytes), Type = "application/pdf" };
+                attachments = new List<Attachment>() { attach };
+            }
+
+            //Async sending of email
+            //Compose destination
+            var ownerAdress = new List<SendGrid.Helpers.Mail.EmailAddress>
+                { new SendGrid.Helpers.Mail.EmailAddress(this.owner.Email.Trim(), this.owner.name) };
+            var contacts = owner.condosInfoContact;
+            foreach (var con in contacts) //For each related contact, an email is added to receipts
             {
                 //If its a valid email, different from the owner emails, its added as an aditional receipment
                 if (MailerSendGrid.IsValid(con.email) && con.email != ApplicationUser.NULL_EMAIL && con.email.Trim() != owner.Email.Trim())

@@ -34,6 +34,7 @@ namespace CostaDiamante_HOA.Controllers
                 res = true;
             return res;
         }
+
         // GET: Reports
         /// <summary>
         /// Prepares a global report to show the payment of HOAFee status for every quarter of a year for every condo.
@@ -108,32 +109,27 @@ namespace CostaDiamante_HOA.Controllers
             return fileView;
         }
 
-        [HttpPost]
-        [FiltrosDeSolicitudes.ValidateHeaderAntiForgeryToken]
-        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
-        public async Task<JsonResult> SendEmailImpactRentsReport(int? id, int year = 0)
+        /// <summary>
+        /// Generates a PDF to download of the RentsByYear report.
+        /// </summary>
+        /// <param name="id">Condo ID</param>
+        /// <param name="year">Year to report</param>
+        /// <param name="quarter">Quarter of the year to report</param>
+        /// <returns>Generates an invoice of how much is needed to pay</returns>
+        public ActionResult DownloadPDfHOAFeeInvoice(int? id, int? year, int? quarter)
         {
-            if (id == null)
-            {
-                var error = new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
-            }
             var condo = db.Condoes.Find(id);
             if (condo == null)
-            {
-                var error = HttpNotFound();
-                return Json(new { count = 0,errorCode = error.StatusCode, errorMessage = error.StatusDescription});
-            }
+                return HttpNotFound();
 
             if (!isAllowedToAccess(condo.ownerID))
-            {
-                var error = new HttpStatusCodeResult(HttpStatusCode.Forbidden);
-                return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
-            }
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
-            Payment.InvoiceSentStatus errorMessage = await condo.sendEmail_ImpactOfRentReport(Request, ControllerContext, year);
+            var fileView = condo.generateRotativaPDF_HOAFeeInvoice(year,quarter, Request);
 
-            return Json(errorMessage.mailStatus.message);
+            //Code to get content
+            return fileView;
         }
+
     }
 }

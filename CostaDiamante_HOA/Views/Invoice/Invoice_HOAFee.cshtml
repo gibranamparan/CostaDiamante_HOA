@@ -1,0 +1,36 @@
+﻿@model CostaDiamante_HOA.Models.Payment.InvoiceHOA
+@{
+    ViewBag.Title = "Invoice";
+    Layout = "~/Views/Shared/_LayoutPDF.cshtml";
+}
+
+@Html.Partial("ReportHeader")
+
+
+<h2 style="text-align: center">Invoice</h2>
+<div style="text-align: right">
+    <strong>Date: </strong><strong>@(Model.date.ToString("MMMM yyyy"))</strong>
+</div>
+<span>PROPERTY OWNER: </span><strong>@(Model.condo.name + " " + Model.condo.owner.fullName )</strong>
+<table>
+    <thead>
+        <tr>
+            <th>Description</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.description</td>
+            <td>@Model.amount.ToString("C")</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td style="text-align: right">TOTAL DUE</td>
+            <td>@(Model.totalDue.ToString("C"))</td>
+        </tr>
+    </tfoot>
+</table>
+
+@Html.Partial("ReportFooter")
