@@ -131,6 +131,10 @@ namespace CostaDiamante_HOA.Models
                 int.TryParse(res["id"] ?? string.Empty, out condoID);
                 this.condoID = condoID;
 
+                int quarter = 0;
+                int.TryParse(res["quarter"] ?? string.Empty, out quarter);
+                this.quarter = quarter;
+
                 int year = DateTime.Today.Year;
                 int.TryParse(res["year"] ?? string.Empty, out year);
                 this.year = year;

@@ -156,10 +156,15 @@ namespace CostaDiamante_HOA.Controllers
 
             //return Json(errorMessage.mailStatus.message);
             string criptedQS = GeneralTools.CryptoTools.EnryptString(ifg.QueryString);
+
+            inv.sendInvoice()
+
             string decriptedQS = GeneralTools.CryptoTools.DecryptString(criptedQS);
             InvoiceFormGenerator inv2 = new InvoiceFormGenerator(decriptedQS);
 
-            return Json(new { invoice = inv, invoice2 = inv2 });
+            return Json(new { invoice = new InvoiceFormGenerator() { condoID = inv.condo.condoID,
+                quarter = inv is InvoiceHOA ? ((InvoiceHOA)inv).quarter : 0,
+            sendDate = inv.date, typeOfInvoice = inv.typeOfInvoice, year = inv.year }, invoice2 = inv2 });
         }
 
         [HttpPost]

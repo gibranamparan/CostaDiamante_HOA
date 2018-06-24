@@ -41,7 +41,7 @@
             </form>
         </div>
     </div>
-
+    <img style="width: 2em" src="~/images/loading1.gif" v-if="loading" />
     <v-client-table v-bind:data="condos" v-bind:columns="cols" v-bind:options="options">
         <input type="checkbox" slot="selected" slot-scope="props" 
                v-model="condos.filter(con=>con.condoID == props.row.condoID)[0].selected" @@change="printSelected()">
@@ -76,6 +76,7 @@
     var app = new Vue({
         el: "#appInvoices",
         data: {
+            loading: true,
             condos: {},
             selectedCondos: {},
             options: {
@@ -151,6 +152,7 @@
                 } else if (res.errorMessage) {
                     notifyError(res.errorMessage)
                 }
+                this.loading = false;
             }).catch(err => {
                 response = err
                 console.log(err)
