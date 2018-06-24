@@ -82,9 +82,10 @@ namespace CostaDiamante_HOA.Controllers
         [AllowAnonymous]
         public ActionResult DownloadInvoiceByToken(string cryptedStr)
         {
-            InvoiceFormGenerator args = new InvoiceFormGenerator(cryptedStr);
-            return Json(new { });
-            //return generatePDF(id, year, quarter, typeOfInvoice);
+            string decriptedQS = GeneralTools.CryptoTools.DecryptString(cryptedStr);
+            InvoiceFormGenerator args = new InvoiceFormGenerator(decriptedQS);
+
+            return generatePDF(args.condoID, args.year, args.quarter, args.typeOfInvoice);
         }
 
         private ActionResult generatePDF(int? id, int? year, int? quarter, TypeOfPayment typeOfInvoice)
@@ -156,8 +157,8 @@ namespace CostaDiamante_HOA.Controllers
 
             //return Json(errorMessage.mailStatus.message);
             string criptedQS = GeneralTools.CryptoTools.EnryptString(ifg.QueryString);
-
-            inv.sendInvoice()
+            inv.cryptedQueryString = criptedQS;
+            var resSend = await inv.sendInvoice(Request, ControllerContext);
 
             string decriptedQS = GeneralTools.CryptoTools.DecryptString(criptedQS);
             InvoiceFormGenerator inv2 = new InvoiceFormGenerator(decriptedQS);

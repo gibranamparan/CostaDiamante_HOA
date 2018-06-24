@@ -139,9 +139,10 @@ namespace CostaDiamante_HOA.Models
                 int.TryParse(res["year"] ?? string.Empty, out year);
                 this.year = year;
 
+                // If valid, assing input value, else assing NONE
                 TypeOfPayment typeOfPayment = TypeOfPayment.NONE;
                 Enum.TryParse(res["type-of-invoice"] ?? string.Empty, out typeOfPayment);
-                // If valid, assing input value, else assing NONE
+                this.typeOfInvoice = typeOfPayment;
             }
 
             /// <summary>
@@ -167,6 +168,8 @@ namespace CostaDiamante_HOA.Models
             public int year { get; set; }
             public decimal amount { get; set; }
             public Condo condo { get; set; }
+            public string queryString { get; set; }
+            public string cryptedQueryString { get; set; }
 
             public TypeOfPayment typeOfInvoice
             {
@@ -192,6 +195,7 @@ namespace CostaDiamante_HOA.Models
 
             public abstract Rotativa.ActionAsPdf generateInvoicePDF(HttpRequestBase Request);
             public abstract Task<Payment.InvoiceSentStatus> sendInvoice(HttpRequestBase Request, ControllerContext ControllerContext);
+
             public static Rotativa.ActionAsPdf generatePDF(Condo condo, HttpRequestBase request, int? id, int? year, int? quarter, TypeOfPayment typeOfInvoice)
             {
                 InvoiceFormGenerator ifg = new InvoiceFormGenerator() { quarter = quarter.Value, typeOfInvoice = typeOfInvoice, year = year.Value };
@@ -254,7 +258,7 @@ namespace CostaDiamante_HOA.Models
             }
 
 
-            private static string quarterMonths(int quarter)
+            public static string quarterMonths(int quarter)
             {
                 string res = string.Empty;
                 int startMonth = 1;
@@ -289,7 +293,7 @@ namespace CostaDiamante_HOA.Models
             /// <returns></returns>
             public override Task<Payment.InvoiceSentStatus> sendInvoice(HttpRequestBase Request, ControllerContext ControllerContext)
             {
-                return this.condo.sendEmail_HOAFeeInvoice(Request, ControllerContext, this.quarter, this.year);
+                return this.condo.sendEmail_HOAFeeInvoice(Request, ControllerContext, this.quarter, this.year, this.cryptedQueryString);
             }
         }
 
@@ -329,7 +333,7 @@ namespace CostaDiamante_HOA.Models
             /// <returns></returns>
             public override Task<Payment.InvoiceSentStatus> sendInvoice(HttpRequestBase Request, ControllerContext ControllerContext)
             {
-                return this.condo.sendEmail_ImpactOfRentReport(Request, ControllerContext, this.year);
+                return this.condo.sendEmail_ImpactOfRentReport(Request, ControllerContext, this.year, this.cryptedQueryString);
             }
         }
     }

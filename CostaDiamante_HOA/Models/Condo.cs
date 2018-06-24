@@ -117,7 +117,7 @@ namespace CostaDiamante_HOA.Models
         /// <param name="controllerContext"></param>
         /// <param name="year"></param>
         /// <returns></returns>
-        public async Task<Payment.InvoiceSentStatus> sendEmail_ImpactOfRentReport(HttpRequestBase Request, ControllerContext controllerContext, int year = 0)
+        public async Task<Payment.InvoiceSentStatus> sendEmail_ImpactOfRentReport(HttpRequestBase Request, ControllerContext controllerContext, int year = 0, string cryptedQueryString = "")
         {
             string errorMessage = string.Empty;
             year = year == 0 ? DateTime.Today.Year : year;
@@ -127,20 +127,21 @@ namespace CostaDiamante_HOA.Models
             string subject = $"Impact of Rent report to {strDate} in condo {this.name}";
 
             //URL To see Details
-            string detailsURL = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
-            detailsURL += $"/Condo/HOAFees/{this.condoID}?year={year}";
+            string downloadURL = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
+            downloadURL += $"/Invoice/DownloadInvoiceByToken?cryptedStr={cryptedQueryString}";
 
             //Email Body
             string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
-            emailMessage += $"<h3>Impact of Rent</h3>";
-            emailMessage += $"<span>In this email is attached the Impact of Rent status report to { strDate } for";
-            emailMessage += $" condo {this.name }, property of {this.owner.name}";
+            emailMessage += $"<h3>Impact of Rent Report</h3>";
+
+            emailMessage += $"<span>In this email you will find a link to download your Impact of Rent status report for year {year} for";
+            emailMessage += $" , condo {this.name }, property of {this.owner.name}. Click the following link:";
+
+            //Add link to see report if its a visit that cause Impact of Rent
+            emailMessage += " <a href='" + downloadURL + "'>Download Impact of Rent Report.</a>";
 
             //Generate attachments for email
             List<Attachment> attachments = null;
-            //Add link to see report if its a visit that cause Impact of Rent
-            emailMessage += $" <span>See attached PDF or click this link to go to your Impact of Rent status report for year {year}:</span>";
-            emailMessage += " <a href='" + detailsURL + "'>Download Impact of Rent Report Year .</a>";
 
             //Is mailer enabled
             bool emailEnabled = true;
@@ -177,29 +178,30 @@ namespace CostaDiamante_HOA.Models
             return status;
         }
 
-        public async Task<Payment.InvoiceSentStatus> sendEmail_HOAFeeInvoice(HttpRequestBase Request, ControllerContext controllerContext, int quarter, int year = 0)
+        public async Task<Payment.InvoiceSentStatus> sendEmail_HOAFeeInvoice(HttpRequestBase Request, ControllerContext controllerContext, int quarter, int year = 0, string cryptedQueryString = "")
         {
             string errorMessage = string.Empty;
             year = year == 0 ? DateTime.Today.Year : year;
             string strDate = DateTime.Today.ToString("dd MMMM yyyy");
 
             //Subject
-            string subject = $"Impact of Rent report to {strDate} in condo {this.name}";
+            string subject = $"HOA Fee invoice to for quarter { Payment.InvoiceHOA.quarterMonths(quarter) } of { year } in condo {this.name}";
 
             //URL To see Details
-            string detailsURL = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
-            detailsURL += $"/Condo/HOAFees/{this.condoID}?year={year}";
+            string downloadURL = Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port);
+            downloadURL += $"/Invoice/DownloadInvoiceByToken?cryptedStr={cryptedQueryString}";
 
             //Email Body
             string emailMessage = "<h2>Costa Diamante HOA-System</h2>";
             emailMessage += $"<h3>HOA Fee Invoice</h3>";
-            emailMessage += $"<span>In this email is attached the invoice for quarter {quarter} in year {year}";
-            emailMessage += $" condo {this.name }, property of {this.owner.name}";
+            emailMessage += $"<span>In this email you will find a link to download your HOA Invoice for { Humanizer.OrdinalizeExtensions.Ordinalize(quarter) } quarter { Payment.InvoiceHOA.quarterMonths(quarter) } in year {year}";
+            emailMessage += $" , condo {this.name }, property of {this.owner.name}. Click the following link:";
+
+            //Add link to see report if its a visit that cause Impact of Rent
+            emailMessage += " <a href='" + downloadURL + "'>Download HOA Invoice.</a>";
 
             //Generate attachments for email
             List<Attachment> attachments = null;
-            //Add link to see report if its a visit that cause Impact of Rent
-            emailMessage += $" <span>See attached PDF.";
 
             //Is mailer enabled
             bool emailEnabled = true;
