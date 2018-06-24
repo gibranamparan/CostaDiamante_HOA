@@ -260,6 +260,11 @@ namespace CostaDiamante_HOA.Controllers
         public async System.Threading.Tasks.Task<ActionResult> Edit(RegisterViewModel vmOwner)
         {
             ApplicationUser userEdited = new ApplicationUser(vmOwner);
+            if (vmOwner.roleName != ApplicationUser.RoleNames.ADMIN) { 
+                userEdited = new Owner(vmOwner);
+                ((Owner)userEdited).name = vmOwner.name;
+            }
+
             UserStore<ApplicationUser> store = new UserStore<ApplicationUser>(db);
 
             string newPassword = vmOwner.Password;
@@ -279,23 +284,28 @@ namespace CostaDiamante_HOA.Controllers
             {
                 //Change username
                 userEdited.UserName = vmOwner.UserName;
+
                 //Remaininig fields are updated
                 await store.UpdateAsync(userEdited);
                 var updatedRegs = db.SaveChangesAsync();
                 
                 //Change the role if the edited user is not admin
                 if (!UserManager.IsInRole(userEdited.Id, ApplicationUser.RoleNames.ADMIN))
-                { 
+                {
+
                     //If its already landlord
                     bool isLandLord = UserManager.IsInRole(userEdited.Id, ApplicationUser.RoleNames.LANDLORD);
+
                     //Gets if Owner or Landlord was selected in the form
                     bool selOwner = vmOwner.roleName == ApplicationUser.RoleNames.OWNER;
                     bool selLandlord = vmOwner.roleName == ApplicationUser.RoleNames.LANDLORD;
 
-                    //If landlord was selected to a user that was Owner, add Landlord Role
+
+                    //If landlord was selected in a user that was Owner, add Landlord Role
                     if (!selOwner && selLandlord && !isLandLord)
                         UserManager.AddToRole(userEdited.Id, ApplicationUser.RoleNames.LANDLORD);
-                    //If orwer was selected to a user that was Landlord, remove Landlord Role
+
+                    //If owner was selected in a user that was Landlord, remove Landlord Role
                     if (selOwner && !selLandlord && isLandLord)
                         UserManager.RemoveFromRole(userEdited.Id, ApplicationUser.RoleNames.LANDLORD);
                 }

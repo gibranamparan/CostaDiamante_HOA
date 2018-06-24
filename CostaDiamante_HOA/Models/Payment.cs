@@ -113,10 +113,45 @@ namespace CostaDiamante_HOA.Models
         /// </summary>
         public class InvoiceFormGenerator
         {
+            private readonly string STRING_FORMAT_QUERY_STRING = "id={0}&year={1}&quarter={2}&type-of-invoice={3}";
+
+            public int condoID { get; set; }
             public DateTime sendDate { get; set; }
             public TypeOfPayment typeOfInvoice { get; set; }
             public int year { get; set; }
             public int quarter { get; set; }
+
+
+            public InvoiceFormGenerator() { }
+            public InvoiceFormGenerator(string queryString)
+            {
+                System.Collections.Specialized.NameValueCollection res = HttpUtility.ParseQueryString(queryString);
+
+                int condoID = 0;
+                int.TryParse(res["id"] ?? string.Empty, out condoID);
+                this.condoID = condoID;
+
+                int year = DateTime.Today.Year;
+                int.TryParse(res["year"] ?? string.Empty, out year);
+                this.year = year;
+
+                TypeOfPayment typeOfPayment = TypeOfPayment.NONE;
+                Enum.TryParse(res["type-of-invoice"] ?? string.Empty, out typeOfPayment);
+                // If valid, assing input value, else assing NONE
+            }
+
+            /// <summary>
+            /// Transforms a InvoiceArguments objecto into its query string format.
+            /// </summary>
+            /// <param name="args">InvoiceArguments object</param>
+            /// <returns>Query string ready to be part of a URL</returns>
+            public string QueryString
+            {
+                get { 
+                    string res = String.Format(this.STRING_FORMAT_QUERY_STRING, this.condoID,this.year, this.quarter, this.typeOfInvoice);
+                    return res;
+                }
+            }
         }
 
         /// <summary>
@@ -153,6 +188,22 @@ namespace CostaDiamante_HOA.Models
 
             public abstract Rotativa.ActionAsPdf generateInvoicePDF(HttpRequestBase Request);
             public abstract Task<Payment.InvoiceSentStatus> sendInvoice(HttpRequestBase Request, ControllerContext ControllerContext);
+            public static Rotativa.ActionAsPdf generatePDF(Condo condo, HttpRequestBase request, int? id, int? year, int? quarter, TypeOfPayment typeOfInvoice)
+            {
+                InvoiceFormGenerator ifg = new InvoiceFormGenerator() { quarter = quarter.Value, typeOfInvoice = typeOfInvoice, year = year.Value };
+
+                Invoice inv = null;
+
+                if (typeOfInvoice == TypeOfPayment.HOA_FEE)
+                    inv = new InvoiceHOA(condo, ifg);
+                else if (typeOfInvoice == TypeOfPayment.RENTAL_IMPACT)
+                    inv = new InvoiceRent(condo, ifg);
+
+                var fileView = inv.generateInvoicePDF(request);
+
+                //Code to get content
+                return fileView;
+            }
         }
 
         /// <summary>
@@ -202,12 +253,14 @@ namespace CostaDiamante_HOA.Models
             private static string quarterMonths(int quarter)
             {
                 string res = string.Empty;
+                int startMonth = 1;
                 if(quarter>=1 && quarter <= 4)
                 {
-                    for (int c = 0; c <= 2; c++) {
+                    startMonth = 3 * (quarter - 1) + 1;
+                    for (int c = startMonth; c <= startMonth + 2; c++) {
                         //var dt = new DateTime(DateTime.Today.Year,quarter + c,DateTime.Today.Day);
-                        var dt = new DateTime(DateTime.Today.Year, quarter + c, 28);
-                        var separator = c == 1 ? ", " : c == 2 ? " & " : "";
+                        var dt = new DateTime(DateTime.Today.Year, c , 28);
+                        var separator = c == startMonth ? ", " : ( c == startMonth +1 ? " & " : "" );
                         res += dt.ToString("MMMM")+separator;
                     }
                 }

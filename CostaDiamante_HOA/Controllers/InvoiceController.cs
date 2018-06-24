@@ -71,25 +71,30 @@ namespace CostaDiamante_HOA.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public ActionResult DownloadInvoice(int? id, int? year, int? quarter, TypeOfPayment typeOfInvoice)
+        {
+            return generatePDF(id, year, quarter, typeOfInvoice);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult DownloadInvoiceByToken(string cryptedStr)
+        {
+            InvoiceFormGenerator args = new InvoiceFormGenerator(cryptedStr);
+            return Json(new { });
+            //return generatePDF(id, year, quarter, typeOfInvoice);
+        }
+
+        private ActionResult generatePDF(int? id, int? year, int? quarter, TypeOfPayment typeOfInvoice)
         {
             var condo = db.Condoes.Find(id);
             if (condo == null)
                 return HttpNotFound();
 
-            InvoiceFormGenerator ifg = new InvoiceFormGenerator() { quarter = quarter.Value, typeOfInvoice = typeOfInvoice, year = year.Value };
-
-            Invoice inv = null;
-
-            if (typeOfInvoice == TypeOfPayment.HOA_FEE)
-                inv = new InvoiceHOA(condo, ifg);
-            else if (typeOfInvoice == TypeOfPayment.RENTAL_IMPACT)
-                inv = new InvoiceRent(condo, ifg);
-
-            var fileView = inv.generateInvoicePDF(this.Request);
-
-            //Code to get content
-            return fileView;
+            var pdfInvoice = Invoice.generatePDF(condo, this.Request, id, year, quarter, typeOfInvoice);
+            return pdfInvoice;
         }
 
         /// <summary>
@@ -118,20 +123,22 @@ namespace CostaDiamante_HOA.Controllers
         [Authorize(Roles = ApplicationUser.RoleNames.ADMIN)]
         public async Task<JsonResult> SendEmail(int? id, InvoiceFormGenerator ifg)
         {
-            if (id == null || ifg == null)//Check request
+            if (id == null || ifg == null)//Check if request is valid
             {
                 var error = new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
             }
 
+            //Find condo
             var condo = db.Condoes.Find(id);
-            if (condo == null) //Check if existe
+            if (condo == null) //Check if found
             {
                 var error = HttpNotFound();
                 return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
             }
+            ifg.condoID = id.Value;
 
-            if (!isAllowedToAccess(condo.ownerID))
+            if (!isAllowedToAccess(condo.ownerID)) // Check if current user has access to information
             {
                 var error = new HttpStatusCodeResult(HttpStatusCode.Forbidden);
                 return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
@@ -144,11 +151,24 @@ namespace CostaDiamante_HOA.Controllers
             else if (ifg.typeOfInvoice == TypeOfPayment.RENTAL_IMPACT)
                 inv = new InvoiceRent(condo, ifg);
 
-            Payment.InvoiceSentStatus errorMessage = await inv.sendInvoice(Request, ControllerContext);
+            // Send email to condo owners and associated contacts
+            //Payment.InvoiceSentStatus errorMessage = await inv.sendInvoice(Request, ControllerContext);
 
-            return Json(errorMessage.mailStatus.message);
+            //return Json(errorMessage.mailStatus.message);
+            string criptedQS = GeneralTools.CryptoTools.EnryptString(ifg.QueryString);
+            string decriptedQS = GeneralTools.CryptoTools.DecryptString(criptedQS);
+            InvoiceFormGenerator inv2 = new InvoiceFormGenerator(decriptedQS);
+
+            return Json(new { invoice = inv, invoice2 = inv2 });
         }
 
-
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<JsonResult> TestEncryption(string testStr)
+        {
+            string strEncrypted = GeneralTools.CryptoTools.EnryptString(testStr);
+            string strDecrypted = GeneralTools.CryptoTools.DecryptString(strEncrypted);
+            return Json(new { testStr, strEncrypted, strDecrypted });
+        }
     }
 }

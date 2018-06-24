@@ -37,7 +37,7 @@
                     </div>
 
                 </div>
-                <button class="btn btn-primary" type="submit">Send Invoices</button>
+                <!--<button class="btn btn-primary" type="submit">Send Invoices</button>-->
             </form>
         </div>
     </div>
@@ -53,7 +53,7 @@
                 <i class="fa fa-download"></i> <span>Download</span>
             </a>
             <span> | </span>
-            <a @@click="sendInvoice(props.row.condoID)">
+            <a @@click="sendInvoice(props.row.condoID)" style="cursor: pointer">
                 <i class="fa fa-envelope"></i> <span>Send Invoice</span>
             </a>
         </span>
@@ -121,12 +121,11 @@
                 })
             },
             sendInvoice(condoID){
-                debugger
                 swal({ title: "Are your sure?", text: "You are going to send invoice to the selected owner, are your sure?", buttons: true })
-                .then(confirm=> {
+                .then(confirm => {
                     if(confirm){
-                        api.post("/invoice/SendEmail/"+condoID, { ifg:this.invoiceGeneratorForm })
-                        .then(res=> {
+                        api.post("/invoice/SendEmail/"+condoID, { ifg: this.invoiceGeneratorForm })
+                        .then(res => {
                             res = res.data
                             if (res.count > 0) {
                                 console.log(res.invoicesStatus)

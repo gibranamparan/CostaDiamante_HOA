@@ -218,6 +218,7 @@
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\VisitorsController.cs" />
     <Compile Include="Controllers\VisitsController.cs" />
+    <Compile Include="GeneralTools\CryptoTools.cs" />
     <Compile Include="GeneralTools\ExcelTools.cs" />
     <Compile Include="GeneralTools\FiltrosDeSolicitudes.cs" />
     <Compile Include="GeneralTools\MailerSendGrid.cs" />

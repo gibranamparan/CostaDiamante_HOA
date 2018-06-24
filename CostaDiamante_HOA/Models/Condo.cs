@@ -146,6 +146,7 @@ namespace CostaDiamante_HOA.Models
             bool emailEnabled = true;
             Boolean.TryParse(ConfigurationManager.AppSettings["enableEmail"], out emailEnabled);
             //Just send Impact of Rent report for paid visits marked as that.
+            /*
             if (controllerContext != null && emailEnabled)
             {
                 //Generate the report to be send
@@ -155,7 +156,7 @@ namespace CostaDiamante_HOA.Models
                 //Add PDF file to attachments
                 Attachment attach = new Attachment() { Filename = fileView.FileName, Content = Convert.ToBase64String(fileBytes), Type = "application/pdf" };
                 attachments = new List<Attachment>() { attach };
-            }
+            }*/
 
             //Async sending of email
             //Compose destination
@@ -204,6 +205,7 @@ namespace CostaDiamante_HOA.Models
             bool emailEnabled = true;
             Boolean.TryParse(ConfigurationManager.AppSettings["enableEmail"], out emailEnabled);
             //Just send Impact of Rent report for paid visits marked as that.
+            /*
             if (controllerContext != null && emailEnabled)
             {
                 //Generate the report to be send
@@ -213,7 +215,7 @@ namespace CostaDiamante_HOA.Models
                 //Add PDF file to attachments
                 Attachment attach = new Attachment() { Filename = fileView.FileName, Content = Convert.ToBase64String(fileBytes), Type = "application/pdf" };
                 attachments = new List<Attachment>() { attach };
-            }
+            }*/
 
             //Async sending of email
             //Compose destination
