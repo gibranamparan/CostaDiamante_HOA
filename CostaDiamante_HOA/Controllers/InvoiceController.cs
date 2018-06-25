@@ -54,6 +54,8 @@ namespace CostaDiamante_HOA.Controllers
             string errorMessage = string.Empty;
             List<InvoiceSentStatus> invoicesStatus = new List<InvoiceSentStatus>();
 
+            var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<MailerNotifierHub>();
+
             if (ifg == null || ifg == null)//Check if request is valid
             {
                 var error = new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -84,8 +86,10 @@ namespace CostaDiamante_HOA.Controllers
                         // Send email to condo owners and associated contacts
                         string criptedQS = GeneralTools.CryptoTools.EnryptString(ifg.QueryString);
                         inv.cryptedQueryString = criptedQS;
-                        //var resSend = await inv.sendInvoice(Request, ControllerContext);
+                        var resSend = await inv.sendInvoice(Request, ControllerContext);
 
+                        context.Clients.All.broadcastMessage(resSend);
+                        invoicesStatus.Add(resSend);
                     }
                 }
                 return Json(new { invoicesStatus, count = invoicesStatus.Count() });

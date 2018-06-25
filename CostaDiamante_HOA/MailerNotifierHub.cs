@@ -16,11 +16,11 @@ namespace CostaDiamante_HOA
             this.resultNotify = res;
         }*/
 
-        public void Send(string message)
+        public void Send(GeneralTools.MailerSendGrid.MailerResult mailerResult)
         {
             // Call the broadcastMessage method to update clients.
             //Clients.All.broadcastMessage(this.resultNotify, message);
-            Clients.All.broadcastMessage(message);
+            Clients.All.broadcastMessage(mailerResult);
         }
     }
 }

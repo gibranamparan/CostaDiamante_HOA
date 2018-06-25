@@ -37,7 +37,10 @@
                     </div>
 
                 </div>
-                <button class="btn btn-primary" type="submit" v-bind:disabled="numberOfSelectedCondos == 0">Send Selected Invoices</button>
+                <button class="btn btn-success" type="submit" v-bind:disabled="condos.filter(condo=>condo.selected).length == 0">Send Selected Invoices</button>
+                <button class="btn btn-info" type="button" @@click="selectAll()">Select All</button>
+                <button class="btn btn-info" type="button" @@click="clearAll()">Clear Selected</button>
+                <strong>Selected Condos To Notify: </strong><span>{{condos.filter(condo=>condo.selected).length}}</span>
             </form>
         </div>
     </div>
@@ -62,8 +65,13 @@
             </span>
         </span>
     </v-client-table>
-    <div v-for="res in receivedNotifications">
-        {{res.message}}
+    <div class="alert alert-success" v-if="openAlertSuccess">
+        <i class="fa fa-remove" @@click="openAlertSuccess=false" style="cursor: pointer"></i>
+        <strong>Condos notified: </strong> {{succededNotifications.length}} / {{numberOfSelectedCondos}} ({{percentOfSuccess}})
+    </div>
+    <div class="alert alert-danger" v-if="openAlertFail && failedNotifications.length">
+        <i class="fa fa-remove" @@click="openAlertFail=false" style="cursor: pointer"></i>
+        <strong>Condos failed notification: </strong> {{failedNotifications.length}} / {{numberOfSelectedCondos}} ({{percentOfFailure}})
     </div>
 </div>
 @Html.AntiForgeryToken()
@@ -73,18 +81,7 @@
 }
 
 @section Scripts{
-<script>
-    $(function () {
-        var notiHub = $.connection.mailerNotifierHub;
-        notiHub.client.broadcastMessage = function (resultNotify, message) {
-            receivedNotifications.push({resultNotify, message})
-        };
-    
-        $.connection.hub.start().done(function () {
-            console.log("Hub is started.");
-        });
-    });
-    
+<script>    
     var response
     installVueTable()
 
@@ -99,10 +96,12 @@
     var app = new Vue({
         el: "#appInvoices",
         data: {
+            openAlertSuccess : false,
+            openAlertFail : false,
             receivedNotifications : [],
             loading: true,
             condos: [],
-            selectedCondos: {},
+            selectedCondos: [],
             options: {
                 headings: { 'condoName': 'Condo', 'ownerName': 'Owner', "concatEmails":"Emails",'actions':''}
             },
@@ -115,23 +114,40 @@
             },
             numberOfSelectedCondos(){
                 return this.condos.filter(con=>con.selected).length;
+            },
+            succededNotifications(){
+                var res = this.receivedNotifications.length == 0 ? [] : this.receivedNotifications.filter(not => not.mailStatus.httpCode >= 200 && not.mailStatus.httpCode < 300)
+                return res;
+            },
+            failedNotifications(){
+                var res = this.receivedNotifications.length == 0 ? [] : this.receivedNotifications.filter(not => not.mailStatus.httpCode >= 300)
+                return res;
+            },
+            percentOfSuccess(){
+                var res = (this.numberOfSelectedCondos == 0 ? 0 : numeral((this.succededNotifications.length / this.numberOfSelectedCondos)*100).format('0.00')) + "%"
+                return res;
+            },
+            percentOfFailure(){
+                var res = (this.numberOfSelectedCondos == 0 ? 0 : numeral((this.failedNotifications.length / this.numberOfSelectedCondos)*100).format('0.00')) + "%"
+                return res;
             }
-        }
-        ,
+        },
         methods: {
             selectCondo(condoID) {
                 var condo = this.condos.filter(con=>con.condoID == condoID)[0]
                 condo.selected = !condo.selected
-                console.log(JSON.stringify(this.condos.filter(con=>con.selected)))
             },
             printSelected() {
-                console.log(JSON.stringify(this.condos.filter(con=>con.selected)))
+                //console.log(JSON.stringify(this.condos.filter(con=>con.selected)))
+                this.$forceUpdate()
             },
             sendInvoices() {
-                /*swal({ title: "Are your sure?", text: "You are going to send invoices to the selected owners, are your sure?", buttons: true })
+                swal({ title: "Are your sure?", text: "You are going to send invoices to the selected owners, are your sure?", buttons: true })
                 .then(confirm=> {
                     if(confirm){
                         var selectedCondos = this.condos.filter(con=>con.selected)
+                        this.openAlertSuccess = true;
+                        this.openAlertFail = true;
                         api.post("/invoice/SendInvoices", { selectedCondos, ifg : this.invoiceGeneratorForm })
                         .then(res=> {
                             res = res.data
@@ -146,7 +162,7 @@
                             console.log(err)
                         })
                     }
-                })*/
+                })
             },
             sendInvoice(condoID){
                 swal({ title: "Are your sure?", text: "You are going to send invoice to the selected owner, are your sure?", buttons: true })
@@ -181,6 +197,14 @@
                 })
 
             },
+            selectAll(){
+                this.condos.forEach(condo=>condo.selected = true)
+                this.$forceUpdate()
+            },
+            clearAll(){
+                this.condos.forEach(condo=>condo.selected = false)
+                this.$forceUpdate()
+            }
         },
         beforeCreate() {
             api.get("/condo/List")
@@ -195,7 +219,16 @@
             }).catch(err => {
                 response = err
                 console.log(err)
-            })
+            });
+            
+            var notiHub = $.connection.mailerNotifierHub;
+            notiHub.client.broadcastMessage = (mailerResult) => {
+                this.receivedNotifications.push(mailerResult)
+            };
+    
+            $.connection.hub.start().done(function () {
+                console.log("Hub is started.");
+            });
         }
     })
 </script>
