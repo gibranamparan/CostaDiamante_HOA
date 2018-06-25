@@ -99,7 +99,9 @@
     @Scripts.Render("~/bundles/template")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/signalR")
 
+    @RenderSection("SignalRScripts", required: false)
     @RenderSection("scripts", required: false)
 
     <script>

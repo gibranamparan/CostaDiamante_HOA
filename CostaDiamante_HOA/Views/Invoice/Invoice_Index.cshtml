@@ -37,7 +37,7 @@
                     </div>
 
                 </div>
-                <!--<button class="btn btn-primary" type="submit">Send Invoices</button>-->
+                <button class="btn btn-primary" type="submit" v-bind:disabled="numberOfSelectedCondos == 0">Send Selected Invoices</button>
             </form>
         </div>
     </div>
@@ -53,15 +53,38 @@
                 <i class="fa fa-download"></i> <span>Download</span>
             </a>
             <span> | </span>
-            <a @@click="sendInvoice(props.row.condoID)" style="cursor: pointer">
+            <a @@click="sendInvoice(props.row.condoID)" style="cursor: pointer"
+               v-if="!condos.filter(con=>con.condoID == props.row.condoID)[0].loading">
                 <i class="fa fa-envelope"></i> <span>Send Invoice</span>
             </a>
+            <span v-if="condos.filter(con=>con.condoID == props.row.condoID)[0].loading">
+                Sending...
+            </span>
         </span>
     </v-client-table>
+    <div v-for="res in receivedNotifications">
+        {{res.message}}
+    </div>
 </div>
 @Html.AntiForgeryToken()
+
+@section SignalRScripts{
+    <script src="~/signalr/hubs"></script>
+}
+
 @section Scripts{
 <script>
+    $(function () {
+        var notiHub = $.connection.mailerNotifierHub;
+        notiHub.client.broadcastMessage = function (resultNotify, message) {
+            receivedNotifications.push({resultNotify, message})
+        };
+    
+        $.connection.hub.start().done(function () {
+            console.log("Hub is started.");
+        });
+    });
+    
     var response
     installVueTable()
 
@@ -76,8 +99,9 @@
     var app = new Vue({
         el: "#appInvoices",
         data: {
+            receivedNotifications : [],
             loading: true,
-            condos: {},
+            condos: [],
             selectedCondos: {},
             options: {
                 headings: { 'condoName': 'Condo', 'ownerName': 'Owner', "concatEmails":"Emails",'actions':''}
@@ -88,6 +112,9 @@
         computed:{
             params(){
                 return `?year=${this.invoiceGeneratorForm.year}&quarter=${this.invoiceGeneratorForm.quarter}&typeOfInvoice=${this.invoiceGeneratorForm.typeOfInvoice}`
+            },
+            numberOfSelectedCondos(){
+                return this.condos.filter(con=>con.selected).length;
             }
         }
         ,
@@ -101,11 +128,11 @@
                 console.log(JSON.stringify(this.condos.filter(con=>con.selected)))
             },
             sendInvoices() {
-                swal({ title: "Are your sure?", text: "You are going to send invoices to the selected owners, are your sure?", buttons: true })
+                /*swal({ title: "Are your sure?", text: "You are going to send invoices to the selected owners, are your sure?", buttons: true })
                 .then(confirm=> {
                     if(confirm){
                         var selectedCondos = this.condos.filter(con=>con.selected)
-                        api.post("/invoice/SendInvoices", { selectedCondos, invoiceGeneratorForm:this.invoiceGeneratorForm })
+                        api.post("/invoice/SendInvoices", { selectedCondos, ifg : this.invoiceGeneratorForm })
                         .then(res=> {
                             res = res.data
                             if (res.count > 0) {
@@ -119,29 +146,41 @@
                             console.log(err)
                         })
                     }
-                })
+                })*/
             },
             sendInvoice(condoID){
                 swal({ title: "Are your sure?", text: "You are going to send invoice to the selected owner, are your sure?", buttons: true })
                 .then(confirm => {
                     if(confirm){
+                        var condo = this.condos.filter(con=>con.condoID == condoID)[0]
+                        condo.loading = true;
+                        this.$forceUpdate()
+
                         api.post("/invoice/SendEmail/"+condoID, { ifg: this.invoiceGeneratorForm })
                         .then(res => {
                             res = res.data
-                            if (res.count > 0) {
+                            if (res.mailStatus && res.mailStatus.httpCode >= 200 && res.mailStatus.httpCode < 300) {
                                 console.log(res.invoicesStatus)
-                                notifySuccess("Invoice Sent", "The invoice was sent")
-                            } else if (res.errorMessage) {
-                                notifyError(res.errorMessage)
+                                notifySuccess("Invoice Sent", "The invoice was sent for all the receipts for condo "+condo.condoName)
+                            } else if (res.mailStatus.message) {
+                                notifyError(res.mailStatus.message)
                             }
+                            else{
+                                notifyError("Unknown error, see console.")
+                                console.log(res)
+                            }
+                            condo.loading = false
+                            this.$forceUpdate()
                         }).catch(err => {
                             response = err
                             console.log(err)
+                            condo.loading = false;
+                            this.$forceUpdate()
                         })
                     }
                 })
 
-            }
+            },
         },
         beforeCreate() {
             api.get("/condo/List")

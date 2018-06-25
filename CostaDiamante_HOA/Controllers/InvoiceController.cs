@@ -48,19 +48,44 @@ namespace CostaDiamante_HOA.Controllers
         /// <returns></returns>
         [HttpPost]
         [GeneralTools.FiltrosDeSolicitudes.ValidateHeaderAntiForgeryToken]
-        public async Task<ActionResult> SendInvoices(List<Condo.VMCondo> selectedCondos, InvoiceFormGenerator invoiceGeneratorForm)
+        public async Task<ActionResult> SendInvoices(List<Condo.VMCondo> selectedCondos, InvoiceFormGenerator ifg)
         {
             int year = DateTime.Today.Year; //TODO: Temp year
             string errorMessage = string.Empty;
             List<InvoiceSentStatus> invoicesStatus = new List<InvoiceSentStatus>();
 
+            if (ifg == null || ifg == null)//Check if request is valid
+            {
+                var error = new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
+            }
+
             try
             {
-                if (selectedCondos.Count() > 0) { 
-                    foreach(var vmCondo in selectedCondos) {
+                if (selectedCondos.Count() > 0) { // Is condos were selected
+                    foreach(var vmCondo in selectedCondos) { //For each selected codo
+
                         var condo = db.Condoes.Find(vmCondo.condoID);
-                        InvoiceSentStatus res = await condo.sendEmail_ImpactOfRentReport(Request, ControllerContext, year);
-                        invoicesStatus.Add(res);
+                        ifg.condoID = vmCondo.condoID;
+
+                        /*if (!isAllowedToAccess(condo.ownerID)) // Check if current user has access to information
+                        {
+                            var error = new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                            return Json(new { count = 0, errorCode = error.StatusCode, errorMessage = error.StatusDescription });
+                        }*/
+
+                        Invoice inv = null;
+
+                        if (ifg.typeOfInvoice == TypeOfPayment.HOA_FEE)
+                            inv = new InvoiceHOA(condo, ifg);
+                        else if (ifg.typeOfInvoice == TypeOfPayment.RENTAL_IMPACT)
+                            inv = new InvoiceRent(condo, ifg);
+
+                        // Send email to condo owners and associated contacts
+                        string criptedQS = GeneralTools.CryptoTools.EnryptString(ifg.QueryString);
+                        inv.cryptedQueryString = criptedQS;
+                        //var resSend = await inv.sendInvoice(Request, ControllerContext);
+
                     }
                 }
                 return Json(new { invoicesStatus, count = invoicesStatus.Count() });
@@ -153,28 +178,11 @@ namespace CostaDiamante_HOA.Controllers
                 inv = new InvoiceRent(condo, ifg);
 
             // Send email to condo owners and associated contacts
-            //Payment.InvoiceSentStatus errorMessage = await inv.sendInvoice(Request, ControllerContext);
-
-            //return Json(errorMessage.mailStatus.message);
             string criptedQS = GeneralTools.CryptoTools.EnryptString(ifg.QueryString);
             inv.cryptedQueryString = criptedQS;
             var resSend = await inv.sendInvoice(Request, ControllerContext);
 
-            string decriptedQS = GeneralTools.CryptoTools.DecryptString(criptedQS);
-            InvoiceFormGenerator inv2 = new InvoiceFormGenerator(decriptedQS);
-
-            return Json(new { invoice = new InvoiceFormGenerator() { condoID = inv.condo.condoID,
-                quarter = inv is InvoiceHOA ? ((InvoiceHOA)inv).quarter : 0,
-            sendDate = inv.date, typeOfInvoice = inv.typeOfInvoice, year = inv.year }, invoice2 = inv2 });
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<JsonResult> TestEncryption(string testStr)
-        {
-            string strEncrypted = GeneralTools.CryptoTools.EnryptString(testStr);
-            string strDecrypted = GeneralTools.CryptoTools.DecryptString(strEncrypted);
-            return Json(new { testStr, strEncrypted, strDecrypted });
+            return Json(resSend);
         }
     }
 }

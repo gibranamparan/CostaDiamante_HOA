@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNet.SignalR;
 
 namespace CostaDiamante_HOA.GeneralTools
 {
@@ -143,5 +144,7 @@ namespace CostaDiamante_HOA.GeneralTools
                 this.emails = to;
             }
         }
+
     }
+
 }

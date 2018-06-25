@@ -233,7 +233,8 @@ namespace CostaDiamante_HOA.Models
 
             //Email is sent just to the admin
             MailerSendGrid.MailerResult res = await MailerSendGrid.sendEmailToMultipleRecipients(subject, emailMessage, ownerAdress, attachments);
-            Payment.InvoiceSentStatus status = new Payment.InvoiceSentStatus { condoID = this.condoID, mailStatus = res, sendDate = DateTime.Today };
+            Payment.InvoiceSentStatus status = new Payment.InvoiceSentStatus { condoID = this.condoID, condoName = this.name,
+                mailStatus = res, sendDate = DateTime.Today };
 
             return status;
         }

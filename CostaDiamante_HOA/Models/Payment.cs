@@ -219,7 +219,7 @@ namespace CostaDiamante_HOA.Models
         /// </summary>
         public class InvoiceSentStatus : InvoiceFormGenerator
         {
-            public int condoID { get; set; }
+            public string condoName { get; set; }
             public MailerSendGrid.MailerResult mailStatus { get; set; }
         }
 

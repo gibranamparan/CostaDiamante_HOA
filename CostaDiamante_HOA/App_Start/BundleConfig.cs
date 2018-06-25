@@ -27,6 +27,9 @@ namespace CostaDiamante_HOA
                         "~/Scripts/notify.min.js",
                         "~/Scripts/custom.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/signalR").Include(
+                        "~/Scripts/jquery.signalR-2.2.3.min.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/jquery-datatables-reports").Include(
                         "~/Scripts/buttons.flash.min.js",
                         "~/Scripts/buttons.html5.min.js",

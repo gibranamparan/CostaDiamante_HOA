@@ -12,6 +12,7 @@
 /// <reference path="jquery.datatables.min.js" />
 /// <reference path="jquery.mask.js" />
 /// <reference path="jquery.min.js" />
+/// <reference path="jquery.signalr-2.2.3.min.js" />
 /// <reference path="jquery.validate.js" />
 /// <reference path="jquery.validate.unobtrusive.js" />
 /// <reference path="jquery-1.10.2.js" />
