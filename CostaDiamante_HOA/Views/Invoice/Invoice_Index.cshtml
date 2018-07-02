@@ -69,9 +69,23 @@
         <i class="fa fa-remove" @@click="openAlertSuccess=false" style="cursor: pointer"></i>
         <strong>Condos notified: </strong> {{succededNotifications.length}} / {{numberOfSelectedCondos}} ({{percentOfSuccess}})
     </div>
-    <div class="alert alert-danger" v-if="openAlertFail && failedNotifications.length">
-        <i class="fa fa-remove" @@click="openAlertFail=false" style="cursor: pointer"></i>
-        <strong>Condos failed notification: </strong> {{failedNotifications.length}} / {{numberOfSelectedCondos}} ({{percentOfFailure}})
+    <div v-if="openAlertFail && failedNotifications.length">
+        <div class="alert alert-danger">
+            <i class="fa fa-remove" @@click="openAlertFail=false" style="cursor: pointer"></i>
+            <strong>Condos failed notification: </strong> {{failedNotifications.length}} / {{numberOfSelectedCondos}} ({{percentOfFailure}})
+        </div>
+        <table v-if="failedNotifications">
+            <tr>
+                <th style="background-color: pink">Condo</th>
+                <th style="background-color: pink">Emails</th>
+                <th style="background-color: pink">Error Message</th>
+            </tr>
+            <tr v-for="res in failedNotifications">
+                <td>{{res.condoName}}</td>
+                <td>{{res.mailStatus.concatEmails}}</td>
+                <td>{{res.mailStatus.message}}</td>
+            </tr>
+        </table>
     </div>
 </div>
 @Html.AntiForgeryToken()
@@ -146,6 +160,7 @@
                 .then(confirm=> {
                     if(confirm){
                         var selectedCondos = this.condos.filter(con=>con.selected)
+                        this.receivedNotifications = [];
                         this.openAlertSuccess = true;
                         this.openAlertFail = true;
                         api.post("/invoice/SendInvoices", { selectedCondos, ifg : this.invoiceGeneratorForm })
